@@ -11,6 +11,7 @@ import ReactFlow, {
   Position
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import AIOsintSearch from './AIOsintSearch'
 
 // Provider categories with logos
 const PROVIDER_CATEGORIES = {
@@ -1270,6 +1271,7 @@ Lookup made by https://datawire.cc
 
   const sidebarItems = [
     { id: 'search', icon: 'bx-search', label: 'Search', isCategory: false },
+    { id: 'ai-osint', icon: 'bx-brain', label: 'AI OSINT', isCategory: false },
     { id: 'intelx', icon: 'bx-cloud-download', label: 'IntelX', isCategory: false },
     { id: 'mapping', icon: 'bx-link', label: 'Lead Mapping', isCategory: false },
     { id: 'history', icon: 'bx-history', label: 'Search History', isCategory: false },
@@ -1679,6 +1681,10 @@ Lookup made by https://datawire.cc
                 </button>
               </div>
             </div>
+          )}
+
+          {activeTab === 'ai-osint' && (
+            <AIOsintSearch />
           )}
 
           {activeTab === 'mapping' && (
