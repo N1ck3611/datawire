@@ -216,6 +216,11 @@ async function executeAIOsintInvestigation(identifiers, userId) {
           toolExecutions = JSON.parse(jsonMatch[0]);
         }
       } catch (error) {
+        console.error('Failed to parse AI response, using fallback:', error);
+      }
+      
+      // Fallback: If no tools from AI or parsing failed, manually map identifiers to tools
+      if (toolExecutions.length === 0) {
         Object.entries(identifiers).forEach(([type, values]) => {
           values.forEach(value => {
             const relevantTool = Object.values(AI_OSINT_TOOLS).find(t => t.identifierType === type);
@@ -225,7 +230,47 @@ async function executeAIOsintInvestigation(identifiers, userId) {
                 identifier: value,
                 priority: 'medium'
               });
+            } else {
+              // For unsupported identifier types, try to find a close match
+              if (type === 'fullNames') {
+                toolExecutions.push({
+                  tool: 'username_search',
+                  identifier: value,
+                  priority: 'low'
+                });
+              } else if (type === 'urls') {
+                toolExecutions.push({
+                  tool: 'domain_intel',
+                  identifier: value,
+                  priority: 'low'
+                });
+              } else if (type === 'socialProfiles') {
+                toolExecutions.push({
+                  tool: 'social_media_osint',
+                  identifier: value,
+                  priority: 'low'
+                });
+              } else if (type === 'cryptoWallets') {
+                toolExecutions.push({
+                  tool: 'username_search',
+                  identifier: value,
+                  priority: 'low'
+                });
+              }
             }
+          });
+        });
+      }
+      
+      // If still no tools, add a default tool to ensure investigation runs
+      if (toolExecutions.length === 0) {
+        Object.entries(identifiers).forEach(([type, values]) => {
+          values.forEach(value => {
+            toolExecutions.push({
+              tool: 'username_search',
+              identifier: value,
+              priority: 'low'
+            });
           });
         });
       }
@@ -241,6 +286,15 @@ async function executeAIOsintInvestigation(identifiers, userId) {
       state.stage = 'Running API Queries';
       state.progress = 20;
       
+      if (toolExecutions.length === 0) {
+        state.activityLog.push({
+          tool: 'System',
+          identifier: 'N/A',
+          action: 'No tools to execute, skipping to open-source search',
+          status: 'Completed'
+        });
+      }
+      
       for (let i = 0; i < toolExecutions.length; i++) {
         const execution = toolExecutions[i];
         const tool = AI_OSINT_TOOLS[execution.tool];
@@ -255,13 +309,19 @@ async function executeAIOsintInvestigation(identifiers, userId) {
         try {
           for (const provider of tool.providers) {
             const providerConfig = PROVIDERS[provider];
-            if (!providerConfig) continue;
+            if (!providerConfig) {
+              console.log(`[AI OSINT] Provider config not found: ${provider}`);
+              continue;
+            }
             
             const endpoint = WEB_ENDPOINTS[provider]?.find(
               e => e.queryParam === tool.queryParam || e.name.includes(tool.queryParam)
             );
             
-            if (!endpoint) continue;
+            if (!endpoint) {
+              console.log(`[AI OSINT] Endpoint not found for ${provider} with queryParam ${tool.queryParam}`);
+              continue;
+            }
             
             const params = {};
             params[endpoint.queryParam] = execution.identifier;
@@ -269,8 +329,8 @@ async function executeAIOsintInvestigation(identifiers, userId) {
             const response = await providerHttpRequest(
               endpoint.method || 'GET',
               `${providerConfig.apiBase}${endpoint.path}`,
-              endpoint.extraParams || {},
-              null,
+              endpoint.method === 'POST' ? null : params,
+              endpoint.method === 'POST' ? params : null,
               providerConfig.apiKeyHeader,
               providerConfig.apiKey,
               providerConfig.apiKeyQuery
@@ -297,6 +357,9 @@ async function executeAIOsintInvestigation(identifiers, userId) {
             status: 'Completed'
           });
         } catch (error) {
+          console.error(`[AI OSINT] Tool execution error:`, error);
+          state.completedTasks++;
+          state.progress = 20 + (state.completedTasks / state.totalTasks) * 60;
           state.activityLog.push({
             tool: tool.name,
             identifier: execution.identifier,
