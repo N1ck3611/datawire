@@ -22,19 +22,16 @@ const PROVIDER_CATEGORIES = {
   discord: {
     label: 'Discord',
     icon: 'bx-discord',
-    logo: 'https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png',
     providers: ['cordcat', 'oathnet', 'datavoid']
   },
   telegram: {
     label: 'Telegram',
     icon: 'bx-telegram',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/512px-Telegram_logo.svg.png',
     providers: ['telegram']
   },
   tiktok: {
     label: 'TikTok',
-    icon: 'bx-video',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/512px-TikTok_logo.svg.png',
+    icon: 'bxl-tiktok',
     providers: ['tiktok', 'seeknow', 'seekria']
   },
   gaming: {
@@ -137,10 +134,10 @@ style.textContent = `
   }
   
   .glass-card {
-    background: rgba(15, 15, 25, 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    background: rgba(10, 10, 16, 0.6);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
   }
@@ -152,8 +149,8 @@ style.textContent = `
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+    transition: left 0.6s ease;
   }
   
   .glass-card:hover::before {
@@ -161,8 +158,9 @@ style.textContent = `
   }
   
   .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
   }
   
   button {
@@ -1030,7 +1028,7 @@ Lookup made by https://datawire.cc
           label: 'same_value',
           type: 'smoothstep',
           animated: true,
-          style: { stroke: '#ff6b6b', strokeWidth: 2 },
+          style: { stroke: '#ffffff', strokeWidth: 2 },
           markerEnd: { type: MarkerType.ArrowClosed }
         })
       }
@@ -1046,7 +1044,7 @@ Lookup made by https://datawire.cc
             label: 'found_in_result',
             type: 'smoothstep',
             animated: true,
-            style: { stroke: '#4ecdc4', strokeWidth: 2 },
+            style: { stroke: '#ffffff', strokeWidth: 2 },
             markerEnd: { type: MarkerType.ArrowClosed }
           })
         }
@@ -1318,47 +1316,69 @@ Lookup made by https://datawire.cc
             </button>
           ))}
 
-          {/* Provider Categories Section */}
+          {/* Provider Categories Section with Individual Search Boxes */}
           <div className="mt-6 pt-4 border-t border-osint-border">
             <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => {
                 const providerCount = category.providers.filter(p => providers && providers[p]).length
                 if (providerCount === 0) return null
                 
                 return (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setSelectedCategory(key)
-                      const availableProviders = category.providers.filter(p => providers && providers[p])
-                      if (availableProviders.length > 0) {
-                        setSelectedProvider(availableProviders[0])
-                        setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
-                      }
-                      setActiveTab('search')
-                      setSidebarOpen(false)
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
-                      selectedCategory === key && activeTab === 'search'
-                        ? 'bg-white/10 text-white border-white' 
-                        : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
-                    }`}
-                  >
-                    {category.logo ? (
-                      <img 
-                        src={category.logo} 
-                        alt={category.label}
-                        className="w-5 h-5 object-contain filter grayscale brightness-0 contrast-100"
-                      />
-                    ) : (
+                  <div key={key} className="space-y-1">
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(key)
+                        const availableProviders = category.providers.filter(p => providers && providers[p])
+                        if (availableProviders.length > 0) {
+                          setSelectedProvider(availableProviders[0])
+                          setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
+                        }
+                        setActiveTab('search')
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
+                        selectedCategory === key && activeTab === 'search'
+                          ? 'bg-white/10 text-white border-white' 
+                          : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
+                      }`}
+                    >
                       <i className={`bx ${category.icon} text-lg`}></i>
+                      <span className="font-medium text-sm">{category.label}</span>
+                      <span className="text-xs ml-auto opacity-60 font-mono">
+                        {providerCount}
+                      </span>
+                    </button>
+                    
+                    {/* Individual provider search boxes when category is selected */}
+                    {selectedCategory === key && activeTab === 'search' && (
+                      <div className="pl-4 space-y-2 mt-2">
+                        {category.providers.filter(p => providers && providers[p]).map(provider => {
+                          const providerCommands = providers?.[provider] || []
+                          return (
+                            <div key={provider} className="bg-osint-bg/30 rounded-lg p-3 border border-osint-border/50">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xs font-semibold text-white capitalize">{provider}</span>
+                                <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
+                              </div>
+                              <input
+                                type="text"
+                                placeholder={`Search ${provider}...`}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setSelectedProvider(provider)
+                                    setSelectedCommand(providerCommands[0]?.name || '')
+                                    setQuery(e.target.value)
+                                    handleSearch()
+                                  }
+                                }}
+                                className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-xs"
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
                     )}
-                    <span className="font-medium text-sm">{category.label}</span>
-                    <span className="text-xs ml-auto opacity-60 font-mono">
-                      {providerCount}
-                    </span>
-                  </button>
+                  </div>
                 )
               })}
             </div>

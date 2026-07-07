@@ -76,16 +76,6 @@ const AddBot = () => {
             </div>
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6"
-          >
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-            <span className="text-sm text-white">Discord Bot Integration</span>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

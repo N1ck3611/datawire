@@ -98,7 +98,7 @@ const ProviderScroll = () => {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               {/* Card */}
-              <div className="w-64 h-32 bg-osint-card rounded-xl border border-osint-border hover:border-white/50 transition-all duration-300 overflow-hidden relative">
+              <div className="w-56 h-24 bg-osint-card rounded-xl border border-osint-border hover:border-white/50 transition-all duration-300 overflow-hidden relative">
                 {/* Glow effect on hover */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -152,9 +152,9 @@ const ProviderScroll = () => {
         className="flex justify-center gap-8 mt-8 relative z-20"
       >
         {[
-          { label: "Providers", value: "9+" },
+          { label: "Providers", value: "40+" },
           { label: "API Calls", value: "10M+" },
-          { label: "Data Points", value: "50B+" },
+          { label: "Data Points", value: "1.6T+" },
           { label: "Uptime", value: "99.9%" },
         ].map((stat, index) => (
           <div key={index} className="text-center">

@@ -16,8 +16,8 @@ const Home = () => {
     },
     {
       icon: 'bx bx-data',
-      title: '50B+ Data Points',
-      description: 'Comprehensive database with billions of records',
+      title: '1.6T+ Data Points',
+      description: 'Comprehensive database with trillions of records',
     },
     {
       icon: 'bx bxs-bot',
