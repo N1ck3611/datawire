@@ -491,7 +491,7 @@ const COIN_DECIMALS = {
 
 // CORS headers
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://datawire.cc',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Allow-Credentials': 'true'
@@ -792,7 +792,7 @@ function getCallbackHTML() {
   <title>Redirecting...</title>
   <script>
     const params = new URLSearchParams(window.location.search);
-    window.location.href = 'https://datawire.cc/callback?' + params.toString();
+    window.location.href = '/callback?' + params.toString();
   </script>
 </head>
 <body>
