@@ -97,7 +97,11 @@ const AIOsintSearch = () => {
       // Start polling for progress
       const pollInterval = setInterval(async () => {
         try {
-          const progressResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-progress?id=${data.investigationId}`)
+          const progressResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-progress?id=${data.investigationId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
           const progressData = await progressResponse.json()
 
           if (progressData.success) {
@@ -112,7 +116,11 @@ const AIOsintSearch = () => {
               setIsSearching(false)
               
               // Fetch final report
-              const reportResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-report?id=${data.investigationId}`)
+              const reportResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-report?id=${data.investigationId}`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              })
               const reportData = await reportResponse.json()
               
               if (reportData.success) {
