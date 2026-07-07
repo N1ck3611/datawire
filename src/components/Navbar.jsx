@@ -41,7 +41,7 @@ const Navbar = () => {
               className="relative"
             >
               <img 
-                src="https://i.ibb.co/DHF6GRQH/logo.png" 
+                src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
                 alt="DataWire" 
                 className="w-10 h-10 rounded-xl border border-osint-border group-hover:border-white/50 transition-colors"
               />

@@ -135,9 +135,9 @@ const Home = () => {
             className="flex flex-wrap justify-center gap-8 mt-16"
           >
             {[
-              { value: '9+', label: 'API Providers' },
+              { value: '40+', label: 'API Providers' },
               { value: '10M+', label: 'API Calls' },
-              { value: '50B+', label: 'Data Points' },
+              { value: '1.6T+', label: 'Data Points' },
               { value: '99.9%', label: 'Uptime' },
             ].map((stat, index) => (
               <div key={index} className="text-center">
@@ -252,7 +252,7 @@ const Home = () => {
           >
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-white/30">
-                <img src="https://i.ibb.co/DHF6GRQH/logo.png" alt="DataWire" className="w-full h-full object-cover" />
+                <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="DataWire" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 text-center md:text-left">
                 <h2 className="text-2xl font-bold text-osint-secondary mb-2">DataWire Team</h2>
