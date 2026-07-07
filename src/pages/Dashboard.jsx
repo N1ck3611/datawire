@@ -574,7 +574,7 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-64 overflow-y-auto animate-scale-in">
+        <div className="absolute z-[99999] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-64 overflow-y-auto animate-scale-in">
           {options?.map((option) => (
             <button
               key={option.value}
@@ -632,7 +632,7 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in">
+        <div className="absolute z-[99999] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in">
           {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => (
             <div key={key}>
               <button
@@ -709,6 +709,7 @@ const Dashboard = () => {
   const [searchHistory, setSearchHistory] = useState([])
   const [cooldown, setCooldown] = useState(false)
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false)
+  const [searchMode, setSearchMode] = useState('main') // 'main' or 'provider'
   
   // IntelX State
   const [intelxSystemId, setIntelxSystemId] = useState('')
@@ -1303,6 +1304,7 @@ Lookup made by https://datawire.cc
               key={item.id}
               onClick={() => {
                 setActiveTab(item.id)
+                if (item.id === 'search') setSearchMode('main')
                 setSidebarOpen(false)
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 ${
@@ -1335,6 +1337,7 @@ Lookup made by https://datawire.cc
                           setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
                         }
                         setActiveTab('search')
+                        setSearchMode('provider')
                       }}
                       className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
                         selectedCategory === key && activeTab === 'search'
@@ -1455,84 +1458,125 @@ Lookup made by https://datawire.cc
         <div className="flex-1 p-4 md:p-8 overflow-y-auto">
           {activeTab === 'search' && (
             <div className="max-w-4xl mx-auto space-y-6">
-              {/* Search Form */}
-              <div className="glass-card p-6 animate-fade-in">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
-                  <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm text-osint-muted mb-2 tracking-wide">Provider</label>
-                    <CustomDropdown
-                      options={getCategoryProviders(selectedCategory).map(p => ({
-                        value: p,
-                        label: p.charAt(0).toUpperCase() + p.slice(1)
-                      }))}
-                      value={selectedProvider}
-                      onChange={(provider) => {
-                        setSelectedProvider(provider)
-                        setSelectedCommand(providers?.[provider]?.[0]?.name || '')
-                      }}
-                      placeholder="Select provider"
-                    />
+              {/* Main Search Form - only shown when searchMode is 'main' */}
+              {searchMode === 'main' && (
+                <div className="glass-card p-6 animate-fade-in">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
+                    <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm text-osint-muted mb-2 tracking-wide">Command</label>
-                    <CustomDropdown
-                      options={commandOptions}
-                      value={selectedCommand}
-                      onChange={setSelectedCommand}
-                      placeholder="Select command"
-                    />
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Provider</label>
+                      <CustomDropdown
+                        options={getCategoryProviders(selectedCategory).map(p => ({
+                          value: p,
+                          label: p.charAt(0).toUpperCase() + p.slice(1)
+                        }))}
+                        value={selectedProvider}
+                        onChange={(provider) => {
+                          setSelectedProvider(provider)
+                          setSelectedCommand(providers?.[provider]?.[0]?.name || '')
+                        }}
+                        placeholder="Select provider"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Command</label>
+                      <CustomDropdown
+                        options={commandOptions}
+                        value={selectedCommand}
+                        onChange={setSelectedCommand}
+                        placeholder="Select command"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-sm text-osint-muted mb-2 tracking-wide">Search Query</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        placeholder="Enter username, email, IP, ID..."
+                        className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                      />
+                      <i className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'></i>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p className="text-sm text-osint-muted">
+                      Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
+                    </p>
+                    <button
+                      onClick={handleSearch}
+                      disabled={searching || cooldown}
+                      className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
+                    >
+                      {searching ? (
+                        <>
+                          <i className='bx bx-loader-alt animate-spin'></i>
+                          Searching...
+                        </>
+                      ) : cooldown ? (
+                        <>
+                          <i className='bx bx-time'></i>
+                          Cooldown...
+                        </>
+                      ) : (
+                        <>
+                          <i className='bx bx-search'></i>
+                          Search
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
+              )}
 
-                <div className="mb-4">
-                  <label className="block text-sm text-osint-muted mb-2 tracking-wide">Search Query</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                      placeholder="Enter username, email, IP, ID..."
-                      className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                    />
-                    <i className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'></i>
+              {/* Provider-Specific Search Form - shown when searchMode is 'provider' */}
+              {searchMode === 'provider' && (
+                <div className="glass-card p-6 animate-fade-in">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
+                    <h3 className="text-lg font-semibold tracking-tight">
+                      {PROVIDER_CATEGORIES[selectedCategory]?.label} Search
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {getCategoryProviders(selectedCategory).map(provider => {
+                      const providerCommands = providers?.[provider] || []
+                      return (
+                        <div key={provider} className="bg-osint-bg/30 rounded-lg p-4 border border-osint-border/50">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-sm font-semibold text-white capitalize">{provider}</span>
+                            <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
+                          </div>
+                          <input
+                            type="text"
+                            placeholder={`Search ${provider}...`}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                setSelectedProvider(provider)
+                                setSelectedCommand(providerCommands[0]?.name || '')
+                                setQuery(e.target.value)
+                                handleSearch()
+                              }
+                            }}
+                            className="w-full px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
+                          />
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
-
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <p className="text-sm text-osint-muted">
-                    Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
-                  </p>
-                  <button
-                    onClick={handleSearch}
-                    disabled={searching || cooldown}
-                    className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
-                  >
-                    {searching ? (
-                      <>
-                        <i className='bx bx-loader-alt animate-spin'></i>
-                        Searching...
-                      </>
-                    ) : cooldown ? (
-                      <>
-                        <i className='bx bx-time'></i>
-                        Cooldown...
-                      </>
-                    ) : (
-                      <>
-                        <i className='bx bx-search'></i>
-                        Search
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
+              )}
 
                 {/* Search Results */}
                 {searchResults && (
@@ -1683,7 +1727,7 @@ Lookup made by https://datawire.cc
                       <i className={`bx bx-chevron-down transition-transform ${entityTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
                     </button>
                     {entityTypeDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-50 overflow-hidden">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
                         {['all', 'email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => (
                           <button
                             key={type}
@@ -1710,7 +1754,7 @@ Lookup made by https://datawire.cc
                       <i className={`bx bx-chevron-down transition-transform ${relationshipTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
                     </button>
                     {relationshipTypeDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-50 overflow-hidden">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
                         {['all', 'same_value', 'found_in_result'].map(type => (
                           <button
                             key={type}
@@ -1831,7 +1875,7 @@ Lookup made by https://datawire.cc
                         <i className={`bx bx-chevron-down transition-transform ${leadTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
                       </button>
                       {leadTypeDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-50 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
                           {['email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => (
                             <button
                               key={type}
