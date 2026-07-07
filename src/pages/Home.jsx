@@ -251,7 +251,7 @@ const Home = () => {
             className="bg-osint-card border border-osint-border rounded-3xl p-8 transition-all duration-300 hover:border-white/30"
           >
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-white/30">
+              <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden">
                 <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="DataWire" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 text-center md:text-left">

@@ -1534,44 +1534,6 @@ Lookup made by https://datawire.cc
                 </div>
               </div>
 
-              {/* Individual Provider Search Boxes */}
-              {selectedCategory && (
-                <div className="glass-card p-6 animate-fade-in">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      Quick Search - {PROVIDER_CATEGORIES[selectedCategory]?.label}
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {getCategoryProviders(selectedCategory).map(provider => {
-                      const providerCommands = providers?.[provider] || []
-                      return (
-                        <div key={provider} className="bg-osint-bg/30 rounded-lg p-4 border border-osint-border/50">
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="text-sm font-semibold text-white capitalize">{provider}</span>
-                            <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
-                          </div>
-                          <input
-                            type="text"
-                            placeholder={`Search ${provider}...`}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setSelectedProvider(provider)
-                                setSelectedCommand(providerCommands[0]?.name || '')
-                                setQuery(e.target.value)
-                                handleSearch()
-                              }
-                            }}
-                            className="w-full px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
-                          />
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
                 {/* Search Results */}
                 {searchResults && (
                   <div className="glass-card p-6 animate-fade-in">

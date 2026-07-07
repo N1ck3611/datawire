@@ -139,7 +139,7 @@ const MusicPlayer = ({ autoPlay = false }) => {
       <motion.div
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className={`fixed bottom-6 right-6 z-50 ${isExpanded ? 'w-80' : 'w-auto'}`}
+        className={`fixed bottom-6 right-6 left-6 md:left-auto z-50 ${isExpanded ? 'w-auto' : 'w-auto'}`}
       >
         <motion.div
           className="glass-card rounded-2xl overflow-hidden"
@@ -150,28 +150,28 @@ const MusicPlayer = ({ autoPlay = false }) => {
         >
           {/* Collapsed View */}
           {!isExpanded && (
-            <div className="p-4 flex items-center space-x-3">
+            <div className="p-3 flex items-center space-x-3">
               {albumArt ? (
                 <img 
                   src={albumArt} 
                   alt="Album Art" 
-                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover flex-shrink-0"
                 />
               ) : (
                 <button
                   onClick={handlePlayPause}
-                  className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                  className="w-8 h-8 md:w-10 md:h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
                 >
-                  <i className={`bx ${isPlaying ? 'bx-pause' : 'bx-play'} text-white text-lg`}></i>
+                  <i className={`bx ${isPlaying ? 'bx-pause' : 'bx-play'} text-white text-sm md:text-lg`}></i>
                 </button>
               )}
               <div className="flex-1 min-w-0 overflow-hidden">
-                <p className="text-xs text-osint-muted truncate">Now Playing:</p>
+                <p className="text-[10px] md:text-xs text-osint-muted truncate">Now Playing:</p>
                 <div className="overflow-hidden">
                   <motion.p 
                     animate={{ x: [0, -50, 0] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="text-sm text-osint-muted font-medium whitespace-nowrap"
+                    className="text-xs md:text-sm text-osint-muted font-medium whitespace-nowrap"
                   >
                     {getSongName(currentSong)}
                   </motion.p>
@@ -179,15 +179,15 @@ const MusicPlayer = ({ autoPlay = false }) => {
               </div>
               <button
                 onClick={handlePlayPause}
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                className="w-7 h-7 md:w-8 md:h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
               >
-                <i className={`bx ${isPlaying ? 'bx-pause' : 'bx-play'} text-white text-lg`}></i>
+                <i className={`bx ${isPlaying ? 'bx-pause' : 'bx-play'} text-white text-sm md:text-lg`}></i>
               </button>
               <button
                 onClick={() => setIsExpanded(true)}
-                className="w-8 h-8 hover:bg-white/10 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                className="w-7 h-7 md:w-8 md:h-8 hover:bg-white/10 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
               >
-                <i className='bx bx-expand-alt text-osint-muted'></i>
+                <i className='bx bx-expand-alt text-osint-muted text-sm md:text-base'></i>
               </button>
             </div>
           )}

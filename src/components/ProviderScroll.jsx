@@ -7,39 +7,39 @@ const ProviderScroll = () => {
   const providers = [
     { 
       name: "SEON", 
-      description: "Fraud prevention & digital intelligence",
+      logo: "https://seon.io/logo.png",
     },
     { 
       name: "HUDSON ROCK", 
-      description: "Infostealer intelligence solutions",
+      logo: "https://hudsonrock.com/logo.png",
     },
     { 
       name: "SHODAN", 
-      description: "Internet-connected device search",
+      logo: "https://shodan.io/static/img/logo.png",
     },
     { 
       name: "INTELX", 
-      description: "Deep web data archive",
+      logo: "https://intelx.io/logo.png",
     },
     { 
       name: "SNUSBASE", 
-      description: "Database breach search engine",
+      logo: "https://snusbase.com/logo.png",
     },
     { 
       name: "DEHASHED", 
-      description: "Breach intelligence platform",
+      logo: "https://dehashed.com/logo.png",
     },
     { 
       name: "LEAKCHECK", 
-      description: "Credential exposure monitoring",
+      logo: "https://leakcheck.io/logo.png",
     },
     { 
       name: "CRIMINAL IP", 
-      description: "Cyber threat intelligence",
+      logo: "https://criminalip.io/logo.png",
     },
     { 
       name: "HIBP", 
-      description: "Data breach checker",
+      logo: "https://haveibeenpwned.com/logo.png",
     },
   ]
 
@@ -110,15 +110,25 @@ const ProviderScroll = () => {
                 />
                 
                 {/* Content */}
-                <div className="relative z-10 p-4 h-full flex flex-col justify-between">
+                <div className="relative z-10 p-4 h-full flex items-center">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
-                      <span className="text-xs font-bold text-white">{provider.name[0]}</span>
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
+                      {provider.logo ? (
+                        <img 
+                          src={provider.logo} 
+                          alt={provider.name}
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-white">${provider.name[0]}</span>`
+                          }}
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-white">{provider.name[0]}</span>
+                      )}
                     </div>
                     <h3 className="font-semibold text-white text-sm">{provider.name}</h3>
                   </div>
-                  
-                  <p className="text-xs text-gray-400 line-clamp-2">{provider.description}</p>
                 </div>
 
                 {/* Animated border */}
