@@ -1519,7 +1519,7 @@ Lookup made by https://datawire.cc
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4 mb-4">
+                  <div className="max-h-[60vh] overflow-y-auto pr-2 space-y-4">
                     {getCategoryProviders(selectedCategory).map(provider => {
                       const providerCommands = providers?.[provider] || []
                       return (
