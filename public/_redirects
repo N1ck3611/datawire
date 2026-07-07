@@ -1,2 +1,3 @@
-/assets/*  /assets/:splat  200
-/*    /index.html   200
+# SPA fallback - only for routes without file extensions
+# Assets (files with extensions) are served directly by the Assets handler
+/*  /index.html  200
