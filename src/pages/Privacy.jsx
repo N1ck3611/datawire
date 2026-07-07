@@ -49,7 +49,7 @@ const Privacy = () => {
               Information Collection
             </h2>
             <p className="text-sm text-osint-muted leading-relaxed">
-              DataWire.cc does not collect, store, or process any personal data. Our website is a static informational site that does not require user registration or account creation. We do not use cookies, tracking scripts, or analytics services that collect personal information.
+              Datawire.cc does not collect, store, or process any personal data. Our website is a static informational site that does not require user registration or account creation. We do not use cookies, tracking scripts, or analytics services that collect personal information.
             </p>
           </section>
 

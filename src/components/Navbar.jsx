@@ -42,12 +42,12 @@ const Navbar = () => {
             >
               <img 
                 src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
-                alt="DataWire" 
+                alt="Datawire.cc" 
                 className="w-10 h-10 rounded-xl group-hover:scale-110 transition-transform"
               />
             </motion.div>
             <span className="text-xl font-bold text-white group-hover:text-gray-300 transition-colors">
-              DataWire.cc
+              Datawire.cc
             </span>
           </Link>
 

@@ -79,7 +79,7 @@ const Team = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8 sm:mb-12"
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-osint-secondary mb-2">DataWire Team</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-osint-secondary mb-2">Datawire.cc Team</h1>
             <p className="text-sm sm:text-base text-osint-muted">Building the future of OSINT intelligence</p>
           </motion.div>
 

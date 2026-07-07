@@ -6,7 +6,7 @@ const BootIntro = ({ onComplete }) => {
   const [showEnter, setShowEnter] = useState(false)
 
   const bootLines = [
-    'Initializing DataWire OS v2.0...',
+    'Initializing Datawire.cc OS v2.0...',
     'Loading kernel modules...',
     'Mounting file systems...',
     'Starting network services...',

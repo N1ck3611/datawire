@@ -61,8 +61,8 @@ const Owner1Bio = () => {
               <p className="text-xs text-osint-muted">Lead developer of the OsintCat bot, implementing core OSINT functionalities and API integrations.</p>
             </div>
             <div className="border-l-2 border-white pl-3">
-              <h3 className="font-semibold text-sm text-osint-secondary mb-1">DataWire Platform</h3>
-              <p className="text-xs text-osint-muted">Architected the overall DataWire intelligence platform and infrastructure.</p>
+              <h3 className="font-semibold text-sm text-osint-secondary mb-1">Datawire.cc Platform</h3>
+              <p className="text-xs text-osint-muted">Architected the overall Datawire.cc intelligence platform and infrastructure.</p>
             </div>
             <div className="border-l-2 border-white pl-3">
               <h3 className="font-semibold text-sm text-osint-secondary mb-1">Security Research</h3>

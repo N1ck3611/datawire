@@ -5,7 +5,7 @@ const AddBot = () => {
   const features = [
     { 
       icon: 'bx bxs-shield-quarter', 
-      title: "9+ Premium APIs", 
+      title: "40+ Premium APIs", 
       description: "Access SEON, HudsonRock, Snusbase, and more",
     },
     { 
@@ -21,7 +21,7 @@ const AddBot = () => {
   ]
 
   const benefits = [
-    "Access to all 9+ integrated APIs",
+    "Access to all 40+ integrated APIs",
     "Real-time OSINT intelligence",
     "Premium support in our Discord",
     "Regular updates and new features",
@@ -71,7 +71,7 @@ const AddBot = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="w-24 h-24 rounded-2xl bg-white/10 flex items-center justify-center"
               >
-                <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="DataWire" className="w-16 h-16 object-contain" />
+                <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="Datawire.cc" className="w-16 h-16 object-contain" />
               </motion.div>
             </div>
           </motion.div>
@@ -82,7 +82,7 @@ const AddBot = () => {
             transition={{ delay: 0.4 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold text-osint-secondary mb-4"
           >
-            Add DataWire to Discord
+            Add Datawire.cc to Discord
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}

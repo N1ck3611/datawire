@@ -7,7 +7,7 @@ const Home = () => {
     {
       icon: 'bx bx-globe',
       title: 'Global Intelligence',
-      description: 'Access data from 9+ premium OSINT providers worldwide',
+      description: 'Access data from 40+ premium OSINT providers worldwide',
     },
     {
       icon: 'bx bx-shield-quarter',
@@ -90,7 +90,7 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6"
           >
-            DataWire.cc
+            Datawire.cc
           </motion.h1>
 
           {/* Subtitle */}
@@ -100,7 +100,7 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="text-lg sm:text-xl text-osint-muted mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Advanced OSINT intelligence platform for Discord. Access 9+ premium APIs through a single bot with real-time threat detection and comprehensive data analysis.
+            Advanced OSINT intelligence platform for Discord. Access 40+ premium APIs through a single bot with real-time threat detection and comprehensive data analysis.
           </motion.p>
 
           {/* CTA Buttons */}

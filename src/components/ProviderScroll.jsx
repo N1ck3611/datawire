@@ -68,7 +68,7 @@ const ProviderScroll = () => {
           transition={{ delay: 0.2 }}
           className="text-gray-400 text-sm"
         >
-          Access 9+ premium OSINT APIs through a single platform
+          Access 40+ premium OSINT APIs through a single platform
         </motion.p>
       </div>
 

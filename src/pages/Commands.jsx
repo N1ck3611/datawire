@@ -337,7 +337,7 @@ const Commands = () => {
             transition={{ delay: 0.3 }}
             className="text-base text-osint-muted max-w-2xl mx-auto"
           >
-            Browse available OSINT providers and their search commands. Access 9+ premium APIs through our unified interface.
+            Browse available OSINT providers and their search commands. Access 40+ premium APIs through our unified interface.
           </motion.p>
         </motion.div>
 

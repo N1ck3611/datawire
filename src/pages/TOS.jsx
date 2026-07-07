@@ -49,7 +49,7 @@ const TOS = () => {
               Acceptance of Terms
             </h2>
             <p className="text-sm text-osint-muted leading-relaxed">
-              By accessing or using DataWire.cc and our Discord bots, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+              By accessing or using Datawire.cc and our Discord bots, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
             </p>
           </section>
 
@@ -59,7 +59,7 @@ const TOS = () => {
               User Responsibility
             </h2>
             <p className="text-sm text-osint-muted leading-relaxed">
-              You are solely responsible for how you use the DataWire bots and any information obtained through them. DataWire.cc and its operators are not responsible for any actions taken by users based on information provided by our bots.
+              You are solely responsible for how you use the DataWire bots and any information obtained through them. Datawire.cc and its operators are not responsible for any actions taken by users based on information provided by our bots.
             </p>
           </section>
 
@@ -111,10 +111,10 @@ const TOS = () => {
               Disclaimer of Liability
             </h2>
             <p className="text-sm text-osint-muted leading-relaxed">
-              DataWire.cc and its operators are not responsible for how customers use this bot. Users are solely responsible for their actions and any consequences resulting from the use of our services. We provide information "as is" without any warranties, express or implied.
+              Datawire.cc and its operators are not responsible for how customers use this bot. Users are solely responsible for their actions and any consequences resulting from the use of our services. We provide information "as is" without any warranties, express or implied.
             </p>
             <p className="text-sm text-osint-muted leading-relaxed mt-2">
-              In no event shall DataWire.cc or its operators be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from the use or inability to use our services.
+              In no event shall Datawire.cc or its operators be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from the use or inability to use our services.
             </p>
           </section>
 
@@ -154,7 +154,7 @@ const TOS = () => {
               Indemnification
             </h2>
             <p className="text-sm text-osint-muted leading-relaxed">
-              You agree to indemnify and hold harmless DataWire.cc and its operators from any claims, damages, or expenses arising from your use of our services or violation of these terms.
+              You agree to indemnify and hold harmless Datawire.cc and its operators from any claims, damages, or expenses arising from your use of our services or violation of these terms.
             </p>
           </section>
 

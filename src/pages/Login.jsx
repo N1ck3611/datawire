@@ -79,7 +79,7 @@ const Login = () => {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
             src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
-            alt="DataWire" 
+            alt="Datawire.cc" 
             className="w-24 h-24 mx-auto mb-6"
           />
           <motion.h1
@@ -116,8 +116,8 @@ const Login = () => {
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          src="https://i.ibb.co/DHF6GRQH/logo.png" 
-          alt="DataWire" 
+          src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png"
+          alt="Datawire.cc" 
           className="w-24 h-24 mx-auto mb-6"
         />
         <motion.h1
@@ -125,7 +125,7 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="text-2xl font-bold text-osint-secondary mb-2"
-        >Welcome to DataWire</motion.h1>
+        >Welcome to Datawire.cc</motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -1178,13 +1178,13 @@ Lookup made by https://datawire.cc
     })
 
     output += `\n══════════════════════════════════════════════════════════════\n`
-    output += `DATAWIRE OSINT MAPPING - END OF EXPORT\n`
+    output += `DATAWIRE.CC OSINT MAPPING - END OF EXPORT\n`
     output += `Powered by https://datawire.cc\n`
     output += `══════════════════════════════════════════════════════════════\n`
 
-    output += `\n\n<!-- DATAWIRE_JSON_START -->\n`
+    output += `\n\n<!-- DATAWIRE.CC_JSON_START -->\n`
     output += JSON.stringify({ nodes, edges, timestamp }, null, 2)
-    output += `\n<!-- DATAWIRE_JSON_END -->`
+    output += `\n<!-- DATAWIRE.CC_JSON_END -->`
 
     const blob = new Blob([output], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
@@ -1206,7 +1206,7 @@ Lookup made by https://datawire.cc
     const reader = new FileReader()
     reader.onload = (e) => {
       const content = e.target.result
-      const jsonMatch = content.match(/<!-- DATAWIRE_JSON_START -->([\s\S]*?)<!-- DATAWIRE_JSON_END -->/)
+      const jsonMatch = content.match(/<!-- DATAWIRE.CC_JSON_START -->([\s\S]*?)<!-- DATAWIRE.CC_JSON_END -->/)
       
       if (jsonMatch) {
         try {
@@ -1286,11 +1286,11 @@ Lookup made by https://datawire.cc
           <div className="flex items-center gap-3">
             <img 
               src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
-              alt="DataWire" 
+              alt="Datawire.cc" 
               className="w-10 h-10"
             />
             <div>
-              <h1 className="font-bold text-xl tracking-tight">DataWire</h1>
+              <h1 className="font-bold text-xl tracking-tight">Datawire.cc</h1>
               <p className="text-xs text-osint-muted tracking-wider uppercase">OSINT Platform</p>
             </div>
           </div>
@@ -1318,74 +1318,6 @@ Lookup made by https://datawire.cc
             </button>
           ))}
 
-          {/* Provider Categories Section with Individual Search Boxes */}
-          <div className="mt-6 pt-4 border-t border-osint-border">
-            <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
-            <div className="space-y-2">
-              {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => {
-                const providerCount = category.providers.filter(p => providers && providers[p]).length
-                if (providerCount === 0) return null
-                
-                return (
-                  <div key={key} className="space-y-1">
-                    <button
-                      onClick={() => {
-                        setSelectedCategory(key)
-                        const availableProviders = category.providers.filter(p => providers && providers[p])
-                        if (availableProviders.length > 0) {
-                          setSelectedProvider(availableProviders[0])
-                          setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
-                        }
-                        setActiveTab('search')
-                        setSearchMode('provider')
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
-                        selectedCategory === key && activeTab === 'search'
-                          ? 'bg-white/10 text-white border-white' 
-                          : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
-                      }`}
-                    >
-                      <i className={`bx ${category.icon} text-lg`}></i>
-                      <span className="font-medium text-sm">{category.label}</span>
-                      <span className="text-xs ml-auto opacity-60 font-mono">
-                        {providerCount}
-                      </span>
-                    </button>
-                    
-                    {/* Individual provider search boxes when category is selected */}
-                    {selectedCategory === key && activeTab === 'search' && (
-                      <div className="pl-4 space-y-2 mt-2">
-                        {category.providers.filter(p => providers && providers[p]).map(provider => {
-                          const providerCommands = providers?.[provider] || []
-                          return (
-                            <div key={provider} className="bg-osint-bg/30 rounded-lg p-3 border border-osint-border/50">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xs font-semibold text-white capitalize">{provider}</span>
-                                <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
-                              </div>
-                              <input
-                                type="text"
-                                placeholder={`Search ${provider}...`}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setSelectedProvider(provider)
-                                    setSelectedCommand(providerCommands[0]?.name || '')
-                                    setQuery(e.target.value)
-                                    handleSearch()
-                                  }
-                                }}
-                                className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-xs"
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
         </nav>
 
         {/* User Section */}
@@ -1479,7 +1411,7 @@ Lookup made by https://datawire.cc
                           setSelectedProvider(provider)
                           setSelectedCommand(providers?.[provider]?.[0]?.name || '')
                         }}
-                        placeholder="Select provider"
+                        placeholder="Select provider (e.g., snusbase, leakcheck, breachbase)"
                       />
                     </div>
                     
@@ -1489,7 +1421,7 @@ Lookup made by https://datawire.cc
                         options={commandOptions}
                         value={selectedCommand}
                         onChange={setSelectedCommand}
-                        placeholder="Select command"
+                        placeholder="Select command (e.g., search, combo-lookup, hash-lookup)"
                       />
                     </div>
                   </div>
@@ -1502,7 +1434,7 @@ Lookup made by https://datawire.cc
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        placeholder="Enter username, email, IP, ID..."
+                        placeholder="Enter username, email, IP address, or ID..."
                         className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
                       />
                       <i className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'></i>
@@ -1560,7 +1492,7 @@ Lookup made by https://datawire.cc
                           </div>
                           <input
                             type="text"
-                            placeholder={`Search ${provider}...`}
+                            placeholder={`Search ${provider} (username, email, IP, ID)...`}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 setSelectedProvider(provider)
@@ -1676,7 +1608,7 @@ Lookup made by https://datawire.cc
                     value={intelxSystemId}
                     onChange={(e) => setIntelxSystemId(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleIntelxDownload()}
-                    placeholder="Enter IntelX System ID (UUID)"
+                    placeholder="Enter IntelX System ID (UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"
                     className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors"
                   />
                 </div>
@@ -1710,7 +1642,7 @@ Lookup made by https://datawire.cc
                   <div className="flex-1 min-w-[200px]">
                     <input
                       type="text"
-                      placeholder="Search nodes..."
+                      placeholder="Search nodes by value (email, phone, IP, username)..."
                       value={nodeSearch}
                       onChange={(e) => setNodeSearch(e.target.value)}
                       className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
@@ -1897,7 +1829,7 @@ Lookup made by https://datawire.cc
                     <label className="block text-xs text-osint-muted mb-2 tracking-wide">Value</label>
                     <input
                       type="text"
-                      placeholder="Enter value..."
+                      placeholder="Enter value (email, phone, IP, username, etc.)"
                       value={newLead.value}
                       onChange={(e) => setNewLead(prev => ({ ...prev, value: e.target.value }))}
                       className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
@@ -1908,7 +1840,7 @@ Lookup made by https://datawire.cc
                     <label className="block text-xs text-osint-muted mb-2 tracking-wide">Source</label>
                     <input
                       type="text"
-                      placeholder="Source..."
+                      placeholder="Enter source (provider name or URL)..."
                       value={newLead.source}
                       onChange={(e) => setNewLead(prev => ({ ...prev, source: e.target.value }))}
                       className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
