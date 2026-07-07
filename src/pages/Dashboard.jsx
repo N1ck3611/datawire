@@ -1318,6 +1318,44 @@ Lookup made by https://datawire.cc
             </button>
           ))}
 
+          {/* Provider Categories Section */}
+          <div className="mt-6 pt-4 border-t border-osint-border">
+            <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
+            <div className="space-y-1">
+              {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => {
+                const providerCount = category.providers.filter(p => providers && providers[p]).length
+                if (providerCount === 0) return null
+                
+                return (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setSelectedCategory(key)
+                      const availableProviders = category.providers.filter(p => providers && providers[p])
+                      if (availableProviders.length > 0) {
+                        setSelectedProvider(availableProviders[0])
+                        setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
+                      }
+                      setActiveTab('search')
+                      setSearchMode('provider')
+                      setSidebarOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
+                      selectedCategory === key && activeTab === 'search' && searchMode === 'provider'
+                        ? 'bg-white/10 text-white border-white' 
+                        : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
+                    }`}
+                  >
+                    <i className={`bx ${category.icon} text-lg`}></i>
+                    <span className="font-medium text-sm">{category.label}</span>
+                    <span className="text-xs ml-auto opacity-60 font-mono">
+                      {providerCount}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </nav>
 
         {/* User Section */}
@@ -1481,28 +1519,37 @@ Lookup made by https://datawire.cc
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-1 gap-4 mb-4">
                     {getCategoryProviders(selectedCategory).map(provider => {
                       const providerCommands = providers?.[provider] || []
                       return (
                         <div key={provider} className="bg-osint-bg/30 rounded-lg p-4 border border-osint-border/50">
-                          <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-2 mb-4">
                             <span className="text-sm font-semibold text-white capitalize">{provider}</span>
                             <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
                           </div>
-                          <input
-                            type="text"
-                            placeholder={`Search ${provider} (username, email, IP, ID)...`}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setSelectedProvider(provider)
-                                setSelectedCommand(providerCommands[0]?.name || '')
-                                setQuery(e.target.value)
-                                handleSearch()
-                              }
-                            }}
-                            className="w-full px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
-                          />
+                          <div className="space-y-3">
+                            {providerCommands.map(command => (
+                              <div key={command.name} className="space-y-2">
+                                <label className="block text-xs text-osint-muted capitalize">
+                                  {command.name} ({command.queryParam})
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder={`Enter ${command.queryParam} for ${command.name}...`}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      setSelectedProvider(provider)
+                                      setSelectedCommand(command.name)
+                                      setQuery(e.target.value)
+                                      handleSearch()
+                                    }
+                                  }}
+                                  className="w-full px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
+                                />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )
                     })}
