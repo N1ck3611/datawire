@@ -372,7 +372,10 @@ const AIOsintSearch = () => {
                   const a = document.createElement('a')
                   a.href = url
                   a.download = `datawire-ai-osint-${Date.now()}.txt`
+                  document.body.appendChild(a)
                   a.click()
+                  document.body.removeChild(a)
+                  setTimeout(() => URL.revokeObjectURL(url), 100)
                 }}
                 className="px-4 py-2 bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
