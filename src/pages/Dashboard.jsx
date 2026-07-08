@@ -1657,7 +1657,7 @@ Lookup made by https://datawire.cc
                     </motion.div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <motion.div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <motion.p 
                       className="text-sm text-osint-muted"
                       animate={{ opacity: searching ? 0.5 : 1 }}
@@ -1692,13 +1692,18 @@ Lookup made by https://datawire.cc
                         </>
                       )}
                     </motion.button>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               )}
 
               {/* Provider-Specific Search Form - shown when searchMode is 'provider' */}
               {searchMode === 'provider' && (
-                <div className="glass-card p-6 animate-fade-in">
+                <motion.div 
+                  className="glass-card p-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
                     <h3 className="text-lg font-semibold tracking-tight">
@@ -1741,12 +1746,17 @@ Lookup made by https://datawire.cc
                       )
                     })}
                   </div>
-                </div>
+                </motion.div>
               )}
 
                 {/* Search Results */}
                 {searchResults && (
-                  <div className="glass-card p-6 animate-fade-in">
+                  <motion.div 
+                    className="glass-card p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                       <h3 className="text-lg font-semibold tracking-tight">Search Results</h3>
                       <button
@@ -1764,11 +1774,11 @@ Provider: ${selectedProvider}
 Command: ${selectedCommand}
 Query: ${query}
 Downloaded: ${new Date().toLocaleString()}
-══════════════════════════════════════════════════════════════
+═════════════════════════════════════════════════════════════
 
 ${JSON.stringify(searchResults.result || searchResults, null, 2)}
 
-══════════════════════════════════════════════════════════════
+═════════════════════════════════════════════════════════════
 Powered by https://datawire.cc
 Lookup made by https://datawire.cc
 `;
@@ -1793,7 +1803,7 @@ Lookup made by https://datawire.cc
                         {JSON.stringify(searchResults.result || searchResults, null, 2)}
                       </pre>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Recent Searches */}
@@ -1928,7 +1938,7 @@ Lookup made by https://datawire.cc
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <div className="flex items-center justify-between mb-4">
+                <motion.div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
                       <i className='bx bx-map text-xl'></i>
@@ -1936,7 +1946,7 @@ Lookup made by https://datawire.cc
                     </h3>
                     <p className="text-sm text-osint-muted mt-1">Track locations from IP addresses, phone numbers, and domains</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <motion.div className="flex items-center gap-2">
                     <motion.button
                       onClick={() => setGeoLocations([])}
                       whileHover={{ scale: 1.05 }}
@@ -1946,8 +1956,8 @@ Lookup made by https://datawire.cc
                       <i className='bx bx-trash'></i>
                       Clear
                     </motion.button>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
                 
                 {/* Manual Location Input */}
                 <motion.div 
