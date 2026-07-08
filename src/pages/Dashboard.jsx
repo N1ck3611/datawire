@@ -1366,11 +1366,20 @@ const Dashboard = () => {
       })
 
       const data = await response.json()
+      console.log('IntelX download response:', data)
+      
       if (data.success) {
         setBalance(data.balance)
         
+        // Handle different response formats
+        const result = data.result || data
+        console.log('IntelX result:', result)
+        
         // Handle binary download as .txt with ASCII art
-        if (data.result.binary) {
+        if (result.binary || result.file || result.data) {
+          const binaryData = result.binary || result.file || result.data
+          const downloadedBytes = result.downloadedBytes || result.size || binaryData.length
+          
           const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝
 ██║  ██║███████║   ██║   ███████║██║ █╗ ██║██║██████╔╝█████╗     ██║     ██║     
@@ -1382,11 +1391,11 @@ const Dashboard = () => {
 IntelX File Download
 System ID: ${intelxSystemId}
 Downloaded: ${new Date().toLocaleString()}
-File Size: ${data.result.downloadedBytes} bytes
+File Size: ${downloadedBytes} bytes
 ══════════════════════════════════════════════════════════════
 
 Binary Data (Base64 Encoded):
-${data.result.binary}
+${binaryData}
 
 ══════════════════════════════════════════════════════════════
 Powered by https://datawire.cc
@@ -1402,8 +1411,48 @@ Lookup made by https://datawire.cc
           document.body.removeChild(a)
           setTimeout(() => URL.revokeObjectURL(url), 100)
           showToast('File downloaded successfully', 'success')
+        } else if (result.url || result.downloadUrl) {
+          // Handle URL-based download
+          const downloadUrl = result.url || result.downloadUrl
+          const a = document.createElement('a')
+          a.href = downloadUrl
+          a.download = `intelx-${intelxSystemId}`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          showToast('File downloaded successfully', 'success')
         } else {
-          showToast('Download completed', 'success')
+          // Handle raw result
+          const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
+██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝
+██║  ██║███████║   ██║   ███████║██║ █╗ ██║██║██████╔╝█████╗     ██║     ██║     
+██║  ██║██╔══██║   ██║   ██╔══██║██║███╗██║██║██╔══██╗██╔══╝     ██║     ██║     
+██████╔╝██║  ██║   ██║   ██║  ██║╚███╔███╔╝██║██║  ██║███████╗██╗╚██████╗╚██████╗
+╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═════╝
+                                                                                 
+
+IntelX File Download
+System ID: ${intelxSystemId}
+Downloaded: ${new Date().toLocaleString()}
+══════════════════════════════════════════════════════════════
+
+Result Data:
+${JSON.stringify(result, null, 2)}
+
+══════════════════════════════════════════════════════════════
+Powered by https://datawire.cc
+Lookup made by https://datawire.cc
+`;
+          const blob = new Blob([asciiArt], { type: 'text/plain' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `intelx-${intelxSystemId}.txt`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          setTimeout(() => URL.revokeObjectURL(url), 100)
+          showToast('File downloaded successfully', 'success')
         }
       } else {
         showToast(data.error || 'Download failed', 'error')

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const AIOsintSearch = () => {
@@ -24,6 +24,16 @@ const AIOsintSearch = () => {
   const [totalTasks, setTotalTasks] = useState(0)
   const [investigationId, setInvestigationId] = useState(null)
   const [report, setReport] = useState(null)
+  const pollIntervalRef = useRef(null)
+
+  // Cleanup polling interval on unmount
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current)
+      }
+    }
+  }, [])
 
   const stages = [
     'Initializing Investigation',
@@ -61,6 +71,11 @@ const AIOsintSearch = () => {
   }
 
   const handleSearch = async () => {
+    // Clear any existing polling interval
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current)
+    }
+
     setIsSearching(true)
     setProgress(0)
     setActivityLog([])
@@ -95,7 +110,7 @@ const AIOsintSearch = () => {
       setInvestigationId(data.investigationId)
 
       // Start polling for progress
-      const pollInterval = setInterval(async () => {
+      pollIntervalRef.current = setInterval(async () => {
         try {
           const progressResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-progress?id=${data.investigationId}`, {
             headers: {
@@ -112,7 +127,7 @@ const AIOsintSearch = () => {
             setTotalTasks(progressData.totalTasks)
 
             if (progressData.completed) {
-              clearInterval(pollInterval)
+              clearInterval(pollIntervalRef.current)
               setIsSearching(false)
               
               // Fetch final report
