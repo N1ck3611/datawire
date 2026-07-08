@@ -752,9 +752,28 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
         setIsOpen(false)
       }
     }
+    
+    const handleScroll = () => {
+      if (isOpen && dropdownRef.current) {
+        const rect = dropdownRef.current.getBoundingClientRect()
+        setMenuPosition({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width
+        })
+      }
+    }
+    
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleScroll)
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [isOpen])
 
   const toggleDropdown = () => {
     if (!isOpen && dropdownRef.current) {
@@ -830,9 +849,28 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
         setIsOpen(false)
       }
     }
+    
+    const handleScroll = () => {
+      if (isOpen && dropdownRef.current) {
+        const rect = dropdownRef.current.getBoundingClientRect()
+        setMenuPosition({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width
+        })
+      }
+    }
+    
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleScroll)
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [isOpen])
 
   const getCategoryProviders = (category) => {
     const categoryData = PROVIDER_CATEGORIES[category]
@@ -1193,21 +1231,39 @@ const Dashboard = () => {
     // Also check if the query itself looks like an IP and try to geocode it
     const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
     if (ipRegex.test(query) && locations.length === 0) {
-      // Try to geocode the IP directly
-      fetch(`http://ip-api.com/json/${query}`)
+      // Try to geocode the IP directly using free API
+      fetch(`https://ipapi.co/${query}/json/`)
         .then(res => res.json())
         .then(data => {
-          if (data.status === 'success') {
+          if (!data.error && data.latitude && data.longitude) {
             setGeoLocations(prev => [...prev, {
-              lat: data.lat,
-              lng: data.lon,
+              lat: data.latitude,
+              lng: data.longitude,
               title: `IP: ${query}`,
-              address: `${data.city}, ${data.region}, ${data.country}`,
+              address: `${data.city}, ${data.region}, ${data.country_name}`,
               icon: 'bx-globe',
               color: '#ff6b6b',
               source: 'IP Geolocation'
             }])
             setShowMap(true)
+          } else {
+            // Fallback to ipwhois.app
+            return fetch(`https://ipwhois.app/json/${query}`)
+              .then(res => res.json())
+              .then(fallbackData => {
+                if (fallbackData.success) {
+                  setGeoLocations(prev => [...prev, {
+                    lat: fallbackData.latitude,
+                    lng: fallbackData.longitude,
+                    title: `IP: ${query}`,
+                    address: `${fallbackData.city}, ${fallbackData.region}, ${fallbackData.country}`,
+                    icon: 'bx-globe',
+                    color: '#ff6b6b',
+                    source: 'IP Geolocation'
+                  }])
+                  setShowMap(true)
+                }
+              })
           }
         })
         .catch(err => console.log('IP geocoding failed:', err))
