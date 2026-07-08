@@ -1697,9 +1697,9 @@ Lookup made by https://datawire.cc
   return (
     <div className="min-h-screen bg-osint-bg text-osint-secondary flex">
       {/* Sidebar */}
-      <div className={`fixed lg:relative z-50 w-72 bg-osint-card border-r border-osint-border flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-osint-card border-r border-osint-border flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
-        <div className="p-6 border-b border-osint-border">
+        <div className="p-6 border-b border-osint-border flex-shrink-0">
           <div className="flex items-center gap-3">
             <img 
               src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
@@ -1714,7 +1714,7 @@ Lookup made by https://datawire.cc
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
           {/* Main Navigation Items */}
           {sidebarItems.map((item, index) => (
             <motion.button
@@ -2005,46 +2005,153 @@ Lookup made by https://datawire.cc
                   transition={{ duration: 0.5 }}
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
+                    <motion.div 
+                      className="w-1 h-8 bg-white animate-pulse-glow"
+                      initial={{ height: 0 }}
+                      animate={{ height: 32 }}
+                      transition={{ duration: 0.3 }}
+                    ></motion.div>
                     <h3 className="text-lg font-semibold tracking-tight">
                       {PROVIDER_CATEGORIES[selectedCategory]?.label} Search
                     </h3>
                   </div>
 
-                  <div className="max-h-[60vh] overflow-y-auto pr-2 space-y-4">
-                    {getCategoryProviders(selectedCategory).map(provider => {
-                      const providerCommands = providers?.[provider] || []
+                  <div className="space-y-4">
+                    {/* Provider Dropdown */}
+                    <div>
+                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Provider</label>
+                      <CustomDropdown
+                        options={getCategoryProviders(selectedCategory).map(p => ({
+                          value: p,
+                          label: p.charAt(0).toUpperCase() + p.slice(1)
+                        }))}
+                        value={selectedProvider}
+                        onChange={(provider) => {
+                          setSelectedProvider(provider)
+                          setSelectedCommand(providers?.[provider]?.[0]?.name || '')
+                        }}
+                        placeholder="Select provider"
+                      />
+                    </div>
+
+                    {/* Command Dropdown */}
+                    {selectedProvider && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <label className="block text-sm text-osint-muted mb-2 tracking-wide">Command</label>
+                        <CustomDropdown
+                          options={providers?.[selectedProvider]?.map(cmd => ({
+                            value: cmd.name,
+                            label: `${cmd.name} (${cmd.queryParam})`
+                          })) || []}
+                          value={selectedCommand}
+                          onChange={setSelectedCommand}
+                          placeholder="Select command"
+                        />
+                      </motion.div>
+                    )}
+
+                    {/* Dynamic Input Fields */}
+                    {selectedProvider && selectedCommand && (() => {
+                      const command = providers?.[selectedProvider]?.find(cmd => cmd.name === selectedCommand)
+                      if (!command) return null
+                      
+                      // Handle commands that need multiple parameters
+                      if (command.pathIncludesQuery) {
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-3"
+                          >
+                            <label className="block text-sm text-osint-muted mb-2 tracking-wide">
+                              {command.queryParam}
+                            </label>
+                            <motion.input
+                              type="text"
+                              value={query}
+                              onChange={(e) => setQuery(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                              placeholder={`Enter ${command.queryParam}...`}
+                              className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                              whileFocus={{ scale: 1.01 }}
+                            />
+                          </motion.div>
+                        )
+                      }
+                      
+                      // Regular single parameter commands
                       return (
-                        <div key={provider} className="bg-osint-bg/30 rounded-lg p-4 border border-osint-border/50">
-                          <div className="flex items-center gap-2 mb-4">
-                            <span className="text-sm font-semibold text-white capitalize">{provider}</span>
-                            <span className="text-xs text-osint-muted">({providerCommands.length} commands)</span>
-                          </div>
-                          <div className="space-y-3">
-                            {providerCommands.map(command => (
-                              <div key={command.name} className="space-y-2">
-                                <label className="block text-xs text-osint-muted capitalize">
-                                  {command.name} ({command.queryParam})
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder={`Enter ${command.queryParam} for ${command.name}...`}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      setSelectedProvider(provider)
-                                      setSelectedCommand(command.name)
-                                      setQuery(e.target.value)
-                                      handleSearch()
-                                    }
-                                  }}
-                                  className="w-full px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="space-y-3"
+                        >
+                          <label className="block text-sm text-osint-muted mb-2 tracking-wide">
+                            {command.queryParam}
+                          </label>
+                          <motion.input
+                            type="text"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            placeholder={`Enter ${command.queryParam}...`}
+                            className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                            whileFocus={{ scale: 1.01 }}
+                          />
+                        </motion.div>
                       )
-                    })}
+                    })()}
+
+                    {/* Search Button */}
+                    {selectedProvider && selectedCommand && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                      >
+                        <motion.p 
+                          className="text-sm text-osint-muted"
+                          animate={{ opacity: searching ? 0.5 : 1 }}
+                        >
+                          Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
+                        </motion.p>
+                        <motion.button
+                          onClick={handleSearch}
+                          disabled={searching || cooldown}
+                          whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.3)' }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
+                        >
+                          {searching ? (
+                            <>
+                              <motion.i 
+                                className='bx bx-loader-alt'
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                              ></motion.i>
+                              Searching...
+                            </>
+                          ) : cooldown ? (
+                            <>
+                              <i className='bx bx-time'></i>
+                              Cooldown...
+                            </>
+                          ) : (
+                            <>
+                              <i className='bx bx-search'></i>
+                              Search
+                            </>
+                          )}
+                        </motion.button>
+                      </motion.div>
+                    )}
                   </div>
                 </motion.div>
               )}
