@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 // Fix for default marker icons in Leaflet with React
 delete L.Icon.Default.prototype._getIconUrl
@@ -105,25 +105,10 @@ const GeolocationMap = ({ locations = [], onLocationClick }) => {
               click: () => handleMarkerClick(location)
             }}
           >
-            <Popup
-              position={[location.lat, location.lng]}
-              onClose={() => setSelectedLocation(null)}
-              style={{
-                background: 'rgba(10, 10, 16, 0.95)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '16px',
-                color: '#ffffff'
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="min-w-[200px]"
-                style={{ color: '#ffffff' }}
-              >
+            <Popup>
+              <div className="min-w-[200px]" style={{ color: '#ffffff' }}>
                 <div className="flex items-center gap-2 mb-2">
-                  <i className={`bx ${selectedLocation?.icon || location.icon || 'bx-map'} text-lg`} style={{ color: location.color || '#ff6b6b' }}></i>
+                  <i className={`bx ${location.icon || 'bx-map'} text-lg`} style={{ color: location.color || '#ff6b6b' }}></i>
                   <h3 className="font-semibold text-white">{location.title || 'Location'}</h3>
                 </div>
                 <p className="text-sm text-gray-300 mb-1">{location.address || 'Unknown address'}</p>
@@ -133,7 +118,7 @@ const GeolocationMap = ({ locations = [], onLocationClick }) => {
                 {location.source && (
                   <p className="text-xs text-gray-500 mt-2">Source: {location.source}</p>
                 )}
-              </motion.div>
+              </div>
             </Popup>
           </Marker>
         ))}
