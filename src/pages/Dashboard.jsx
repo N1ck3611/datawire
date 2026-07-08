@@ -747,7 +747,8 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+          dropdownMenuRef.current && !dropdownMenuRef.current.contains(event.target)) {
         setIsOpen(false)
       }
     }
@@ -796,8 +797,8 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
           {options?.map((option) => (
             <button
               key={option.value}
-              onClick={(e) => {
-                e.stopPropagation()
+              onMouseDown={(e) => {
+                e.preventDefault()
                 onChange(option.value)
                 setIsOpen(false)
               }}
@@ -824,7 +825,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+          dropdownMenuRef.current && !dropdownMenuRef.current.contains(event.target)) {
         setIsOpen(false)
       }
     }
@@ -880,8 +882,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
           {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => (
             <div key={key}>
               <button
-                onClick={(e) => {
-                  e.stopPropagation()
+                onMouseDown={(e) => {
+                  e.preventDefault()
                   onCategoryChange(key)
                   const providers = getCategoryProviders(key)
                   if (providers.length > 0) {
@@ -912,8 +914,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
                   {availableProviders.map(provider => (
                     <button
                       key={provider}
-                      onClick={(e) => {
-                        e.stopPropagation()
+                      onMouseDown={(e) => {
+                        e.preventDefault()
                         onProviderChange(provider)
                         setIsOpen(false)
                       }}
