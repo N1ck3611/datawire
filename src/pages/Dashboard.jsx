@@ -137,16 +137,22 @@ style.textContent = `
   }
   
   .glass-card {
-    background: rgba(10, 10, 16, 0.7);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
   
   .glass-card::before {
@@ -159,10 +165,25 @@ style.textContent = `
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(255, 255, 255, 0.03), 
+      rgba(255, 255, 255, 0.1), 
       transparent
     );
-    transition: left 0.8s ease;
+    transition: left 1s ease;
+  }
+  
+  .glass-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
   }
   
   .glass-card:hover::before {
@@ -170,12 +191,13 @@ style.textContent = `
   }
   
   .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateY(-4px) scale(1.01);
+      0 25px 80px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 0 40px rgba(255, 255, 255, 0.05);
+    transform: translateY(-6px) scale(1.02);
   }
   
   button {
@@ -199,6 +221,162 @@ style.textContent = `
   button:active::after {
     width: 300px;
     height: 300px;
+  }
+  
+  /* Enhanced input styles */
+  input, select {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  input:focus, select:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(10, 10, 16, 0.5);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.2) 100%
+    );
+  }
+  
+  /* Glow effects */
+  .glow-effect {
+    box-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.1),
+      0 0 40px rgba(255, 255, 255, 0.05);
+  }
+  
+  .glow-effect-purple {
+    box-shadow: 
+      0 0 20px rgba(168, 85, 247, 0.3),
+      0 0 40px rgba(168, 85, 247, 0.1);
+  }
+  
+  .glow-effect-blue {
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.3),
+      0 0 40px rgba(59, 130, 246, 0.1);
+  }
+  
+  .glow-effect-green {
+    box-shadow: 
+      0 0 20px rgba(34, 197, 94, 0.3),
+      0 0 40px rgba(34, 197, 94, 0.1);
+  }
+  
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #a855f7 50%,
+      #3b82f6 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Animated border */
+  .animated-border {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .animated-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      #ff6b6b,
+      #4ecdc4,
+      #45b7d1,
+      #96ceb4,
+      #ffeaa7,
+      #dfe6e9,
+      #ff6b6b
+    );
+    background-size: 400% 400%;
+    animation: gradient-border 3s ease infinite;
+    border-radius: inherit;
+    z-index: -1;
+  }
+  
+  @keyframes gradient-border {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Floating particles effect */
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float-particle 10s infinite;
+  }
+  
+  @keyframes float-particle {
+    0%, 100% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100vh) rotate(720deg);
+      opacity: 0;
+    }
   }
   
   input:focus {
@@ -733,7 +911,7 @@ const Dashboard = () => {
   // Geolocation State
   const [geoLocations, setGeoLocations] = useState([])
   const [showMap, setShowMap] = useState(false)
-  const [manualLocation, setManualLocation] = useState({ lat: '', lng: '', title: '', address: '' })
+  const [manualInput, setManualInput] = useState({ value: '', type: 'address' })
   const [addingLocation, setAddingLocation] = useState(false)
   
   // Lead Mapping State - Graph
@@ -898,15 +1076,25 @@ const Dashboard = () => {
     
     const locations = []
     
-    // Check for IP geolocation data
-    if (result.ip || result.ip_info || result.location) {
-      const ipData = result.ip_info || result.location || result
+    // Check for IP geolocation data - more comprehensive check
+    if (result.ip || result.ip_info || result.location || result.geolocation || result.geo) {
+      const ipData = result.ip_info || result.location || result.geolocation || result.geo || result
       if (ipData.lat && ipData.lng) {
         locations.push({
           lat: ipData.lat,
           lng: ipData.lng,
           title: `IP: ${query}`,
-          address: ipData.city || ipData.country || 'Unknown',
+          address: ipData.city || ipData.country || ipData.region || 'Unknown',
+          icon: 'bx-globe',
+          color: '#ff6b6b',
+          source: 'IP Geolocation'
+        })
+      } else if (ipData.latitude && ipData.longitude) {
+        locations.push({
+          lat: ipData.latitude,
+          lng: ipData.longitude,
+          title: `IP: ${query}`,
+          address: ipData.city || ipData.country || ipData.region || 'Unknown',
           icon: 'bx-globe',
           color: '#ff6b6b',
           source: 'IP Geolocation'
@@ -915,7 +1103,7 @@ const Dashboard = () => {
     }
     
     // Check for phone number location
-    if (result.phone_location || result.carrier) {
+    if (result.phone_location || result.carrier || result.phone) {
       const phoneData = result.phone_location || result
       if (phoneData.lat && phoneData.lng) {
         locations.push({
@@ -931,8 +1119,8 @@ const Dashboard = () => {
     }
     
     // Check for domain/hosting location
-    if (result.hosting || result.server_location) {
-      const hostingData = result.hosting || result.server_location
+    if (result.hosting || result.server_location || result.domain) {
+      const hostingData = result.hosting || result.server_location || result
       if (hostingData.lat && hostingData.lng) {
         locations.push({
           lat: hostingData.lat,
@@ -946,6 +1134,29 @@ const Dashboard = () => {
       }
     }
     
+    // Also check if the query itself looks like an IP and try to geocode it
+    const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
+    if (ipRegex.test(query) && locations.length === 0) {
+      // Try to geocode the IP directly
+      fetch(`http://ip-api.com/json/${query}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            setGeoLocations(prev => [...prev, {
+              lat: data.lat,
+              lng: data.lon,
+              title: `IP: ${query}`,
+              address: `${data.city}, ${data.region}, ${data.country}`,
+              icon: 'bx-globe',
+              color: '#ff6b6b',
+              source: 'IP Geolocation'
+            }])
+            setShowMap(true)
+          }
+        })
+        .catch(err => console.log('IP geocoding failed:', err))
+    }
+    
     if (locations.length > 0) {
       setGeoLocations(prev => [...prev, ...locations])
       setShowMap(true)
@@ -953,35 +1164,124 @@ const Dashboard = () => {
     }
   }
 
-  const handleAddManualLocation = () => {
-    const { lat, lng, title, address } = manualLocation
+  const handleAddManualLocation = async () => {
+    const { value, type } = manualInput
     
-    if (!lat || !lng) {
-      showToast('Please enter latitude and longitude', 'error')
+    if (!value.trim()) {
+      showToast('Please enter a value', 'error')
       return
     }
+
+    setAddingLocation(true)
     
-    const latNum = parseFloat(lat)
-    const lngNum = parseFloat(lng)
-    
-    if (isNaN(latNum) || isNaN(lngNum) || latNum < -90 || latNum > 90 || lngNum < -180 || lngNum > 180) {
-      showToast('Invalid coordinates', 'error')
-      return
+    try {
+      let locationData = null
+
+      if (type === 'address') {
+        // Use Nominatim (OpenStreetMap) for address geocoding
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}`)
+        const data = await response.json()
+        if (data && data.length > 0) {
+          locationData = {
+            lat: parseFloat(data[0].lat),
+            lng: parseFloat(data[0].lon),
+            title: value,
+            address: data[0].display_name,
+            icon: 'bx-map',
+            color: '#ff6b6b',
+            source: 'Address Geocoding'
+          }
+        }
+      } else if (type === 'ip') {
+        // Use ip-api.com for IP geolocation
+        const response = await fetch(`http://ip-api.com/json/${value}`)
+        const data = await response.json()
+        if (data.status === 'success') {
+          locationData = {
+            lat: data.lat,
+            lng: data.lon,
+            title: `IP: ${value}`,
+            address: `${data.city}, ${data.region}, ${data.country}`,
+            icon: 'bx-globe',
+            color: '#4ecdc4',
+            source: 'IP Geolocation'
+          }
+        }
+      } else if (type === 'phone') {
+        // Extract area code and use approximate location
+        const cleanedPhone = value.replace(/\D/g, '')
+        if (cleanedPhone.length >= 3) {
+          const areaCode = cleanedPhone.substring(0, 3)
+          // US area code approximate locations
+          const areaCodeLocations = {
+            '212': { lat: 40.7128, lng: -74.0060, city: 'New York, NY' },
+            '310': { lat: 34.0522, lng: -118.2437, city: 'Los Angeles, CA' },
+            '415': { lat: 37.7749, lng: -122.4194, city: 'San Francisco, CA' },
+            '312': { lat: 41.8781, lng: -87.6298, city: 'Chicago, IL' },
+            '617': { lat: 42.3601, lng: -71.0589, city: 'Boston, MA' },
+            '305': { lat: 25.7617, lng: -80.1918, city: 'Miami, FL' },
+            '206': { lat: 47.6062, lng: -122.3321, city: 'Seattle, WA' },
+            '713': { lat: 29.7604, lng: -95.3698, city: 'Houston, TX' },
+            '404': { lat: 33.7490, lng: -84.3880, city: 'Atlanta, GA' },
+            '303': { lat: 39.7392, lng: -104.9903, city: 'Denver, CO' },
+          }
+          
+          if (areaCodeLocations[areaCode]) {
+            locationData = {
+              lat: areaCodeLocations[areaCode].lat,
+              lng: areaCodeLocations[areaCode].lng,
+              title: `Phone: ${value}`,
+              address: `Area Code ${areaCode} - ${areaCodeLocations[areaCode].city}`,
+              icon: 'bx-phone',
+              color: '#ffe66d',
+              source: 'Phone Area Code'
+            }
+          } else {
+            // Default to US center if area code not found
+            locationData = {
+              lat: 39.8283,
+              lng: -98.5795,
+              title: `Phone: ${value}`,
+              address: `Area Code ${areaCode} - Unknown location (US)`,
+              icon: 'bx-phone',
+              color: '#ffe66d',
+              source: 'Phone Area Code'
+            }
+          }
+        }
+      } else if (type === 'email') {
+        // Extract domain and geocode
+        const domain = value.split('@')[1]
+        if (domain) {
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(domain)}`)
+          const data = await response.json()
+          if (data && data.length > 0) {
+            locationData = {
+              lat: parseFloat(data[0].lat),
+              lng: parseFloat(data[0].lon),
+              title: `Email: ${value}`,
+              address: `Domain: ${domain} - ${data[0].display_name}`,
+              icon: 'bx-envelope',
+              color: '#a855f7',
+              source: 'Email Domain'
+            }
+          }
+        }
+      }
+
+      if (locationData) {
+        setGeoLocations(prev => [...prev, locationData])
+        setManualInput({ value: '', type: 'address' })
+        showToast('Location added successfully', 'success')
+      } else {
+        showToast('Could not find location for this input', 'error')
+      }
+    } catch (error) {
+      console.error('Error geocoding:', error)
+      showToast('Error geocoding location', 'error')
+    } finally {
+      setAddingLocation(false)
     }
-    
-    const newLocation = {
-      lat: latNum,
-      lng: lngNum,
-      title: title || 'Custom Location',
-      address: address || 'Manual entry',
-      icon: 'bx-map-pin',
-      color: '#a855f7',
-      source: 'Manual'
-    }
-    
-    setGeoLocations(prev => [...prev, newLocation])
-    setManualLocation({ lat: '', lng: '', title: '', address: '' })
-    showToast('Location added successfully', 'success')
   }
 
   const handleIntelxDownload = async () => {
@@ -1968,52 +2268,52 @@ Lookup made by https://datawire.cc
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <i className='bx bx-plus-circle text-sm text-osint-muted'></i>
-                    <span className="text-sm font-medium text-osint-muted">Add Manual Location</span>
+                    <span className="text-sm font-medium text-osint-muted">Add Location by Input</span>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <motion.input
-                      type="number"
-                      step="any"
-                      placeholder="Latitude (-90 to 90)"
-                      value={manualLocation.lat}
-                      onChange={(e) => setManualLocation(prev => ({ ...prev, lat: e.target.value }))}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <motion.select
+                      value={manualInput.type}
+                      onChange={(e) => setManualInput(prev => ({ ...prev, type: e.target.value }))}
                       className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
                       whileFocus={{ scale: 1.02 }}
-                    />
-                    <motion.input
-                      type="number"
-                      step="any"
-                      placeholder="Longitude (-180 to 180)"
-                      value={manualLocation.lng}
-                      onChange={(e) => setManualLocation(prev => ({ ...prev, lng: e.target.value }))}
-                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
-                      whileFocus={{ scale: 1.02 }}
-                    />
+                    >
+                      <option value="address">Address</option>
+                      <option value="ip">IP Address</option>
+                      <option value="phone">Phone Number</option>
+                      <option value="email">Email</option>
+                    </motion.select>
                     <motion.input
                       type="text"
-                      placeholder="Title (optional)"
-                      value={manualLocation.title}
-                      onChange={(e) => setManualLocation(prev => ({ ...prev, title: e.target.value }))}
-                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
-                      whileFocus={{ scale: 1.02 }}
-                    />
-                    <motion.input
-                      type="text"
-                      placeholder="Address (optional)"
-                      value={manualLocation.address}
-                      onChange={(e) => setManualLocation(prev => ({ ...prev, address: e.target.value }))}
-                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
+                      placeholder={manualInput.type === 'address' ? 'Enter address...' : manualInput.type === 'ip' ? 'Enter IP address...' : manualInput.type === 'phone' ? 'Enter phone number...' : 'Enter email...'}
+                      value={manualInput.value}
+                      onChange={(e) => setManualInput(prev => ({ ...prev, value: e.target.value }))}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddManualLocation()}
+                      className="md:col-span-3 px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
                       whileFocus={{ scale: 1.02 }}
                     />
                   </div>
                   <motion.button
                     onClick={handleAddManualLocation}
+                    disabled={addingLocation}
                     whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)' }}
                     whileTap={{ scale: 0.98 }}
-                    className="mt-3 px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all text-sm flex items-center gap-2 rounded-lg"
+                    className="mt-3 px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all text-sm flex items-center gap-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <i className='bx bx-map-pin'></i>
-                    Add Location
+                    {addingLocation ? (
+                      <>
+                        <motion.i 
+                          className='bx bx-loader-alt'
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                        ></motion.i>
+                        Geocoding...
+                      </>
+                    ) : (
+                      <>
+                        <i className='bx bx-map-pin'></i>
+                        Add Location
+                      </>
+                    )}
                   </motion.button>
                 </motion.div>
               </motion.div>

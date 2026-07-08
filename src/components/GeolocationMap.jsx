@@ -12,33 +12,60 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 })
 
-// Custom marker icon component
-const createCustomIcon = (color, icon) => {
+// Custom marker icon component with label
+const createCustomIcon = (color, icon, title) => {
   return L.divIcon({
     className: 'custom-marker',
     html: `<div style="
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, ${color} 0%, ${color}dd 100%);
-      box-shadow: 0 0 30px ${color}40;
+      position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      animation: pulse 2s ease-in-out infinite;
     ">
-      <i class='bx ${icon}' style='color: white; font-size: 20px;'></i>
-    </div>
-    <style>
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 0 0 0px ${color}40; }
-        50% { box-shadow: 0 0 0 20px ${color}00; }
-      }
-    </style>`,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40]
+      <div style="
+        background: rgba(10, 10, 16, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 6px 12px;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      ">
+        <span style="
+          color: white;
+          font-size: 12px;
+          font-weight: 600;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        ">${title || 'Location'}</span>
+      </div>
+      <div style="
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, ${color} 0%, ${color}dd 100%);
+        box-shadow: 0 0 30px ${color}40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        animation: pulse 2s ease-in-out infinite;
+      ">
+        <i class='bx ${icon}' style='color: white; font-size: 20px;'></i>
+      </div>
+      <style>
+        @keyframes pulse {
+          0%, 100% { box-shadow: 0 0 0 0px ${color}40; }
+          50% { box-shadow: 0 0 0 20px ${color}00; }
+        }
+      </style>
+    </div>`,
+    iconSize: [40, 70],
+    iconAnchor: [20, 70],
+    popupAnchor: [0, -70]
   })
 }
 
@@ -89,7 +116,7 @@ const GeolocationMap = ({ locations = [], onLocationClick }) => {
       >
         {/* Dark theme tiles using CartoDB Dark Matter (free) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          attribution=''
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           maxZoom={19}
         />
@@ -100,7 +127,7 @@ const GeolocationMap = ({ locations = [], onLocationClick }) => {
           <Marker
             key={index}
             position={[location.lat, location.lng]}
-            icon={createCustomIcon(location.color || '#ff6b6b', location.icon || 'bx-map')}
+            icon={createCustomIcon(location.color || '#ff6b6b', location.icon || 'bx-map', location.title || 'Location')}
             eventHandlers={{
               click: () => handleMarkerClick(location)
             }}
