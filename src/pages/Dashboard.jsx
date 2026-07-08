@@ -759,8 +759,8 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
     if (!isOpen && dropdownRef.current) {
       const rect = dropdownRef.current.getBoundingClientRect()
       setMenuPosition({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
+        top: rect.bottom + 4,
+        left: rect.left,
         width: rect.width
       })
     }
@@ -796,7 +796,8 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
           {options?.map((option) => (
             <button
               key={option.value}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 onChange(option.value)
                 setIsOpen(false)
               }}
@@ -844,8 +845,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
     if (!isOpen && dropdownRef.current) {
       const rect = dropdownRef.current.getBoundingClientRect()
       setMenuPosition({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
+        top: rect.bottom + 4,
+        left: rect.left,
         width: rect.width
       })
     }
@@ -879,7 +880,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
           {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => (
             <div key={key}>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   onCategoryChange(key)
                   const providers = getCategoryProviders(key)
                   if (providers.length > 0) {
@@ -910,7 +912,8 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
                   {availableProviders.map(provider => (
                     <button
                       key={provider}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation()
                         onProviderChange(provider)
                         setIsOpen(false)
                       }}
@@ -1245,7 +1248,7 @@ const Dashboard = () => {
         }
       } else if (type === 'ip') {
         // Use ip-api.com for IP geolocation
-        const response = await fetch(`http://ip-api.com/json/${value}`)
+        const response = await fetch(`https://ip-api.com/json/${value}`)
         const data = await response.json()
         if (data.status === 'success') {
           locationData = {
@@ -1257,6 +1260,8 @@ const Dashboard = () => {
             color: '#4ecdc4',
             source: 'IP Geolocation'
           }
+        } else {
+          throw new Error(data.message || 'IP geolocation failed')
         }
       } else if (type === 'phone') {
         // Extract area code and use approximate location
@@ -2429,17 +2434,18 @@ Lookup made by https://datawire.cc
                     <span className="text-sm font-medium text-osint-muted">Add Location by Input</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <motion.select
+                    <CustomDropdown
+                      options={[
+                        { value: 'address', label: 'Address' },
+                        { value: 'ip', label: 'IP Address' },
+                        { value: 'phone', label: 'Phone Number' },
+                        { value: 'email', label: 'Email' }
+                      ]}
                       value={manualInput.type}
-                      onChange={(e) => setManualInput(prev => ({ ...prev, type: e.target.value }))}
-                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
-                      whileFocus={{ scale: 1.02 }}
-                    >
-                      <option value="address">Address</option>
-                      <option value="ip">IP Address</option>
-                      <option value="phone">Phone Number</option>
-                      <option value="email">Email</option>
-                    </motion.select>
+                      onChange={(value) => setManualInput(prev => ({ ...prev, type: value }))}
+                      placeholder="Select type"
+                      className="md:col-span-1"
+                    />
                     <motion.input
                       type="text"
                       placeholder={manualInput.type === 'address' ? 'Enter address...' : manualInput.type === 'ip' ? 'Enter IP address...' : manualInput.type === 'phone' ? 'Enter phone number...' : 'Enter email...'}
