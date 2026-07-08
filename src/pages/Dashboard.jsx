@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import ReactFlow, {
   Background,
   useNodesState,
@@ -12,6 +13,7 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import AIOsintSearch from './AIOsintSearch'
+import GeolocationMap from '../components/GeolocationMap'
 
 // Provider categories with logos
 const PROVIDER_CATEGORIES = {
@@ -135,12 +137,16 @@ style.textContent = `
   }
   
   .glass-card {
-    background: rgba(10, 10, 16, 0.6);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(10, 10, 16, 0.7);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
   
   .glass-card::before {
@@ -150,8 +156,13 @@ style.textContent = `
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
-    transition: left 0.6s ease;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.03), 
+      transparent
+    );
+    transition: left 0.8s ease;
   }
   
   .glass-card:hover::before {
@@ -159,9 +170,12 @@ style.textContent = `
   }
   
   .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-4px) scale(1.01);
   }
   
   button {
@@ -716,6 +730,10 @@ const Dashboard = () => {
   const [intelxSystemId, setIntelxSystemId] = useState('')
   const [intelxDownloading, setIntelxDownloading] = useState(false)
   
+  // Geolocation State
+  const [geoLocations, setGeoLocations] = useState([])
+  const [showMap, setShowMap] = useState(false)
+  
   // Lead Mapping State - Graph
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
@@ -841,6 +859,9 @@ const Dashboard = () => {
         // Add node to graph automatically
         addNodeFromSearch(data.result, query.trim())
         
+        // Extract geolocation data if present
+        extractGeoLocation(data.result, query.trim())
+        
         showToast('Search completed successfully', 'success')
         
         setCooldown(true)
@@ -868,6 +889,66 @@ const Dashboard = () => {
     }
     localStorage.removeItem('auth_token')
     navigate('/')
+  }
+
+  const extractGeoLocation = (result, query) => {
+    if (!result || typeof result !== 'object') return
+    
+    const locations = []
+    
+    // Check for IP geolocation data
+    if (result.ip || result.ip_info || result.location) {
+      const ipData = result.ip_info || result.location || result
+      if (ipData.lat && ipData.lng) {
+        locations.push({
+          lat: ipData.lat,
+          lng: ipData.lng,
+          title: `IP: ${query}`,
+          address: ipData.city || ipData.country || 'Unknown',
+          icon: 'bx-globe',
+          color: '#ff6b6b',
+          source: 'IP Geolocation'
+        })
+      }
+    }
+    
+    // Check for phone number location
+    if (result.phone_location || result.carrier) {
+      const phoneData = result.phone_location || result
+      if (phoneData.lat && phoneData.lng) {
+        locations.push({
+          lat: phoneData.lat,
+          lng: phoneData.lng,
+          title: `Phone: ${query}`,
+          address: phoneData.city || phoneData.country || 'Unknown',
+          icon: 'bx-phone',
+          color: '#4ecdc4',
+          source: 'Phone Location'
+        })
+      }
+    }
+    
+    // Check for domain/hosting location
+    if (result.hosting || result.server_location) {
+      const hostingData = result.hosting || result.server_location
+      if (hostingData.lat && hostingData.lng) {
+        locations.push({
+          lat: hostingData.lat,
+          lng: hostingData.lng,
+          title: `Domain: ${query}`,
+          address: hostingData.city || hostingData.country || 'Unknown',
+          icon: 'bx-world',
+          color: '#ffe66d',
+          source: 'Domain Hosting'
+        })
+      }
+    }
+    
+    if (locations.length > 0) {
+      setGeoLocations(prev => [...prev, ...locations])
+      setShowMap(true)
+      showToast(`Found ${locations.length} location(s)`, 'success')
+    }
   }
 
   const handleIntelxDownload = async () => {
@@ -1273,6 +1354,7 @@ Lookup made by https://datawire.cc
     { id: 'search', icon: 'bx-search', label: 'Search', isCategory: false },
     { id: 'ai-osint', icon: 'bx-brain', label: 'AI OSINT', isCategory: false },
     { id: 'intelx', icon: 'bx-cloud-download', label: 'IntelX', isCategory: false },
+    { id: 'geolocation', icon: 'bx-map', label: 'Geolocation', isCategory: false },
     { id: 'mapping', icon: 'bx-link', label: 'Lead Mapping', isCategory: false },
     { id: 'history', icon: 'bx-history', label: 'Search History', isCategory: false },
     { id: 'transactions', icon: 'bx-receipt', label: 'Transactions', isCategory: false },
@@ -1301,23 +1383,38 @@ Lookup made by https://datawire.cc
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {/* Main Navigation Items */}
-          {sidebarItems.map(item => (
-            <button
+          {sidebarItems.map((item, index) => (
+            <motion.button
               key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+              whileHover={{ scale: 1.02, x: 4 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setActiveTab(item.id)
                 if (item.id === 'search') setSearchMode('main')
                 setSidebarOpen(false)
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 ${
+              className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 relative overflow-hidden ${
                 activeTab === item.id 
                   ? 'bg-white/10 text-white border-white' 
                   : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
               }`}
             >
-              <i className={`bx ${item.icon} text-lg`}></i>
-              <span className="font-medium tracking-wide">{item.label}</span>
-            </button>
+              <AnimatePresence>
+                {activeTab === item.id && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"
+                  />
+                )}
+              </AnimatePresence>
+              <i className={`bx ${item.icon} text-lg relative z-10`}></i>
+              <span className="font-medium tracking-wide relative z-10">{item.label}</span>
+            </motion.button>
           ))}
 
           {/* Provider Categories Section */}
@@ -1468,7 +1565,10 @@ Lookup made by https://datawire.cc
 
                   <div className="mb-4">
                     <label className="block text-sm text-osint-muted mb-2 tracking-wide">Search Query</label>
-                    <div className="relative">
+                    <motion.div 
+                      className="relative"
+                      whileFocus={{ scale: 1.01 }}
+                    >
                       <input
                         type="text"
                         value={query}
@@ -1477,22 +1577,35 @@ Lookup made by https://datawire.cc
                         placeholder="Enter username, email, IP address, or ID..."
                         className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
                       />
-                      <i className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'></i>
-                    </div>
+                      <motion.i 
+                        className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'
+                        animate={query ? { color: '#ffffff', scale: 1.1 } : { color: '#6b7280', scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                      ></motion.i>
+                    </motion.div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="text-sm text-osint-muted">
+                    <motion.p 
+                      className="text-sm text-osint-muted"
+                      animate={{ opacity: searching ? 0.5 : 1 }}
+                    >
                       Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
-                    </p>
-                    <button
+                    </motion.p>
+                    <motion.button
                       onClick={handleSearch}
                       disabled={searching || cooldown}
+                      whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.3)' }}
+                      whileTap={{ scale: 0.95 }}
                       className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
                     >
                       {searching ? (
                         <>
-                          <i className='bx bx-loader-alt animate-spin'></i>
+                          <motion.i 
+                            className='bx bx-loader-alt'
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                          ></motion.i>
                           Searching...
                         </>
                       ) : cooldown ? (
@@ -1506,7 +1619,7 @@ Lookup made by https://datawire.cc
                           Search
                         </>
                       )}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               )}
@@ -1681,6 +1794,57 @@ Lookup made by https://datawire.cc
                 </button>
               </div>
             </div>
+          )}
+
+          {activeTab === 'geolocation' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="h-full flex flex-col"
+            >
+              <div className="glass-card p-6 mb-4 animate-fade-in">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
+                      <i className='bx bx-map text-xl'></i>
+                      Geolocation Map
+                    </h3>
+                    <p className="text-sm text-osint-muted mt-1">Track locations from IP addresses, phone numbers, and domains</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setGeoLocations([])}
+                      className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all text-sm flex items-center gap-2"
+                    >
+                      <i className='bx bx-trash'></i>
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex-1 glass-card overflow-hidden relative border border-osint-border" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
+                {geoLocations.length > 0 ? (
+                  <GeolocationMap 
+                    locations={geoLocations}
+                    onLocationClick={(location) => console.log('Location clicked:', location)}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center"
+                    >
+                      <i className='bx bx-map text-6xl text-osint-muted mb-4'></i>
+                      <p className="text-osint-muted">No locations tracked yet</p>
+                      <p className="text-sm text-osint-muted mt-2">Search for IP addresses, phone numbers, or domains to see their locations on the map</p>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           )}
 
           {activeTab === 'ai-osint' && (
