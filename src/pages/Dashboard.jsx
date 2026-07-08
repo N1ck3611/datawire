@@ -1842,7 +1842,7 @@ Lookup made by https://datawire.cc
                       <p className="text-sm text-osint-muted mt-2">Search for IP addresses, phone numbers, or domains to see their locations on the map</p>
                     </motion.div>
                   )}
-                </div>
+                )}
               </div>
             </motion.div>
           )}
