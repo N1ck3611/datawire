@@ -1249,10 +1249,15 @@ const Dashboard = () => {
           }
         }
       } else if (type === 'ip') {
-        // Use ip-api.com for IP geolocation
-        const response = await fetch(`https://ip-api.com/json/${value}`)
+        // Use worker API for IP geolocation
+        const token = localStorage.getItem('auth_token')
+        const response = await fetch(`${API_BASE}/api/geolocation/ip?ip=${encodeURIComponent(value)}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
         const data = await response.json()
-        if (data.status === 'success') {
+        if (data.success) {
           locationData = {
             lat: data.lat,
             lng: data.lon,
@@ -1263,7 +1268,7 @@ const Dashboard = () => {
             source: 'IP Geolocation'
           }
         } else {
-          throw new Error(data.message || 'IP geolocation failed')
+          throw new Error(data.error || 'IP geolocation failed')
         }
       } else if (type === 'phone') {
         // Extract area code and use approximate location
@@ -1380,6 +1385,9 @@ const Dashboard = () => {
           const binaryData = result.binary || result.file || result.data
           const downloadedBytes = result.downloadedBytes || result.size || binaryData.length
           
+          // Format the data with proper line breaks
+          const formattedData = binaryData.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n')
+          
           const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝
 ██║  ██║███████║   ██║   ███████║██║ █╗ ██║██║██████╔╝█████╗     ██║     ██║     
@@ -1394,8 +1402,8 @@ Downloaded: ${new Date().toLocaleString()}
 File Size: ${downloadedBytes} bytes
 ══════════════════════════════════════════════════════════════
 
-Binary Data (Base64 Encoded):
-${binaryData}
+Downloaded Data:
+${formattedData}
 
 ══════════════════════════════════════════════════════════════
 Powered by https://datawire.cc
