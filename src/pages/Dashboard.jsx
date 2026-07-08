@@ -733,6 +733,8 @@ const Dashboard = () => {
   // Geolocation State
   const [geoLocations, setGeoLocations] = useState([])
   const [showMap, setShowMap] = useState(false)
+  const [manualLocation, setManualLocation] = useState({ lat: '', lng: '', title: '', address: '' })
+  const [addingLocation, setAddingLocation] = useState(false)
   
   // Lead Mapping State - Graph
   const [nodes, setNodes, onNodesChange] = useNodesState([])
@@ -949,6 +951,37 @@ const Dashboard = () => {
       setShowMap(true)
       showToast(`Found ${locations.length} location(s)`, 'success')
     }
+  }
+
+  const handleAddManualLocation = () => {
+    const { lat, lng, title, address } = manualLocation
+    
+    if (!lat || !lng) {
+      showToast('Please enter latitude and longitude', 'error')
+      return
+    }
+    
+    const latNum = parseFloat(lat)
+    const lngNum = parseFloat(lng)
+    
+    if (isNaN(latNum) || isNaN(lngNum) || latNum < -90 || latNum > 90 || lngNum < -180 || lngNum > 180) {
+      showToast('Invalid coordinates', 'error')
+      return
+    }
+    
+    const newLocation = {
+      lat: latNum,
+      lng: lngNum,
+      title: title || 'Custom Location',
+      address: address || 'Manual entry',
+      icon: 'bx-map-pin',
+      color: '#a855f7',
+      source: 'Manual'
+    }
+    
+    setGeoLocations(prev => [...prev, newLocation])
+    setManualLocation({ lat: '', lng: '', title: '', address: '' })
+    showToast('Location added successfully', 'success')
   }
 
   const handleIntelxDownload = async () => {
@@ -1504,24 +1537,48 @@ Lookup made by https://datawire.cc
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <div className="h-16 bg-osint-card border-b border-osint-border flex items-center justify-between px-4 md:px-8">
+        <motion.div 
+          className="h-16 bg-osint-card/80 backdrop-blur-xl border-b border-osint-border flex items-center justify-between px-4 md:px-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3)'
+          }}
+        >
           <div className="flex items-center gap-4">
-            <button
+            <motion.button
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="lg:hidden p-2 text-osint-muted hover:text-osint-secondary transition-colors"
             >
-              <i className={`bx ${sidebarOpen ? 'bx-x' : 'bx-menu'} text-xl`}></i>
-            </button>
-            <h2 className="text-lg font-semibold tracking-tight capitalize">{activeTab}</h2>
+              <motion.i 
+                className={`bx ${sidebarOpen ? 'bx-x' : 'bx-menu'} text-xl`}
+                animate={{ rotate: sidebarOpen ? 90 : 0 }}
+                transition={{ duration: 0.2 }}
+              ></motion.i>
+            </motion.button>
+            <motion.h2 
+              className="text-lg font-semibold tracking-tight capitalize"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              key={activeTab}
+            >
+              {activeTab}
+            </motion.h2>
           </div>
           <div className="flex items-center gap-4 md:gap-6">
-            <div className="text-sm text-osint-muted">
+            <motion.div 
+              className="text-sm text-osint-muted"
+              whileHover={{ scale: 1.05 }}
+            >
               Available Searches: <span className="text-white font-semibold font-mono">
                 {Math.floor(parseFloat(balance) / parseFloat(SEARCH_COST))}
               </span>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Content Area */}
         <div className="flex-1 p-4 md:p-8 overflow-y-auto">
@@ -1529,11 +1586,26 @@ Lookup made by https://datawire.cc
             <div className="max-w-4xl mx-auto space-y-6">
               {/* Main Search Form - only shown when searchMode is 'main' */}
               {searchMode === 'main' && (
-                <div className="glass-card p-6 animate-fade-in">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
+                <motion.div 
+                  className="glass-card p-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <motion.div 
+                    className="flex items-center gap-3 mb-6"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <motion.div 
+                      className="w-1 h-8 bg-white animate-pulse-glow"
+                      initial={{ height: 0 }}
+                      animate={{ height: 32 }}
+                      transition={{ duration: 0.3 }}
+                    ></motion.div>
                     <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
-                  </div>
+                  </motion.div>
                   
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
@@ -1726,19 +1798,28 @@ Lookup made by https://datawire.cc
 
                 {/* Recent Searches */}
                 {searchHistory.length > 0 && (
-                  <div className="glass-card p-6 animate-fade-in">
+                  <motion.div 
+                    className="glass-card p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
                     <h3 className="text-lg font-semibold mb-4 tracking-tight">Recent Searches</h3>
                     <div className="space-y-3">
                       {searchHistory.map((search, index) => (
-                        <div
+                        <motion.div
                           key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.4 + index * 0.1 }}
+                          whileHover={{ scale: 1.02, x: 5 }}
                           onClick={() => {
                             setSearchResults(search.result)
                             setQuery(search.query)
                             setSelectedProvider(search.provider)
                             setSelectedCommand(search.command)
                           }}
-                          className="p-4 bg-osint-bg/50 border border-osint-border/50 hover:border-white/50 cursor-pointer transition-all"
+                          className="p-4 bg-osint-bg/50 border border-osint-border/50 hover:border-white/50 cursor-pointer transition-all rounded-xl"
                         >
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium">
@@ -1749,40 +1830,78 @@ Lookup made by https://datawire.cc
                             </span>
                           </div>
                           <p className="text-sm text-osint-muted truncate">{search.query}</p>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
           </div>
           )}
 
           {activeTab === 'intelx' && (
-            <div className="max-w-4xl mx-auto space-y-6">
-              <div className="glass-card p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4 tracking-tight">IntelX File Download</h3>
+            <motion.div 
+              className="max-w-4xl mx-auto space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div 
+                className="glass-card p-6"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+              >
+                <motion.div 
+                  className="flex items-center gap-3 mb-4"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <motion.div 
+                    className="w-1 h-8 bg-white animate-pulse-glow"
+                    initial={{ height: 0 }}
+                    animate={{ height: 32 }}
+                    transition={{ duration: 0.3 }}
+                  ></motion.div>
+                  <h3 className="text-lg font-semibold tracking-tight">IntelX File Download</h3>
+                </motion.div>
                 <p className="text-sm text-osint-muted mb-4">Download files from IntelX by System ID</p>
                 
-                <div className="mb-4">
+                <motion.div 
+                  className="mb-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <label className="block text-sm text-osint-muted mb-2 tracking-wide">System ID</label>
-                  <input
+                  <motion.input
                     type="text"
                     value={intelxSystemId}
                     onChange={(e) => setIntelxSystemId(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleIntelxDownload()}
                     placeholder="Enter IntelX System ID (UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"
-                    className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all rounded-xl"
+                    whileFocus={{ scale: 1.02, borderColor: 'rgba(255, 255, 255, 0.3)' }}
                   />
-                </div>
+                </motion.div>
 
-                <button
+                <motion.button
                   onClick={handleIntelxDownload}
                   disabled={intelxDownloading}
-                  className="px-6 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.2)' }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="px-6 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 rounded-xl shadow-lg shadow-white/10"
                 >
                   {intelxDownloading ? (
                     <>
-                      <i className='bx bx-loader-alt animate-spin'></i>
+                      <motion.i 
+                        className='bx bx-loader-alt'
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      ></motion.i>
                       Downloading...
                     </>
                   ) : (
@@ -1791,9 +1910,9 @@ Lookup made by https://datawire.cc
                       Download File
                     </>
                   )}
-                </button>
-              </div>
-            </div>
+                </motion.button>
+              </motion.div>
+            </motion.div>
           )}
 
           {activeTab === 'geolocation' && (
@@ -1803,8 +1922,13 @@ Lookup made by https://datawire.cc
               transition={{ duration: 0.5 }}
               className="h-full flex flex-col"
             >
-              <div className="glass-card p-6 mb-4 animate-fade-in">
-                <div className="flex items-center justify-between">
+              <motion.div 
+                className="glass-card p-6 mb-4"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
                       <i className='bx bx-map text-xl'></i>
@@ -1813,16 +1937,76 @@ Lookup made by https://datawire.cc
                     <p className="text-sm text-osint-muted mt-1">Track locations from IP addresses, phone numbers, and domains</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
+                    <motion.button
                       onClick={() => setGeoLocations([])}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all text-sm flex items-center gap-2"
                     >
                       <i className='bx bx-trash'></i>
                       Clear
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
+                
+                {/* Manual Location Input */}
+                <motion.div 
+                  className="mt-4 pt-4 border-t border-osint-border"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <i className='bx bx-plus-circle text-sm text-osint-muted'></i>
+                    <span className="text-sm font-medium text-osint-muted">Add Manual Location</span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <motion.input
+                      type="number"
+                      step="any"
+                      placeholder="Latitude (-90 to 90)"
+                      value={manualLocation.lat}
+                      onChange={(e) => setManualLocation(prev => ({ ...prev, lat: e.target.value }))}
+                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
+                      whileFocus={{ scale: 1.02 }}
+                    />
+                    <motion.input
+                      type="number"
+                      step="any"
+                      placeholder="Longitude (-180 to 180)"
+                      value={manualLocation.lng}
+                      onChange={(e) => setManualLocation(prev => ({ ...prev, lng: e.target.value }))}
+                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
+                      whileFocus={{ scale: 1.02 }}
+                    />
+                    <motion.input
+                      type="text"
+                      placeholder="Title (optional)"
+                      value={manualLocation.title}
+                      onChange={(e) => setManualLocation(prev => ({ ...prev, title: e.target.value }))}
+                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
+                      whileFocus={{ scale: 1.02 }}
+                    />
+                    <motion.input
+                      type="text"
+                      placeholder="Address (optional)"
+                      value={manualLocation.address}
+                      onChange={(e) => setManualLocation(prev => ({ ...prev, address: e.target.value }))}
+                      className="px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
+                      whileFocus={{ scale: 1.02 }}
+                    />
+                  </div>
+                  <motion.button
+                    onClick={handleAddManualLocation}
+                    whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)' }}
+                    whileTap={{ scale: 0.98 }}
+                    className="mt-3 px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all text-sm flex items-center gap-2 rounded-lg"
+                  >
+                    <i className='bx bx-map-pin'></i>
+                    Add Location
+                  </motion.button>
+                </motion.div>
+              </motion.div>
               
               <div className="flex-1 glass-card overflow-hidden relative border border-osint-border" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
                 {geoLocations.length > 0 ? (
