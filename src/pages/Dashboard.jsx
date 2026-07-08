@@ -1232,38 +1232,30 @@ const Dashboard = () => {
     const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
     if (ipRegex.test(query) && locations.length === 0) {
       // Try to geocode the IP directly using free API
-      fetch(`https://ipapi.co/${query}/json/`)
-        .then(res => res.json())
+      fetch(`https://ipwhois.app/json/${query}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+        .then(res => {
+          const contentType = res.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('API rate limited');
+          }
+          return res.json();
+        })
         .then(data => {
-          if (!data.error && data.latitude && data.longitude) {
+          if (data.success && data.latitude && data.longitude) {
             setGeoLocations(prev => [...prev, {
               lat: data.latitude,
               lng: data.longitude,
               title: `IP: ${query}`,
-              address: `${data.city}, ${data.region}, ${data.country_name}`,
+              address: `${data.city}, ${data.region}, ${data.country}`,
               icon: 'bx-globe',
               color: '#ff6b6b',
               source: 'IP Geolocation'
             }])
             setShowMap(true)
-          } else {
-            // Fallback to ipwhois.app
-            return fetch(`https://ipwhois.app/json/${query}`)
-              .then(res => res.json())
-              .then(fallbackData => {
-                if (fallbackData.success) {
-                  setGeoLocations(prev => [...prev, {
-                    lat: fallbackData.latitude,
-                    lng: fallbackData.longitude,
-                    title: `IP: ${query}`,
-                    address: `${fallbackData.city}, ${fallbackData.region}, ${fallbackData.country}`,
-                    icon: 'bx-globe',
-                    color: '#ff6b6b',
-                    source: 'IP Geolocation'
-                  }])
-                  setShowMap(true)
-                }
-              })
           }
         })
         .catch(err => console.log('IP geocoding failed:', err))
