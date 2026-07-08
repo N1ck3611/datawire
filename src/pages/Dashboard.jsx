@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ReactFlow, {
   Background,
@@ -741,6 +742,8 @@ const MANUAL_PROVIDERS = {
 const CustomDropdown = ({ options, value, onChange, placeholder, className = '' }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
+  const dropdownMenuRef = useRef(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -752,22 +755,44 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const toggleDropdown = () => {
+    if (!isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect()
+      setMenuPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      })
+    }
+    setIsOpen(!isOpen)
+  }
+
   const selectedOption = options?.find(opt => opt.value === value)
 
   return (
-    <div ref={dropdownRef} className={`relative z-[9999] ${className}`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
-      >
-        <span className={selectedOption ? 'text-osint-secondary' : 'text-osint-muted'}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-        <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
-      </button>
+    <>
+      <div ref={dropdownRef} className={`relative ${className}`}>
+        <button
+          onClick={toggleDropdown}
+          className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
+        >
+          <span className={selectedOption ? 'text-osint-secondary' : 'text-osint-muted'}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+          <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
+        </button>
+      </div>
 
-      {isOpen && (
-        <div className="absolute z-[99999] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-64 overflow-y-auto animate-scale-in">
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownMenuRef}
+          className="fixed z-[999999] bg-osint-card border border-osint-border shadow-2xl max-h-64 overflow-y-auto animate-scale-in"
+          style={{
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`,
+            width: `${menuPosition.width}px`
+          }}
+        >
           {options?.map((option) => (
             <button
               key={option.value}
@@ -782,9 +807,10 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
               {option.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
 
@@ -792,6 +818,8 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
 const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProvider, onCategoryChange, onProviderChange }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
+  const dropdownMenuRef = useRef(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -812,20 +840,42 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
   const currentCategory = PROVIDER_CATEGORIES[selectedCategory]
   const availableProviders = getCategoryProviders(selectedCategory)
 
-  return (
-    <div ref={dropdownRef} className="relative z-[9999]">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
-      >
-        <span className="text-osint-secondary">
-          {currentCategory?.label || 'Select Category'}
-        </span>
-        <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
-      </button>
+  const toggleDropdown = () => {
+    if (!isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect()
+      setMenuPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      })
+    }
+    setIsOpen(!isOpen)
+  }
 
-      {isOpen && (
-        <div className="absolute z-[99999] w-full mt-2 bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in">
+  return (
+    <>
+      <div ref={dropdownRef} className="relative">
+        <button
+          onClick={toggleDropdown}
+          className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
+        >
+          <span className="text-osint-secondary">
+            {currentCategory?.label || 'Select Category'}
+          </span>
+          <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
+        </button>
+      </div>
+
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownMenuRef}
+          className="fixed z-[1000000] bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in"
+          style={{
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`,
+            width: `${menuPosition.width}px`
+          }}
+        >
           {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => (
             <div key={key}>
               <button
@@ -875,9 +925,10 @@ const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProv
               )}
             </div>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
 
