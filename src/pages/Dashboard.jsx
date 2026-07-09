@@ -16,7 +16,59 @@ import 'reactflow/dist/style.css'
 import AIOsintSearch from './AIOsintSearch'
 import GeolocationMap from '../components/GeolocationMap'
 
-// Provider categories with logos
+// Provider icons mapping
+const PROVIDER_ICONS = {
+  snusbase: 'bx-database',
+  leakosint: 'bx-file-find',
+  leakcheck: 'bx-shield-quarter',
+  breachbase: 'bx-server',
+  intelvault: 'bx-vault',
+  breachdirectory: 'bx-book',
+  hackcheck: 'bx-hacker',
+  osintkit: 'bx-toolbox',
+  breachvip: 'bx-crown',
+  cordcat: 'bxl-discord',
+  intelx: 'bx-cloud-download',
+  osintcat: 'bx-cat',
+  xosint: 'bx-search-alt',
+  seeknow: 'bx-search',
+  seekria: 'bx-radar',
+  telegram: 'bxl-telegram',
+  tiktok: 'bxl-tiktok',
+  roblox: 'bx-game',
+  minecraft: 'bx-cube',
+  xbox: 'bx-x',
+  steam: 'bx-steam',
+  fivem: 'bx-car',
+  twitter: 'bxl-twitter',
+  instagram: 'bxl-instagram',
+  github: 'bxl-github',
+  snapchat: 'bxl-snapchat',
+  reddit: 'bxl-reddit',
+  ip: 'bx-globe',
+  domain: 'bx-world',
+  dns: 'bx-network-chart',
+  whois: 'bx-info-circle',
+  hudsonrock: 'bx-shield-x',
+  leaksight: 'bx-eye',
+  nbrs: 'bx-user',
+  room101: 'bx-door-open',
+  seon: 'bx-fingerprint',
+  memory: 'bx-memory-card',
+  nosint: 'bx-search',
+  reconly: 'bx-compass',
+  binlist: 'bx-credit-card',
+  inf0sec: 'bx-terminal',
+  vin: 'bx-car',
+  propertyradar: 'bx-building',
+  datavoid: 'bx-data',
+  checko: 'bx-check-circle',
+  medal: 'bx-medal',
+  discord: 'bxl-discord',
+  oathnet: 'bx-shield'
+}
+
+// Provider categories with logos (kept for reference)
 const PROVIDER_CATEGORIES = {
   footprint: {
     label: 'Footprint',
@@ -1913,39 +1965,31 @@ Lookup made by https://datawire.cc
             </motion.button>
           ))}
 
-          {/* Provider Categories Section */}
+          {/* Providers Section */}
           <div className="mt-6 pt-4 border-t border-osint-border">
             <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
-            <div className="space-y-1">
-              {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => {
-                const providerCount = category.providers.filter(p => providers && providers[p]).length
-                if (providerCount === 0) return null
+            <div className="space-y-1 max-h-96 overflow-y-auto">
+              {Object.keys(providers || {}).map((provider) => {
+                const icon = PROVIDER_ICONS[provider] || 'bx-search'
                 
                 return (
                   <button
-                    key={key}
+                    key={provider}
                     onClick={() => {
-                      setSelectedCategory(key)
-                      const availableProviders = category.providers.filter(p => providers && providers[p])
-                      if (availableProviders.length > 0) {
-                        setSelectedProvider(availableProviders[0])
-                        setSelectedCommand(providers?.[availableProviders[0]]?.[0]?.name || '')
-                      }
+                      setSelectedProvider(provider)
+                      setSelectedCommand(providers?.[provider]?.[0]?.name || '')
                       setActiveTab('search')
                       setSearchMode('provider')
                       setSidebarOpen(false)
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
-                      selectedCategory === key && activeTab === 'search' && searchMode === 'provider'
+                      selectedProvider === provider && activeTab === 'search' && searchMode === 'provider'
                         ? 'bg-white/10 text-white border-white' 
                         : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
                     }`}
                   >
-                    <i className={`bx ${category.icon} text-lg`}></i>
-                    <span className="font-medium text-sm">{category.label}</span>
-                    <span className="text-xs ml-auto opacity-60 font-mono">
-                      {providerCount}
-                    </span>
+                    <i className={`bx ${icon} text-lg`}></i>
+                    <span className="font-medium text-sm capitalize">{provider}</span>
                   </button>
                 )
               })}
@@ -2168,35 +2212,13 @@ Lookup made by https://datawire.cc
                   transition={{ duration: 0.5 }}
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <motion.div 
-                      className="w-1 h-8 bg-white animate-pulse-glow"
-                      initial={{ height: 0 }}
-                      animate={{ height: 32 }}
-                      transition={{ duration: 0.3 }}
-                    ></motion.div>
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      {PROVIDER_CATEGORIES[selectedCategory]?.label} Search
+                    <i className={`bx ${PROVIDER_ICONS[selectedProvider] || 'bx-search'} text-2xl text-white`}></i>
+                    <h3 className="text-lg font-semibold tracking-tight capitalize">
+                      {selectedProvider} Search
                     </h3>
                   </div>
 
                   <div className="space-y-4">
-                    {/* Provider Dropdown */}
-                    <div>
-                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Provider</label>
-                      <CustomDropdown
-                        options={getCategoryProviders(selectedCategory).map(p => ({
-                          value: p,
-                          label: p.charAt(0).toUpperCase() + p.slice(1)
-                        }))}
-                        value={selectedProvider}
-                        onChange={(provider) => {
-                          setSelectedProvider(provider)
-                          setSelectedCommand(providers?.[provider]?.[0]?.name || '')
-                        }}
-                        placeholder="Select provider"
-                      />
-                    </div>
-
                     {/* Command Dropdown */}
                     {selectedProvider && (
                       <motion.div
@@ -2208,7 +2230,7 @@ Lookup made by https://datawire.cc
                         <CustomDropdown
                           options={providers?.[selectedProvider]?.map(cmd => ({
                             value: cmd.name,
-                            label: `${cmd.name} (${cmd.queryParam})`
+                            label: cmd.description || cmd.name
                           })) || []}
                           value={selectedCommand}
                           onChange={setSelectedCommand}
@@ -2222,7 +2244,36 @@ Lookup made by https://datawire.cc
                       const command = providers?.[selectedProvider]?.find(cmd => cmd.name === selectedCommand)
                       if (!command) return null
                       
-                      // Handle commands that need multiple parameters
+                      // Handle commands with extraParams (multiple parameters)
+                      if (command.extraParams) {
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-4"
+                          >
+                            {Object.entries(command.extraParams).map(([paramName, paramValue]) => (
+                              <div key={paramName} className="space-y-2">
+                                <label className="block text-sm text-osint-muted mb-2 tracking-wide capitalize">
+                                  {paramName}
+                                </label>
+                                <motion.input
+                                  type="text"
+                                  value={query}
+                                  onChange={(e) => setQuery(e.target.value)}
+                                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                  placeholder={`Enter ${paramName}...`}
+                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                                  whileFocus={{ scale: 1.01 }}
+                                />
+                              </div>
+                            ))}
+                          </motion.div>
+                        )
+                      }
+                      
+                      // Handle commands that need path parameters
                       if (command.pathIncludesQuery) {
                         return (
                           <motion.div
