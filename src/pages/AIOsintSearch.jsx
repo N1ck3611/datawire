@@ -318,6 +318,12 @@ const AIOsintSearch = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => {
+                  console.log('Download button clicked, report:', report);
+                  if (!report) {
+                    console.error('No report available to download');
+                    return;
+                  }
+                  
                   const separator = '═'.repeat(100);
                   let content = '██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗\n';
                   content += '██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝\n';
@@ -382,15 +388,23 @@ const AIOsintSearch = () => {
                   content += 'Date: ' + new Date().toLocaleString() + '\n';
                   content += 'Powered by https://datawire.cc\n';
                   content += 'Lookup made by https://datawire.cc';
-                  const blob = new Blob([content], { type: 'text/plain' })
-                  const url = URL.createObjectURL(blob)
-                  const a = document.createElement('a')
-                  a.href = url
-                  a.download = `datawire-ai-osint-${Date.now()}.txt`
-                  document.body.appendChild(a)
-                  a.click()
-                  document.body.removeChild(a)
-                  setTimeout(() => URL.revokeObjectURL(url), 100)
+                  
+                  console.log('Content length:', content.length);
+                  
+                  try {
+                    const blob = new Blob([content], { type: 'text/plain' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `datawire-ai-osint-${Date.now()}.txt`
+                    document.body.appendChild(a)
+                    a.click()
+                    document.body.removeChild(a)
+                    setTimeout(() => URL.revokeObjectURL(url), 100)
+                    console.log('Download initiated successfully');
+                  } catch (error) {
+                    console.error('Download failed:', error);
+                  }
                 }}
                 className="px-4 py-2 bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
