@@ -373,8 +373,18 @@ const AIOsintSearch = () => {
                     content += separator + '\n';
                     content += 'SUPPORTING EVIDENCE\n';
                     content += separator + '\n';
-                    content += report.evidence.map(e => `[${e.sourceType.toUpperCase()}] ${e.source}: ${e.description}`).join('\n');
-                    content += '\n\n';
+                    report.evidence.forEach(e => {
+                      content += `[${e.sourceType.toUpperCase()}] ${e.source}`;
+                      if (e.tool) content += ` (${e.tool})`;
+                      content += '\n';
+                      if (e.identifier) content += `Identifier: ${e.identifier}\n`;
+                      if (e.data) {
+                        content += 'Data:\n';
+                        const dataStr = typeof e.data === 'string' ? e.data : JSON.stringify(e.data, null, 2);
+                        content += dataStr + '\n';
+                      }
+                      content += '\n';
+                    });
                   }
                   if (report.nextSteps && report.nextSteps.length > 0) {
                     content += separator + '\n';
@@ -509,6 +519,7 @@ const AIOsintSearch = () => {
                     <div key={index} className="text-sm">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-white font-medium">{item.source}</span>
+                        {item.tool && <span className="text-xs text-osint-muted">({item.tool})</span>}
                         <span className={`text-xs px-2 py-0.5 rounded ${
                           item.sourceType === 'api' ? 'bg-blue-500/20 text-blue-400' :
                           'bg-green-500/20 text-green-400'
@@ -516,7 +527,14 @@ const AIOsintSearch = () => {
                           {item.sourceType === 'api' ? 'API' : 'Web Search'}
                         </span>
                       </div>
-                      <p className="text-osint-muted">{item.description}</p>
+                      {item.identifier && <p className="text-osint-muted text-xs mb-1">Identifier: {item.identifier}</p>}
+                      {item.data && (
+                        <div className="bg-black/30 rounded p-3 mt-2 overflow-x-auto">
+                          <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">
+                            {typeof item.data === 'string' ? item.data : JSON.stringify(item.data, null, 2)}
+                          </pre>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
