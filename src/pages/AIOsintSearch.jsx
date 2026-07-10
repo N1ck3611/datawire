@@ -309,7 +309,7 @@ const AIOsintSearch = () => {
 
       {/* Report Display */}
       {report && (
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 max-h-[70vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
