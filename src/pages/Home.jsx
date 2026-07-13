@@ -1,8 +1,56 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import ProviderScroll from '../components/ProviderScroll'
 
 const Home = () => {
+  const [searching, setSearching] = useState(null)
+  const [results, setResults] = useState({})
+
+  const handleSearch = (type) => {
+    setSearching(type)
+    
+    setTimeout(() => {
+      const fakeResults = {
+        email: {
+          breaches: [
+            { name: 'Adobe', date: '2024-03-15', exposed: 'Email, Password Hash' },
+            { name: 'LinkedIn', date: '2023-11-02', exposed: 'Email, Password' },
+            { name: 'Dropbox', date: '2023-07-19', exposed: 'Email, Password' }
+          ],
+          riskScore: 87,
+          lastBreach: '2024-03-15',
+          totalBreaches: 12,
+          passwordStrength: 'Weak (found in 3 breaches)'
+        },
+        username: {
+          platforms: [
+            { name: 'Twitter', url: 'twitter.com/johndoe', verified: true },
+            { name: 'GitHub', url: 'github.com/johndoe', verified: true },
+            { name: 'Reddit', url: 'reddit.com/u/johndoe', verified: false },
+            { name: 'Instagram', url: 'instagram.com/johndoe', verified: true }
+          ],
+          totalFound: 47,
+          verifiedCount: 23,
+          riskLevel: 'Medium',
+          lastActive: '2024-06-20'
+        },
+        ip: {
+          location: 'Sydney, New South Wales, Australia',
+          isp: 'Cloudflare Inc.',
+          asn: 'AS13335',
+          threatLevel: 'Low',
+          vpnProxy: 'No',
+          tor: 'No',
+          malwareReports: 0,
+          lastReported: 'Never'
+        }
+      }
+      setResults({ [type]: fakeResults[type] })
+      setSearching(null)
+    }, 1500)
+  }
+
   const features = [
     {
       icon: 'bx bx-globe',
@@ -16,8 +64,8 @@ const Home = () => {
     },
     {
       icon: 'bx bx-data',
-      title: '1.6T+ Data Points',
-      description: 'Comprehensive database with trillions of records',
+      title: '500B+ Data Points',
+      description: 'Comprehensive database with billions of records',
     },
     {
       icon: 'bx bxs-bot',
@@ -137,7 +185,7 @@ const Home = () => {
             {[
               { value: '40+', label: 'API Providers' },
               { value: '10M+', label: 'API Calls' },
-              { value: '1.6T+', label: 'Data Points' },
+              { value: '500B+', label: 'Data Points' },
               { value: '99.9%', label: 'Uptime' },
             ].map((stat, index) => (
               <div key={index} className="text-center">
@@ -194,6 +242,246 @@ const Home = () => {
                 <p className="text-sm text-osint-muted">{feature.description}</p>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Demo/Test Section */}
+      <section className="py-24 bg-osint-card/20">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-osint-secondary mb-4">
+              Live Demo
+            </h2>
+            <p className="text-osint-muted max-w-2xl mx-auto">
+              See DataWire in action with sample lookups
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Email Lookup Demo */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <i className='bx bx-envelope text-xl text-blue-400'></i>
+                </div>
+                <h3 className="font-semibold text-white">Email Lookup</h3>
+              </div>
+              <div className="bg-black/30 rounded-lg p-3 mb-4">
+                <code className="text-sm text-green-400">test@gmail.com</code>
+              </div>
+              {searching === 'email' ? (
+                <div className="flex items-center justify-center py-8">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full"
+                  />
+                </div>
+              ) : results.email ? (
+                <div className="space-y-3 text-sm max-h-64 overflow-y-auto">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Risk Score:</span>
+                    <span className="text-red-400 font-bold">{results.email.riskScore}/100</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Breaches:</span>
+                    <span className="text-white font-medium">{results.email.totalBreaches}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Last Breach:</span>
+                    <span className="text-white font-medium">{results.email.lastBreach}</span>
+                  </div>
+                  <div className="border-t border-white/10 pt-3 mt-3">
+                    <p className="text-gray-400 mb-2">Recent Breaches:</p>
+                    {results.email.breaches.map((breach, idx) => (
+                      <div key={idx} className="bg-black/20 rounded-lg p-2 mb-2">
+                        <div className="flex justify-between">
+                          <span className="text-white font-medium">{breach.name}</span>
+                          <span className="text-gray-500 text-xs">{breach.date}</span>
+                        </div>
+                        <p className="text-gray-400 text-xs mt-1">{breach.exposed}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-yellow-400 text-xs mt-2">
+                    <i className='bx bx-warning mr-1'></i>
+                    {results.email.passwordStrength}
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleSearch('email')}
+                  className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 py-3 rounded-lg font-medium transition-all duration-300"
+                >
+                  Search
+                </button>
+              )}
+            </motion.div>
+
+            {/* Username Lookup Demo */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <i className='bx bx-user text-xl text-purple-400'></i>
+                </div>
+                <h3 className="font-semibold text-white">Username Lookup</h3>
+              </div>
+              <div className="bg-black/30 rounded-lg p-3 mb-4">
+                <code className="text-sm text-green-400">John Doe</code>
+              </div>
+              {searching === 'username' ? (
+                <div className="flex items-center justify-center py-8">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full"
+                  />
+                </div>
+              ) : results.username ? (
+                <div className="space-y-3 text-sm max-h-64 overflow-y-auto">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Platforms Found:</span>
+                    <span className="text-white font-medium">{results.username.totalFound}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Verified:</span>
+                    <span className="text-green-400 font-medium">{results.username.verifiedCount}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Risk Level:</span>
+                    <span className="text-yellow-400 font-medium">{results.username.riskLevel}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Last Active:</span>
+                    <span className="text-white font-medium">{results.username.lastActive}</span>
+                  </div>
+                  <div className="border-t border-white/10 pt-3 mt-3">
+                    <p className="text-gray-400 mb-2">Top Platforms:</p>
+                    {results.username.platforms.map((platform, idx) => (
+                      <div key={idx} className="bg-black/20 rounded-lg p-2 mb-2 flex items-center justify-between">
+                        <div>
+                          <span className="text-white font-medium">{platform.name}</span>
+                          <p className="text-gray-500 text-xs">{platform.url}</p>
+                        </div>
+                        {platform.verified ? (
+                          <i className='bx bxs-check-circle text-green-400'></i>
+                        ) : (
+                          <i className='bx bx-question-mark text-gray-500'></i>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleSearch('username')}
+                  className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 py-3 rounded-lg font-medium transition-all duration-300"
+                >
+                  Search
+                </button>
+              )}
+            </motion.div>
+
+            {/* IP Lookup Demo */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                  <i className='bx bx-globe text-xl text-orange-400'></i>
+                </div>
+                <h3 className="font-semibold text-white">IP Lookup</h3>
+              </div>
+              <div className="bg-black/30 rounded-lg p-3 mb-4">
+                <code className="text-sm text-green-400">1.1.1.1</code>
+              </div>
+              {searching === 'ip' ? (
+                <div className="flex items-center justify-center py-8">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-orange-400 border-t-transparent rounded-full"
+                  />
+                </div>
+              ) : results.ip ? (
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Location:</span>
+                    <span className="text-white font-medium text-right">{results.ip.location}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">ISP:</span>
+                    <span className="text-white font-medium">{results.ip.isp}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">ASN:</span>
+                    <span className="text-white font-medium">{results.ip.asn}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Threat Level:</span>
+                    <span className="text-green-400 font-medium">{results.ip.threatLevel}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">VPN/Proxy:</span>
+                    <span className="text-white font-medium">{results.ip.vpnProxy}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">TOR:</span>
+                    <span className="text-white font-medium">{results.ip.tor}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Malware Reports:</span>
+                    <span className="text-white font-medium">{results.ip.malwareReports}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Last Reported:</span>
+                    <span className="text-white font-medium">{results.ip.lastReported}</span>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleSearch('ip')}
+                  className="w-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 py-3 rounded-lg font-medium transition-all duration-300"
+                >
+                  Search
+                </button>
+              )}
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 text-center"
+          >
+            <p className="text-gray-500 text-sm">
+              <i className='bx bx-info-circle mr-1'></i>
+              Demo data shown above is for illustration purposes only
+            </p>
           </motion.div>
         </div>
       </section>

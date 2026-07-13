@@ -83,7 +83,7 @@ const ProviderScroll = () => {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 30,
+              duration: 20,
               ease: "linear",
             },
           }}
@@ -164,7 +164,7 @@ const ProviderScroll = () => {
         {[
           { label: "Providers", value: "40+" },
           { label: "API Calls", value: "10M+" },
-          { label: "Data Points", value: "1.6T+" },
+          { label: "Data Points", value: "500B+" },
           { label: "Uptime", value: "99.9%" },
         ].map((stat, index) => (
           <div key={index} className="text-center">
