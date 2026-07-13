@@ -6,40 +6,114 @@ const ProviderScroll = () => {
 
   const providers = [
     { 
-      name: "SEON", 
-      logo: "https://seon.io/logo.png",
+      name: "INTELX", 
+      logo: "https://logos.osint.ly/intelx.io",
+      url: "https://intelx.io",
     },
     { 
       name: "HUDSON ROCK", 
-      logo: "https://hudsonrock.com/logo.png",
+      logo: "https://logos.osint.ly/hudsonrock.com",
+      url: "https://hudsonrock.com",
+    },
+    { 
+      name: "SEON", 
+      logo: "https://logos.osint.ly/seon.io",
+      url: "https://seon.io",
     },
     { 
       name: "SHODAN", 
-      logo: "https://shodan.io/static/img/logo.png",
-    },
-    { 
-      name: "INTELX", 
-      logo: "https://intelx.io/logo.png",
-    },
-    { 
-      name: "SNUSBASE", 
-      logo: "https://snusbase.com/logo.png",
+      logo: "https://logos.osint.ly/shodan.io",
+      url: "https://shodan.io",
     },
     { 
       name: "DEHASHED", 
-      logo: "https://dehashed.com/logo.png",
+      logo: "https://logos.osint.ly/dehashed.com",
+      url: "https://dehashed.com",
     },
     { 
       name: "LEAKCHECK", 
-      logo: "https://leakcheck.io/logo.png",
+      logo: "https://logos.osint.ly/leakcheck.io",
+      url: "https://leakcheck.io",
+    },
+    { 
+      name: "SNUSBASE", 
+      logo: "https://logos.osint.ly/snusbase.com",
+      url: "https://snusbase.com",
     },
     { 
       name: "CRIMINAL IP", 
-      logo: "https://criminalip.io/logo.png",
+      logo: "https://logos.osint.ly/criminalip.io",
+      url: "https://criminalip.io",
     },
     { 
       name: "HIBP", 
-      logo: "https://haveibeenpwned.com/logo.png",
+      logo: "https://logos.osint.ly/haveibeenpwned.com",
+      url: "https://haveibeenpwned.com",
+    },
+    { 
+      name: "CENSYS", 
+      logo: "https://logos.osint.ly/search.censys.io",
+      url: "https://search.censys.io",
+    },
+    { 
+      name: "ZOOMEYE", 
+      logo: "https://logos.osint.ly/zoomeye.org",
+      url: "https://zoomeye.org",
+    },
+    { 
+      name: "FOFA", 
+      logo: "https://logos.osint.ly/fofa.info",
+      url: "https://fofa.info",
+    },
+    { 
+      name: "BREACHDIR", 
+      logo: "https://logos.osint.ly/breachdirectory.org",
+      url: "https://breachdirectory.org",
+    },
+    { 
+      name: "CORD.CAT", 
+      logo: "https://www.google.com/s2/favicons?domain=cord.cat&sz=64",
+      url: "https://cord.cat",
+    },
+    { 
+      name: "NOSINT", 
+      logo: "https://www.google.com/s2/favicons?domain=nosint.org&sz=64",
+      url: "https://nosint.org",
+    },
+    { 
+      name: "SEEKRIA", 
+      logo: "https://www.google.com/s2/favicons?domain=seekria.cc&sz=64",
+      url: "https://seekria.cc",
+    },
+    { 
+      name: "SEEKNOW", 
+      logo: "https://www.google.com/s2/favicons?domain=see-know.icu&sz=64",
+      url: "https://see-know.icu",
+    },
+    { 
+      name: "DATAVOID", 
+      logo: "https://www.google.com/s2/favicons?domain=datavoid.sh&sz=64",
+      url: "https://datavoid.sh",
+    },
+    { 
+      name: "TRACECSINT", 
+      logo: "https://www.google.com/s2/favicons?domain=tracecsint.org&sz=64",
+      url: "https://tracecsint.org",
+    },
+    { 
+      name: "NBRS", 
+      logo: "https://www.google.com/s2/favicons?domain=nbrs.site&sz=64",
+      url: "https://nbrs.site",
+    },
+    { 
+      name: "ROOM101", 
+      logo: "https://www.google.com/s2/favicons?domain=think-pol.com&sz=64",
+      url: "https://think-pol.com",
+    },
+    { 
+      name: "NOTALIVEX", 
+      logo: "https://www.google.com/s2/favicons?domain=notalivex.xyz&sz=64",
+      url: "https://notalivex.xyz",
     },
   ]
 
@@ -77,20 +151,23 @@ const ProviderScroll = () => {
         <motion.div
           className="flex gap-8 px-8"
           animate={{
-            x: [0, -1000],
+            x: [0, -(providers.length * 192)],
           }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 20,
+              duration: 40,
               ease: "linear",
             },
           }}
         >
           {duplicatedProviders.map((provider, index) => (
-            <motion.div
+            <motion.a
               key={`${provider.name}-${index}`}
+              href={provider.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-shrink-0 group relative"
               onHoverStart={() => setHoveredProvider(provider.name)}
               onHoverEnd={() => setHoveredProvider(null)}
@@ -98,7 +175,7 @@ const ProviderScroll = () => {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               {/* Card */}
-              <div className="w-56 h-20 bg-osint-card rounded-xl border border-osint-border hover:border-white/50 transition-all duration-300 overflow-hidden relative">
+              <div className="w-40 h-16 bg-osint-card rounded-xl transition-all duration-300 overflow-hidden relative">
                 {/* Glow effect on hover */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -110,14 +187,15 @@ const ProviderScroll = () => {
                 />
                 
                 {/* Content */}
-                <div className="relative z-10 p-4 h-full flex items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
+                <div className="relative z-10 p-3 h-full flex items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-lg flex-shrink-0">
                       {provider.logo ? (
                         <img 
                           src={provider.logo} 
                           alt={provider.name}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain p-1 mix-blend-multiply"
+                          style={{ filter: 'grayscale(100%) brightness(0.7)' }}
                           onError={(e) => {
                             e.target.style.display = 'none'
                             e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-white">${provider.name[0]}</span>`
@@ -127,7 +205,7 @@ const ProviderScroll = () => {
                         <span className="text-xs font-bold text-white">{provider.name[0]}</span>
                       )}
                     </div>
-                    <h3 className="font-semibold text-white text-sm">{provider.name}</h3>
+                    <h3 className="font-semibold text-white text-xs truncate max-w-[80px]">{provider.name}</h3>
                   </div>
                 </div>
 
@@ -148,7 +226,7 @@ const ProviderScroll = () => {
                   }}
                 />
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </motion.div>
       </div>
