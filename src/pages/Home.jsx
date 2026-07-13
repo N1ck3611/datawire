@@ -46,7 +46,7 @@ const Home = () => {
           lastReported: 'Never'
         }
       }
-      setResults({ [type]: fakeResults[type] })
+      setResults(prev => ({ ...prev, [type]: fakeResults[type] }))
       setSearching(null)
     }, 1500)
   }
