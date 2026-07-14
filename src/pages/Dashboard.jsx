@@ -33,6 +33,8 @@ const PROVIDER_ICONS = {
   xosint: 'bx-search-alt',
   seeknow: 'bx-search',
   seekria: 'bx-radar',
+  datahound: 'bx-dog',
+  openarchive: 'bx-archive',
   telegram: 'bxl-telegram',
   tiktok: 'bxl-tiktok',
   roblox: 'bx-game',
@@ -73,7 +75,7 @@ const PROVIDER_CATEGORIES = {
   footprint: {
     label: 'Footprint',
     icon: 'bx-user-voice',
-    providers: ['seekria', 'seeknow', 'xosint']
+    providers: ['seekria', 'seeknow', 'xosint', 'datahound']
   },
   discord: {
     label: 'Discord',
@@ -113,7 +115,7 @@ const PROVIDER_CATEGORIES = {
   other: {
     label: 'Other',
     icon: 'bx-dots-horizontal-rounded',
-    providers: ['intelx', 'osintcat', 'hudsonrock', 'leaksight', 'nbrs', 'room101', 'seon', 'memory', 'nosint', 'reconly', 'binlist', 'inf0sec', 'vin', 'propertyradar', 'datavoid', 'checko', 'medal']
+    providers: ['intelx', 'osintcat', 'hudsonrock', 'leaksight', 'nbrs', 'room101', 'seon', 'memory', 'nosint', 'reconly', 'binlist', 'inf0sec', 'vin', 'propertyradar', 'datavoid', 'checko', 'medal', 'openarchive']
   }
 }
 
@@ -659,6 +661,9 @@ const MANUAL_PROVIDERS = {
     { name: 'snusbase-breach', description: 'Snusbase breach', path: '/seekria/snusbase-breach', queryParam: 'query' },
     { name: 'leakcheck-breach', description: 'LeakCheck breach', path: '/seekria/leakcheck-breach', queryParam: 'query' }
   ],
+  datahound: [
+    { name: 'search', description: 'DataHound search', path: '/datahound/search', queryParam: 'query' }
+  ],
   wentyn: [
     { name: 'search', description: 'Wentyn search', path: '/wentyn', queryParam: 'query' }
   ],
@@ -787,6 +792,9 @@ const MANUAL_PROVIDERS = {
   ],
   medal: [
     { name: 'search', description: 'Medal.tv OSINT', path: '/medal', queryParam: 'username' }
+  ],
+  openarchive: [
+    { name: 'search', description: 'OpenArchive search', path: '/openarchive/search', queryParam: 'query' }
   ]
 }
 
@@ -858,7 +866,7 @@ const CustomDropdown = ({ options, value, onChange, placeholder, className = '' 
       {isOpen && createPortal(
         <div 
           ref={dropdownMenuRef}
-          className="fixed z-[999999] bg-osint-card border border-osint-border shadow-2xl max-h-64 overflow-y-auto animate-scale-in"
+          className="fixed z-[999999] bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in"
           style={{
             top: `${menuPosition.top}px`,
             left: `${menuPosition.left}px`,
