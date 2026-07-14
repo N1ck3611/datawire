@@ -44,9 +44,9 @@ const EyeBackground = () => {
   // Idle drift animation
   useEffect(() => {
     const driftInterval = setInterval(() => {
-      driftX.set((Math.random() - 0.5) * 0.1)
-      driftY.set((Math.random() - 0.5) * 0.08)
-    }, 3000 + Math.random() * 2000)
+      driftX.set((Math.random() - 0.5) * 0.08)
+      driftY.set((Math.random() - 0.5) * 0.06)
+    }, 4000 + Math.random() * 3000)
     
     return () => clearInterval(driftInterval)
   }, [driftX, driftY])
@@ -58,7 +58,7 @@ const EyeBackground = () => {
       
       // Upper eyelid moves down
       let startTime = null
-      const duration = 250
+      const duration = 200
       
       const animateBlink = (timestamp) => {
         if (!startTime) startTime = timestamp
@@ -91,7 +91,7 @@ const EyeBackground = () => {
       requestAnimationFrame(animateBlink)
     }
     
-    const interval = setInterval(blink, 10000 + Math.random() * 4000)
+    const interval = setInterval(blink, 12000 + Math.random() * 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -554,4 +554,4 @@ const EyeBackground = () => {
   )
 }
 
-export default EyeBackground
+export default React.memo(EyeBackground)

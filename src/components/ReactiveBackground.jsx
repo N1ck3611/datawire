@@ -96,4 +96,4 @@ const ReactiveBackground = () => {
   )
 }
 
-export default ReactiveBackground
+export default React.memo(ReactiveBackground)

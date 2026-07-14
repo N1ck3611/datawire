@@ -157,31 +157,31 @@ const PROVIDER_LOGOS = {
   memory: 'https://www.google.com/s2/favicons?domain=memory.lol&sz=64',
   nosint: 'https://www.google.com/s2/favicons?domain=nosint.org&sz=64',
   reconly: 'https://www.google.com/s2/favicons?domain=reconly.io&sz=64',
-  tiktok: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TikTok_logo.svg/512px-TikTok_logo.svg.png',
+  tiktok: 'bx-tiktok',
   binlist: 'https://www.google.com/s2/favicons?domain=binlist.net&sz=64',
   inf0sec: 'https://www.google.com/s2/favicons?domain=inf0sec.xyz&sz=64',
   vin: 'https://www.google.com/s2/favicons?domain=vindecoderz.com&sz=64',
   propertyradar: 'https://www.google.com/s2/favicons?domain=propertyradar.com&sz=64',
   datavoid: 'https://www.google.com/s2/favicons?domain=datavoid.sh&sz=64',
   checko: 'https://www.google.com/s2/favicons?domain=checko.io&sz=64',
-  github: 'https://dl.svgcdn.com/svg/logos/github.svg',
-  discord: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Discord_logo.svg/512px-Discord_logo.svg.png',
-  telegram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/512px-Telegram_logo.svg.png',
-  snapchat: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Snapchat_logo.svg/512px-Snapchat_logo.svg.png',
-  instagram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/512px-Instagram_logo_2022.svg.png',
+  github: 'bx-github',
+  discord: 'bx-discord-alt',
+  telegram: 'bx-telegram',
+  snapchat: 'bx-snapchat',
+  instagram: 'bx-instagram',
   medal: 'https://www.google.com/s2/favicons?domain=medal.tv&sz=64',
   openarchive: 'https://www.google.com/s2/favicons?domain=openarchive.lol&sz=64',
   ip: 'https://www.google.com/s2/favicons?domain=ipinfo.io&sz=64',
   domain: 'https://www.google.com/s2/favicons?domain=who.is&sz=64',
   dns: 'https://www.google.com/s2/favicons?domain=dns.google&sz=64',
   whois: 'https://www.google.com/s2/favicons?domain=whois.com&sz=64',
-  roblox: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_logo.svg/512px-Roblox_logo.svg.png',
-  minecraft: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Minecraft_logo.svg/512px-Minecraft_logo.svg.png',
-  xbox: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Xbox_one_logo.svg/512px-Xbox_one_logo.svg.png',
-  steam: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png',
+  roblox: 'bx-game',
+  minecraft: 'bx-cube',
+  xbox: 'bx-xbox',
+  steam: 'bx-steam',
   fivem: 'https://www.google.com/s2/favicons?domain=fivem.net&sz=64',
-  twitter: 'https://seeklogo.com/vector-logo/492396/twitter-x',
-  reddit: 'https://brandfetch.com/reddit.com/logo'
+  twitter: 'bx-twitter',
+  reddit: 'bx-reddit'
 }
 
 // Hide ReactFlow watermark
@@ -865,7 +865,9 @@ const MANUAL_PROVIDERS = {
   openarchive: [
     { name: 'search', description: 'Multi-source search', path: '/search', queryParam: 'query' },
     { name: 'source', description: 'Query OpenArchive source', path: '/source/openarchive', queryParam: 'query' },
-    { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' }
+    { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' },
+    { name: 'usage', description: 'API usage statistics', path: '/usage', queryParam: '' },
+    { name: 'status', description: 'API operational status', path: '/status', queryParam: '' }
   ]
 }
 
@@ -2115,16 +2117,23 @@ Lookup made by https://datawire.cc
                   >
                     <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                       {logo ? (
-                        <img 
-                          src={logo} 
-                          alt={provider}
-                          className="w-full h-full object-contain"
-                          style={{ filter: 'grayscale(100%) brightness(0.7)' }}
-                          onError={(e) => {
-                            e.target.style.display = 'none'
-                            e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-white">${provider.charAt(0).toUpperCase()}</span>`
-                          }}
-                        />
+                        logo.startsWith('bx-') ? (
+                          <i className={`bx ${logo} text-lg`}></i>
+                        ) : (
+                          <img 
+                            src={logo} 
+                            alt={provider}
+                            className="w-full h-full object-contain"
+                            style={{ filter: 'grayscale(100%) brightness(0.7)' }}
+                            onError={(e) => {
+                              e.target.style.display = 'none'
+                              const span = document.createElement('span')
+                              span.className = 'text-xs font-bold text-white'
+                              span.textContent = provider.charAt(0).toUpperCase()
+                              e.target.parentElement.appendChild(span)
+                            }}
+                          />
+                        )
                       ) : (
                         <span className="text-xs font-bold text-white">{provider.charAt(0).toUpperCase()}</span>
                       )}

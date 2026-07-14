@@ -476,7 +476,9 @@ const Commands = () => {
                         style={{ filter: 'grayscale(100%) brightness(0.7)' }}
                         onError={(e) => {
                           e.target.style.display = 'none'
-                          e.target.parentElement.innerHTML = `<i className='bx bx-cog text-2xl text-white'></i>`
+                          const i = document.createElement('i')
+                          i.className = 'bx bx-cog text-2xl text-white'
+                          e.target.parentElement.appendChild(i)
                         }}
                       />
                     </motion.div>

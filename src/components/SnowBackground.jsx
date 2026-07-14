@@ -88,4 +88,4 @@ const SnowBackground = () => {
   )
 }
 
-export default SnowBackground
+export default React.memo(SnowBackground)

@@ -208,7 +208,10 @@ const ProviderScroll = () => {
                           style={{ filter: 'grayscale(100%) brightness(0.7)' }}
                           onError={(e) => {
                             e.target.style.display = 'none'
-                            e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-white">${provider.name[0]}</span>`
+                            const span = document.createElement('span')
+                            span.className = 'text-xs font-bold text-white'
+                            span.textContent = provider.name[0]
+                            e.target.parentElement.appendChild(span)
                           }}
                         />
                       ) : (

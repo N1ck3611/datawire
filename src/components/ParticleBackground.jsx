@@ -16,16 +16,17 @@ const ParticleBackground = () => {
 
     const createParticles = () => {
       particles = []
-      const particleCount = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000))
+      // Reduced particle count for better performance
+      const particleCount = Math.min(50, Math.floor((canvas.width * canvas.height) / 30000))
       
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.5 + 0.2
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          radius: Math.random() * 1.5 + 0.5,
+          opacity: Math.random() * 0.4 + 0.1
         })
       }
     }
@@ -48,21 +49,25 @@ const ParticleBackground = () => {
         ctx.fillStyle = `rgba(0, 255, 255, ${particle.opacity})`
         ctx.fill()
 
-        // Draw connections
-        particles.slice(i + 1).forEach(otherParticle => {
+        // Draw connections - only check nearby particles for performance
+        const maxConnections = 5
+        let connectionCount = 0
+        for (let j = i + 1; j < particles.length && connectionCount < maxConnections; j++) {
+          const otherParticle = particles[j]
           const dx = particle.x - otherParticle.x
           const dy = particle.y - otherParticle.y
           const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 150) {
+          if (distance < 100) {
             ctx.beginPath()
             ctx.moveTo(particle.x, particle.y)
             ctx.lineTo(otherParticle.x, otherParticle.y)
-            ctx.strokeStyle = `rgba(0, 255, 255, ${0.1 * (1 - distance / 150)})`
-            ctx.lineWidth = 0.5
+            ctx.strokeStyle = `rgba(0, 255, 255, ${0.08 * (1 - distance / 100)})`
+            ctx.lineWidth = 0.3
             ctx.stroke()
+            connectionCount++
           }
-        })
+        }
       })
     }
 
@@ -92,9 +97,9 @@ const ParticleBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
-      style={{ opacity: 0.3 }}
+      style={{ opacity: 0.25 }}
     />
   )
 }
 
-export default ParticleBackground
+export default React.memo(ParticleBackground)

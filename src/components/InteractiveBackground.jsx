@@ -92,4 +92,4 @@ const InteractiveBackground = () => {
   )
 }
 
-export default InteractiveBackground
+export default React.memo(InteractiveBackground)
