@@ -246,6 +246,146 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Pricing Plans Section */}
+      <section className="py-24 relative">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-osint-secondary mb-4">
+              Choose Your Plan
+            </h2>
+            <p className="text-osint-muted max-w-2xl mx-auto">
+              Flexible pricing options for every need
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {/* Weekly Plan */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group relative bg-osint-card border border-osint-border rounded-2xl p-8 hover:border-white/30 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="relative">
+                <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                  <i className='bx bx-time-five text-2xl text-white'></i>
+                </div>
+                
+                <h3 className="text-xl font-bold text-osint-secondary mb-2">Weekly</h3>
+                <div className="text-4xl font-bold text-white mb-2">$10</div>
+                <p className="text-sm text-osint-muted mb-6">7 days</p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-check text-green-400'></i>
+                    <span className="text-osint-secondary">50 daily requests</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-x text-red-400'></i>
+                    <span className="text-osint-muted">No IntelX downloads</span>
+                  </div>
+                </div>
+
+                <Link
+                  to="/purchase"
+                  className="block w-full px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Monthly Plan */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group relative bg-white/5 border-2 border-white/30 rounded-2xl p-8 hover:border-white/50 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute top-4 right-4 px-3 py-1 bg-white text-black text-xs font-bold rounded-full">
+                POPULAR
+              </div>
+              
+              <div className="relative">
+                <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center mb-4">
+                  <i className='bx bx-calendar text-2xl text-white'></i>
+                </div>
+                
+                <h3 className="text-xl font-bold text-osint-secondary mb-2">Monthly</h3>
+                <div className="text-4xl font-bold text-white mb-2">$25</div>
+                <p className="text-sm text-osint-muted mb-6">30 days</p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-check text-green-400'></i>
+                    <span className="text-osint-secondary">250 daily requests</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-check text-green-400'></i>
+                    <span className="text-osint-secondary">20 IntelX downloads/day</span>
+                  </div>
+                </div>
+
+                <Link
+                  to="/purchase"
+                  className="block w-full px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Lifetime Plan */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group relative bg-osint-card border border-osint-border rounded-2xl p-8 hover:border-white/30 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="relative">
+                <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                  <i className='bx bx-crown text-2xl text-white'></i>
+                </div>
+                
+                <h3 className="text-xl font-bold text-osint-secondary mb-2">Lifetime</h3>
+                <div className="text-4xl font-bold text-white mb-2">$80</div>
+                <p className="text-sm text-osint-muted mb-6">10 full years</p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-check text-green-400'></i>
+                    <span className="text-osint-secondary">1000 daily requests</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <i className='bx bx-check text-green-400'></i>
+                    <span className="text-osint-secondary">100 IntelX downloads/day</span>
+                  </div>
+                </div>
+
+                <Link
+                  to="/purchase"
+                  className="block w-full px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Demo/Test Section */}
       <section className="py-24 bg-osint-card/20">
         <div className="max-w-6xl mx-auto px-6">

@@ -8,7 +8,10 @@ const Purchase = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [balance, setBalance] = useState('0.00')
+  const [plan, setPlan] = useState(null)
+  const [planExpiresAt, setPlanExpiresAt] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('credits')
   const [selectedCoin, setSelectedCoin] = useState('BTC')
   const [depositAmount, setDepositAmount] = useState('')
   const [depositAddress, setDepositAddress] = useState('')
@@ -16,6 +19,15 @@ const Purchase = () => {
   const [verifying, setVerifying] = useState(false)
   const [toast, setToast] = useState(null)
   const [modal, setModal] = useState(null)
+  
+  // Plan purchase state
+  const [selectedPlan, setSelectedPlan] = useState(null)
+  const [planCoin, setPlanCoin] = useState('BTC')
+  const [senderAddress, setSenderAddress] = useState('')
+  const [planPurchaseAddress, setPlanPurchaseAddress] = useState('')
+  const [planCryptoAmount, setPlanCryptoAmount] = useState('')
+  const [planPurchaseId, setPlanPurchaseId] = useState('')
+  const [verifyingPlan, setVerifyingPlan] = useState(false)
 
   const PAYMENT_ADDRESSES = {
     BTC: 'bc1qpl22tu5gqre7frpz22jzgdkhvrsr4vjpc034ea',
@@ -23,6 +35,12 @@ const Purchase = () => {
     ETH: '0xE5cE7596fD4a9D3659E19fd55E862602E81ECbf3',
     SOL: 'sDqQQKvQktKxL6aHmwcg1fhtwQ2Lc9MHQsQFcSnjaBf',
     USDT: '0xE5cE7596fD4a9D3659E19fd55E862602E81ECbf3'
+  }
+
+  const PLAN_PRICING = {
+    weekly: { price: 10, name: 'Weekly', duration: '7 days', dailyRequests: 50, intelxUses: 0 },
+    monthly: { price: 25, name: 'Monthly', duration: '30 days', dailyRequests: 250, intelxUses: 20 },
+    lifetime: { price: 80, name: 'Lifetime', duration: '10 years', dailyRequests: 1000, intelxUses: 100 }
   }
 
   const showToast = (message, type = 'info') => {
@@ -69,7 +87,11 @@ const Purchase = () => {
       const balanceData = await balanceRes.json()
 
       if (profileData.success) setUser(profileData.user)
-      if (balanceData.success) setBalance(balanceData.balance)
+      if (balanceData.success) {
+        setBalance(balanceData.balance)
+        setPlan(balanceData.plan)
+        setPlanExpiresAt(balanceData.planExpiresAt)
+      }
     } catch (error) {
       console.error('Failed to fetch user data:', error)
       showToast('Failed to load user data', 'error')
@@ -160,6 +182,100 @@ const Purchase = () => {
     showToast('Address copied to clipboard', 'success')
   }
 
+  const handleCreatePlanPurchase = async () => {
+    if (!selectedPlan) {
+      showToast('Please select a plan', 'error')
+      return
+    }
+
+    if (!senderAddress.trim()) {
+      showToast('Please enter your sender address for blockchain verification', 'error')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/plan/purchase`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          planType: selectedPlan, 
+          coin: planCoin,
+          senderAddress: senderAddress.trim()
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        setPlanPurchaseAddress(data.receiverAddress)
+        setPlanCryptoAmount(data.cryptoAmount)
+        setPlanPurchaseId(data.purchaseId)
+        showModal(
+          'Plan Purchase Created',
+          `Send ${data.cryptoAmount} ${planCoin} from ${senderAddress} to the address below:`,
+          'success'
+        )
+      } else {
+        showToast(data.error || 'Failed to create plan purchase', 'error')
+      }
+    } catch (error) {
+      showToast('Failed to create plan purchase', 'error')
+    }
+  }
+
+  const handleVerifyPlanPurchase = async () => {
+    if (!planPurchaseId) {
+      showToast('Create a plan purchase first', 'error')
+      return
+    }
+
+    setVerifyingPlan(true)
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/plan/verify`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ purchaseId: planPurchaseId })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        if (data.status === 'completed') {
+          showToast('Plan activated successfully!', 'success')
+          fetchUserData()
+          setPlanPurchaseAddress('')
+          setPlanCryptoAmount('')
+          setPlanPurchaseId('')
+          setSenderAddress('')
+          setSelectedPlan(null)
+        } else if (data.status === 'detected') {
+          showToast(`Payment detected! ${data.confirmations}/${data.required} confirmations. Please wait...`, 'info')
+        } else {
+          showToast('Payment not yet detected on blockchain. Please check back in a few minutes.', 'info')
+        }
+      } else {
+        showToast(data.error || 'Failed to verify plan purchase', 'error')
+      }
+    } catch (error) {
+      showToast('Failed to verify plan purchase', 'error')
+    } finally {
+      setVerifyingPlan(false)
+    }
+  }
+
+  const copyPlanAddress = () => {
+    navigator.clipboard.writeText(planPurchaseAddress)
+    showToast('Address copied to clipboard', 'success')
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-osint-bg">
@@ -203,14 +319,38 @@ const Purchase = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className="text-3xl font-bold mb-1"
-              >Purchase Credits</motion.h1>
+              >Purchase</motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
                 className="text-osint-muted"
-              >Add funds to your account using cryptocurrency</motion.p>
+              >Add credits or upgrade to a plan</motion.p>
             </div>
+          </div>
+          
+          {/* Tab Switcher */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab('credits')}
+              className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                activeTab === 'credits'
+                  ? 'bg-white text-black'
+                  : 'bg-osint-bg/50 text-gray-500 hover:text-white border border-osint-border'
+              }`}
+            >
+              Purchase Credits
+            </button>
+            <button
+              onClick={() => setActiveTab('plans')}
+              className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                activeTab === 'plans'
+                  ? 'bg-white text-black'
+                  : 'bg-osint-bg/50 text-gray-500 hover:text-white border border-osint-border'
+              }`}
+            >
+              Upgrade Plan
+            </button>
           </div>
         </motion.div>
 
@@ -230,6 +370,9 @@ const Purchase = () => {
                 transition={{ delay: 0.4, type: "spring" }}
                 className="text-4xl font-bold text-white"
               >${balance}</motion.div>
+              {plan && (
+                <p className="text-sm text-osint-muted mt-2 capitalize">{plan} Plan {planExpiresAt && `(Expires: ${new Date(planExpiresAt).toLocaleDateString()})`}</p>
+              )}
             </div>
             <div className="text-right">
               <p className="text-osint-muted mb-1">Logged in as</p>
@@ -238,8 +381,9 @@ const Purchase = () => {
           </div>
         </motion.div>
 
-        {/* Deposit Form */}
-        <motion.div
+        {/* Credits Tab */}
+        {activeTab === 'credits' && (
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -351,6 +495,165 @@ const Purchase = () => {
             </div>
           </div>
         </motion.div>
+        )}
+
+        {/* Plans Tab */}
+        {activeTab === 'plans' && (
+          <>
+            {/* Plan Selection */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="glass-card rounded-2xl p-8 mb-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <i className='bx bx-crown text-3xl text-white'></i>
+                <h2 className="text-xl font-semibold">Select a Plan</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {Object.entries(PLAN_PRICING).map(([key, plan]) => (
+                  <motion.button
+                    key={key}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setSelectedPlan(key)}
+                    className={`p-6 rounded-xl border-2 transition-all ${
+                      selectedPlan === key
+                        ? 'border-white bg-white/10'
+                        : 'border-osint-border hover:border-white/50'
+                    }`}
+                  >
+                    <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                    <div className="text-3xl font-bold mb-2">${plan.price}</div>
+                    <p className="text-sm text-osint-muted mb-4">{plan.duration}</p>
+                    <div className="text-left space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-osint-muted">Daily Requests:</span>
+                        <span className="text-white font-medium">{plan.dailyRequests}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-osint-muted">IntelX Uses:</span>
+                        <span className="text-white font-medium">{plan.intelxUses}</span>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Plan Purchase Form */}
+            {selectedPlan && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="glass-card rounded-2xl p-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <i className='bx bx-shopping-cart text-3xl text-white'></i>
+                  <h2 className="text-xl font-semibold">Purchase {PLAN_PRICING[selectedPlan].name} Plan</h2>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm text-osint-muted mb-3">Select Cryptocurrency</label>
+                  <div className="grid grid-cols-5 gap-3">
+                    {Object.keys(PAYMENT_ADDRESSES).map(coin => (
+                      <button
+                        key={coin}
+                        onClick={() => setPlanCoin(coin)}
+                        className={`p-4 rounded-xl border transition-all ${
+                          planCoin === coin
+                            ? 'border-white bg-white/10 text-white'
+                            : 'border-osint-border text-gray-500 hover:border-white/50'
+                        }`}
+                      >
+                        <i className={`bx ${
+                          coin === 'BTC' ? 'bx-bitcoin' :
+                          coin === 'ETH' ? 'bx-cube' :
+                          coin === 'LTC' ? 'bx-coin' :
+                          coin === 'SOL' ? 'bx-sun' : 'bx-dollar'
+                        } text-2xl block mb-2`}></i>
+                        <span className="text-sm font-medium">{coin}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm text-osint-muted mb-3">
+                    Your Sender Address <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={senderAddress}
+                    onChange={(e) => setSenderAddress(e.target.value)}
+                    placeholder="Enter the address you'll send from"
+                    className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border rounded-xl text-osint-secondary focus:border-white focus:outline-none transition-colors"
+                  />
+                  <p className="text-xs text-osint-muted mt-2">
+                    Required for blockchain verification. This is the address you will send the payment from.
+                  </p>
+                </div>
+
+                {planPurchaseAddress && (
+                  <div className="mb-6 p-4 bg-osint-bg/50 rounded-xl border border-osint-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-sm text-osint-muted">Send {planCryptoAmount} {planCoin} from {senderAddress} to:</label>
+                      <button
+                        onClick={copyPlanAddress}
+                        className="text-xs text-white hover:text-gray-300 flex items-center gap-1"
+                      >
+                        <i className='bx bx-copy'></i> Copy
+                      </button>
+                    </div>
+                    <div className="font-mono text-sm text-white break-all mb-2">{planPurchaseAddress}</div>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCreatePlanPurchase}
+                    className="flex-1 px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-white/25 transition-all"
+                  >
+                    Create Purchase
+                  </button>
+                  {planPurchaseAddress && (
+                    <button
+                      onClick={handleVerifyPlanPurchase}
+                      disabled={verifyingPlan}
+                      className="px-6 py-3 border border-white/30 text-white rounded-xl hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {verifyingPlan ? (
+                        <span className="flex items-center gap-2">
+                          <i className='bx bx-loader-alt animate-spin'></i> Verifying
+                        </span>
+                      ) : (
+                        'Verify Payment'
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/20">
+                  <div className="flex items-start gap-3">
+                    <i className='bx bx-info-circle text-white mt-0.5'></i>
+                    <div className="text-sm text-osint-muted">
+                      <p className="mb-2"><strong className="text-osint-secondary">Important:</strong></p>
+                      <ul className="space-y-1 list-disc list-inside">
+                        <li>You must send from the exact sender address provided</li>
+                        <li>Payments are verified on the blockchain</li>
+                        <li>Confirmations required: BTC(2), LTC(6), ETH(12), SOL(32), USDT(12)</li>
+                        <li>Plan activates automatically after confirmation</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Custom Toast */}
