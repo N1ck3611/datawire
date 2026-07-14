@@ -662,9 +662,9 @@ const MANUAL_PROVIDERS = {
   osintcat: [
     { name: 'user', description: 'OsintCat user info', path: '/user', queryParam: '' },
     { name: 'breach', description: 'OsintCat breach lookup', path: '/breach', queryParam: 'query' },
-    { name: 'discord', description: 'OsintCat Discord lookup', path: '/discord', queryParam: 'id' },
-    { name: 'roblox', description: 'OsintCat Roblox lookup', path: '/roblox', queryParam: 'username' },
-    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/discord-to-roblox', queryParam: 'id' },
+    { name: 'discord', description: 'OsintCat Discord lookup', path: '/discord', queryParam: 'query' },
+    { name: 'roblox', description: 'OsintCat Roblox lookup', path: '/roblox', queryParam: 'query' },
+    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/discord-to-roblox', queryParam: 'query' },
     { name: 'email-osint', description: 'Email OSINT', path: '/email-osint', queryParam: 'email' },
     { name: 'phone-osint', description: 'Phone OSINT', path: '/phone-osint', queryParam: 'phone' },
     { name: 'ip', description: 'IP Info', path: '/ip', queryParam: 'ip' },
@@ -864,10 +864,8 @@ const MANUAL_PROVIDERS = {
   ],
   openarchive: [
     { name: 'search', description: 'Multi-source search', path: '/search', queryParam: 'query' },
-    { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' },
-    { name: 'source', description: 'Query specific source', path: '/source', queryParam: 'sourceId' },
-    { name: 'usage', description: 'API usage stats', path: '/usage', queryParam: '' },
-    { name: 'status', description: 'API status', path: '/status', queryParam: '' }
+    { name: 'source', description: 'Query OpenArchive source', path: '/source/openarchive', queryParam: 'query' },
+    { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' }
   ]
 }
 
