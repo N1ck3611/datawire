@@ -267,12 +267,45 @@ const Commands = () => {
     }))
   }
 
-  const providerIcons = {
-    datahound: 'bx-search-alt',
-    osintcat: 'bx-data',
-    noticed: 'bx-shield-quarter',
-    breachhub: 'bx-lock-alt',
-    intelx: 'bx-cloud-download'
+  const providerLogos = {
+    snusbase: 'https://logos.osint.ly/snusbase.com',
+    leakosint: 'https://www.google.com/s2/favicons?domain=leakosint.io&sz=64',
+    leakcheck: 'https://logos.osint.ly/leakcheck.io',
+    breachbase: 'https://www.google.com/s2/favicons?domain=breachbase.com&sz=64',
+    intelvault: 'https://www.google.com/s2/favicons?domain=intelvault.io&sz=64',
+    breachdirectory: 'https://logos.osint.ly/breachdirectory.org',
+    hackcheck: 'https://www.google.com/s2/favicons?domain=hackcheck.io&sz=64',
+    osintkit: 'https://www.google.com/s2/favicons?domain=osintkit.io&sz=64',
+    breachvip: 'https://www.google.com/s2/favicons?domain=breachvip.com&sz=64',
+    cordcat: 'https://www.google.com/s2/favicons?domain=cord.cat&sz=64',
+    intelx: 'https://logos.osint.ly/intelx.io',
+    osintcat: 'https://www.google.com/s2/favicons?domain=osintcat.io&sz=64',
+    xosint: 'https://www.google.com/s2/favicons?domain=xosint.io&sz=64',
+    seeknow: 'https://www.google.com/s2/favicons?domain=see-know.icu&sz=64',
+    seekria: 'https://www.google.com/s2/favicons?domain=seekria.cc&sz=64',
+    wentyn: 'https://www.google.com/s2/favicons?domain=wentyn.io&sz=64',
+    hudsonrock: 'https://logos.osint.ly/hudsonrock.com',
+    leaksight: 'https://www.google.com/s2/favicons?domain=leaksight.io&sz=64',
+    nbrs: 'https://www.google.com/s2/favicons?domain=nbrs.site&sz=64',
+    room101: 'https://www.google.com/s2/favicons?domain=think-pol.com&sz=64',
+    seon: 'https://logos.osint.ly/seon.io',
+    oathnet: 'https://www.google.com/s2/favicons?domain=oathnet.io&sz=64',
+    memory: 'https://www.google.com/s2/favicons?domain=memory.lol&sz=64',
+    nosint: 'https://www.google.com/s2/favicons?domain=nosint.org&sz=64',
+    reconly: 'https://www.google.com/s2/favicons?domain=reconly.io&sz=64',
+    tiktok: 'https://www.google.com/s2/favicons?domain=tiktok.com&sz=64',
+    binlist: 'https://www.google.com/s2/favicons?domain=binlist.net&sz=64',
+    inf0sec: 'https://www.google.com/s2/favicons?domain=inf0sec.com&sz=64',
+    vin: 'https://www.google.com/s2/favicons?domain=vindecoder.net&sz=64',
+    propertyradar: 'https://www.google.com/s2/favicons?domain=propertyradar.com&sz=64',
+    datavoid: 'https://www.google.com/s2/favicons?domain=datavoid.sh&sz=64',
+    checko: 'https://www.google.com/s2/favicons?domain=checko.io&sz=64',
+    github: 'https://logos.osint.ly/github.com',
+    discord: 'https://www.google.com/s2/favicons?domain=discord.com&sz=64',
+    telegram: 'https://www.google.com/s2/favicons?domain=telegram.org&sz=64',
+    snapchat: 'https://www.google.com/s2/favicons?domain=snapchat.com&sz=64',
+    instagram: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=64',
+    medal: 'https://www.google.com/s2/favicons?domain=medal.tv&sz=64',
   }
 
   const containerVariants = {
@@ -434,9 +467,18 @@ const Commands = () => {
                     <motion.div
                       whileHover={{ rotate: 360 }}
                       transition={{ duration: 0.6 }}
-                      className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/30"
+                      className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/30 overflow-hidden"
                     >
-                      <i className={`bx ${providerIcons[provider] || 'bx-cog'} text-2xl text-white`}></i>
+                      <img 
+                        src={providerLogos[provider] || 'https://www.google.com/s2/favicons?domain=' + provider + '.com&sz=64'}
+                        alt={provider}
+                        className="w-full h-full object-contain p-1 mix-blend-multiply"
+                        style={{ filter: 'grayscale(100%) brightness(0.7)' }}
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.parentElement.innerHTML = `<i className='bx bx-cog text-2xl text-white'></i>`
+                        }}
+                      />
                     </motion.div>
                     <div className="text-left">
                       <h3 className="font-semibold text-osint-secondary text-lg">

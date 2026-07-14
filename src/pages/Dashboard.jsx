@@ -1031,6 +1031,10 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [balance, setBalance] = useState('0.00')
+  const [plan, setPlan] = useState(null)
+  const [planExpiresAt, setPlanExpiresAt] = useState(null)
+  const [dailyCredits, setDailyCredits] = useState(0)
+  const [dailyIntelxUses, setDailyIntelxUses] = useState(0)
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
@@ -1100,6 +1104,12 @@ const Dashboard = () => {
       
       const headers = { 'Authorization': `Bearer ${token}` }
       
+      // Reset daily credits on login
+      await fetch(`${API_BASE}/api/user/resetCredits`, { 
+        method: 'POST',
+        headers 
+      })
+      
       const [profileRes, balanceRes, txRes] = await Promise.all([
         fetch(`${API_BASE}/api/user/profile`, { headers }),
         fetch(`${API_BASE}/api/user/balance`, { headers }),
@@ -1117,7 +1127,13 @@ const Dashboard = () => {
       const txData = await txRes.json()
 
       if (profileData.success) setUser(profileData.user)
-      if (balanceData.success) setBalance(balanceData.balance)
+      if (balanceData.success) {
+        setBalance(balanceData.balance)
+        setPlan(balanceData.plan)
+        setPlanExpiresAt(balanceData.planExpiresAt)
+        setDailyCredits(balanceData.dailyCredits)
+        setDailyIntelxUses(balanceData.dailyIntelxUses)
+      }
       if (txData.success) setTransactions(txData.transactions || [])
     } catch (error) {
       console.error('Failed to fetch user data:', error)
@@ -1174,6 +1190,8 @@ const Dashboard = () => {
       if (data.success) {
         setSearchResults(data.result)
         setBalance(data.balance)
+        if (data.dailyCredits !== undefined) setDailyCredits(data.dailyCredits)
+        if (data.dailyIntelxUses !== undefined) setDailyIntelxUses(data.dailyIntelxUses)
         setSearchHistory(prev => [{
           provider: selectedProvider,
           command: selectedCommand,
@@ -1475,6 +1493,8 @@ const Dashboard = () => {
       
       if (data.success) {
         setBalance(data.balance)
+        if (data.dailyCredits !== undefined) setDailyCredits(data.dailyCredits)
+        if (data.dailyIntelxUses !== undefined) setDailyIntelxUses(data.dailyIntelxUses)
         
         // Handle different response formats
         const result = data.result || data
@@ -2007,9 +2027,47 @@ Lookup made by https://datawire.cc
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate text-sm">{user?.global_name || user?.username}</p>
-              <p className="text-xs text-osint-muted font-mono">${balance} USD</p>
+              {plan ? (
+                <p className="text-xs text-osint-muted font-mono capitalize">{plan} Plan</p>
+              ) : (
+                <p className="text-xs text-osint-muted font-mono">${balance} USD</p>
+              )}
             </div>
           </div>
+          {plan && (
+            <div className="space-y-2 mb-4">
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center justify-between text-xs"
+              >
+                <span className="text-osint-muted">Daily Credits:</span>
+                <span className="text-white font-semibold font-mono">{dailyCredits}</span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="flex items-center justify-between text-xs"
+              >
+                <span className="text-osint-muted">IntelX Uses:</span>
+                <span className="text-white font-semibold font-mono">{dailyIntelxUses}</span>
+              </motion.div>
+              {planExpiresAt && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex items-center justify-between text-xs"
+                >
+                  <span className="text-osint-muted">Expires:</span>
+                  <span className="text-white font-semibold font-mono">
+                    {new Date(planExpiresAt).toLocaleDateString()}
+                  </span>
+                </motion.div>
+              )}
+            </div>
+          )}
           <div className="space-y-2">
             <button
               onClick={() => navigate('/purchase')}

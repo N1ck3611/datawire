@@ -273,8 +273,8 @@ const Home = () => {
               className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <i className='bx bx-envelope text-xl text-blue-400'></i>
+                <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center">
+                  <i className='bx bx-envelope text-xl text-white'></i>
                 </div>
                 <h3 className="font-semibold text-white">Email Lookup</h3>
               </div>
@@ -286,7 +286,7 @@ const Home = () => {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full"
+                    className="w-8 h-8 border-2 border-white border-t-transparent rounded-full"
                   />
                 </div>
               ) : results.email ? (
@@ -323,7 +323,7 @@ const Home = () => {
               ) : (
                 <button
                   onClick={() => handleSearch('email')}
-                  className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 py-3 rounded-lg font-medium transition-all duration-300"
+                  className="w-full bg-black hover:bg-white/10 text-white py-3 rounded-lg font-medium transition-all duration-300"
                 >
                   Search
                 </button>
@@ -339,8 +339,8 @@ const Home = () => {
               className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                  <i className='bx bx-user text-xl text-purple-400'></i>
+                <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center">
+                  <i className='bx bx-user text-xl text-white'></i>
                 </div>
                 <h3 className="font-semibold text-white">Username Lookup</h3>
               </div>
@@ -352,7 +352,7 @@ const Home = () => {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full"
+                    className="w-8 h-8 border-2 border-white border-t-transparent rounded-full"
                   />
                 </div>
               ) : results.username ? (
@@ -393,7 +393,7 @@ const Home = () => {
               ) : (
                 <button
                   onClick={() => handleSearch('username')}
-                  className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 py-3 rounded-lg font-medium transition-all duration-300"
+                  className="w-full bg-black hover:bg-white/10 text-white py-3 rounded-lg font-medium transition-all duration-300"
                 >
                   Search
                 </button>
@@ -409,8 +409,8 @@ const Home = () => {
               className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all duration-300 shadow-xl"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                  <i className='bx bx-globe text-xl text-orange-400'></i>
+                <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center">
+                  <i className='bx bx-globe text-xl text-white'></i>
                 </div>
                 <h3 className="font-semibold text-white">IP Lookup</h3>
               </div>
@@ -422,7 +422,7 @@ const Home = () => {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 border-2 border-orange-400 border-t-transparent rounded-full"
+                    className="w-8 h-8 border-2 border-white border-t-transparent rounded-full"
                   />
                 </div>
               ) : results.ip ? (
@@ -463,7 +463,7 @@ const Home = () => {
               ) : (
                 <button
                   onClick={() => handleSearch('ip')}
-                  className="w-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 py-3 rounded-lg font-medium transition-all duration-300"
+                  className="w-full bg-black hover:bg-white/10 text-white py-3 rounded-lg font-medium transition-all duration-300"
                 >
                   Search
                 </button>
