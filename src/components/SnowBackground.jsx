@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import React from 'react'
 
 const SnowBackground = () => {
   const canvasRef = useRef(null)

@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import React from 'react'
 
 const InteractiveBackground = () => {
   const containerRef = useRef(null)

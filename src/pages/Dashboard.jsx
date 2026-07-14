@@ -115,7 +115,7 @@ const PROVIDER_CATEGORIES = {
   other: {
     label: 'Other',
     icon: 'bx-dots-horizontal-rounded',
-    providers: ['intelx', 'osintcat', 'hudsonrock', 'leaksight', 'nbrs', 'room101', 'seon', 'memory', 'nosint', 'reconly', 'binlist', 'inf0sec', 'vin', 'propertyradar', 'datavoid', 'checko', 'medal', 'openarchive']
+    providers: ['intelx', 'osintcat', 'hudsonrock', 'leaksight', 'nbrs', 'room101', 'seon', 'memory', 'nosint', 'reconly', 'binlist', 'inf0sec', 'vin', 'propertyradar', 'datavoid', 'checko', 'medal', 'openarchive', 'wolfeye']
   }
 }
 
@@ -171,6 +171,7 @@ const PROVIDER_LOGOS = {
   instagram: 'bx-instagram',
   medal: 'https://www.google.com/s2/favicons?domain=medal.tv&sz=64',
   openarchive: 'https://www.google.com/s2/favicons?domain=openarchive.lol&sz=64',
+  wolfeye: 'https://www.wolfeye.xyz/logo.png',
   ip: 'https://www.google.com/s2/favicons?domain=ipinfo.io&sz=64',
   domain: 'https://www.google.com/s2/favicons?domain=who.is&sz=64',
   dns: 'https://www.google.com/s2/favicons?domain=dns.google&sz=64',
@@ -868,6 +869,14 @@ const MANUAL_PROVIDERS = {
     { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' },
     { name: 'usage', description: 'API usage statistics', path: '/usage', queryParam: '' },
     { name: 'status', description: 'API operational status', path: '/status', queryParam: '' }
+  ],
+  wolfeye: [
+    { name: 'health', description: 'Health check', path: '/health', queryParam: '' },
+    { name: 'status', description: 'Plan and usage status', path: '/status', queryParam: '' },
+    { name: 'search', description: 'OSINT search', path: '/search', queryParam: 'q' },
+    { name: 'analytics', description: 'Search statistics and history', path: '/analytics', queryParam: '' },
+    { name: 'horus-modules', description: 'List Horus modules', path: '/horus/modules', queryParam: '' },
+    { name: 'analyze', description: 'Folder/file analysis', path: '/analyze', queryParam: '' }
   ]
 }
 

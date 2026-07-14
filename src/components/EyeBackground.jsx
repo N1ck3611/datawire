@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import React from 'react'
 
 const EyeBackground = () => {
   const mouseX = useMotionValue(0)
