@@ -40,7 +40,7 @@ const Purchase = () => {
   const PLAN_PRICING = {
     weekly: { price: 10, name: 'Weekly', duration: '7 days', dailyRequests: 50, intelxUses: 0 },
     monthly: { price: 25, name: 'Monthly', duration: '30 days', dailyRequests: 250, intelxUses: 20 },
-    lifetime: { price: 80, name: 'Lifetime', duration: '10 years', dailyRequests: 1000, intelxUses: 100 }
+    lifetime: { price: 80, name: 'Lifetime', duration: 'Lifetime', dailyRequests: 1000, intelxUses: 100 }
   }
 
   const showToast = (message, type = 'info') => {
@@ -294,46 +294,46 @@ const Purchase = () => {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-8"
+          className="mb-6"
         >
           <motion.button
             whileHover={{ x: -5 }}
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-4 group"
+            className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-3 group"
           >
             <i className='bx bx-arrow-back group-hover:-translate-x-1 transition-transform'></i>
             Back to Dashboard
           </motion.button>
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-3 mb-3">
             <motion.img 
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
               alt="Datawire.cc" 
-              className="w-16 h-16"
+              className="w-12 h-12"
             />
             <div>
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-3xl font-bold mb-1"
+                className="text-2xl font-bold mb-1"
               >Purchase</motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-osint-muted"
+                className="text-osint-muted text-sm"
               >Add credits or upgrade to a plan</motion.p>
             </div>
           </div>
           
           {/* Tab Switcher */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-2 mb-4">
             <button
               onClick={() => setActiveTab('credits')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
                 activeTab === 'credits'
                   ? 'bg-white text-black'
                   : 'bg-osint-bg/50 text-gray-500 hover:text-white border border-osint-border'
@@ -343,7 +343,7 @@ const Purchase = () => {
             </button>
             <button
               onClick={() => setActiveTab('plans')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
                 activeTab === 'plans'
                   ? 'bg-white text-black'
                   : 'bg-osint-bg/50 text-gray-500 hover:text-white border border-osint-border'
@@ -359,7 +359,7 @@ const Purchase = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-card rounded-2xl p-8 mb-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+          className="glass-card rounded-2xl p-5 mb-6 border border-osint-border hover:border-white/30 transition-all duration-300"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -387,25 +387,25 @@ const Purchase = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="glass-card rounded-2xl p-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+          className="glass-card rounded-2xl p-5 border border-osint-border hover:border-white/30 transition-all duration-300"
         >
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3 mb-4">
             <motion.i
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className='bx bx-bitcoin text-3xl text-white'
+              className='bx bx-bitcoin text-2xl text-white'
             ></motion.i>
-            <h2 className="text-xl font-semibold">Create Deposit</h2>
+            <h2 className="text-lg font-semibold">Create Deposit</h2>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm text-osint-muted mb-3">Select Cryptocurrency</label>
-            <div className="grid grid-cols-5 gap-3">
+          <div className="mb-4">
+            <label className="block text-xs text-osint-muted mb-2">Select Cryptocurrency</label>
+            <div className="grid grid-cols-5 gap-2">
               {Object.keys(PAYMENT_ADDRESSES).map(coin => (
                 <button
                   key={coin}
                   onClick={() => setSelectedCoin(coin)}
-                  className={`p-4 rounded-xl border transition-all ${
+                  className={`p-3 rounded-lg border transition-all ${
                     selectedCoin === coin
                       ? 'border-white bg-white/10 text-white'
                       : 'border-osint-border text-gray-500 hover:border-white/50'
@@ -416,15 +416,15 @@ const Purchase = () => {
                     coin === 'ETH' ? 'bx-cube' :
                     coin === 'LTC' ? 'bx-coin' :
                     coin === 'SOL' ? 'bx-sun' : 'bx-dollar'
-                  } text-2xl block mb-2`}></i>
-                  <span className="text-sm font-medium">{coin}</span>
+                  } text-xl block mb-1`}></i>
+                  <span className="text-xs font-medium">{coin}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm text-osint-muted mb-3">Amount (USD)</label>
+          <div className="mb-4">
+            <label className="block text-xs text-osint-muted mb-2">Amount (USD)</label>
             <input
               type="number"
               min="1"
@@ -432,14 +432,14 @@ const Purchase = () => {
               value={depositAmount}
               onChange={(e) => setDepositAmount(e.target.value)}
               placeholder="Min $1.00"
-              className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border rounded-xl text-osint-secondary focus:border-white focus:outline-none transition-colors"
+              className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border rounded-lg text-osint-secondary focus:border-white focus:outline-none transition-colors text-sm"
             />
           </div>
 
           {depositAddress && (
-            <div className="mb-6 p-4 bg-osint-bg/50 rounded-xl border border-osint-border">
+            <div className="mb-4 p-3 bg-osint-bg/50 rounded-lg border border-osint-border">
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm text-osint-muted">Send to:</label>
+                <label className="text-xs text-osint-muted">Send to:</label>
                 <button
                   onClick={copyAddress}
                   className="text-xs text-white hover:text-gray-300 flex items-center gap-1"
@@ -447,19 +447,19 @@ const Purchase = () => {
                   <i className='bx bx-copy'></i> Copy
                 </button>
               </div>
-              <div className="font-mono text-sm text-white break-all mb-2">{depositAddress}</div>
+              <div className="font-mono text-xs text-white break-all mb-2">{depositAddress}</div>
               {cryptoAmount && (
-                <div className="text-sm text-osint-muted">
+                <div className="text-xs text-osint-muted">
                   Amount to send: <span className="text-osint-secondary font-medium">{cryptoAmount} {selectedCoin}</span>
                 </div>
               )}
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button
               onClick={handleCreateDeposit}
-              className="flex-1 px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-white/25 transition-all"
+              className="flex-1 px-4 py-2 bg-white hover:bg-gray-200 text-black font-semibold rounded-lg hover:shadow-lg hover:shadow-white/25 transition-all text-sm"
             >
               Create Deposit
             </button>
@@ -467,7 +467,7 @@ const Purchase = () => {
               <button
                 onClick={handleVerifyPayment}
                 disabled={verifying}
-                className="px-6 py-3 border border-white/30 text-white rounded-xl hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-white/30 text-white rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {verifying ? (
                   <span className="flex items-center gap-2">
@@ -480,11 +480,11 @@ const Purchase = () => {
             )}
           </div>
 
-          <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/20">
-            <div className="flex items-start gap-3">
-              <i className='bx bx-info-circle text-white mt-0.5'></i>
-              <div className="text-sm text-osint-muted">
-                <p className="mb-2"><strong className="text-osint-secondary">Important:</strong></p>
+          <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/20">
+            <div className="flex items-start gap-2">
+              <i className='bx bx-info-circle text-white mt-0.5 text-sm'></i>
+              <div className="text-xs text-osint-muted">
+                <p className="mb-1"><strong className="text-osint-secondary">Important:</strong></p>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>Minimum deposit: $1.00 USD</li>
                   <li>Payments are verified on the blockchain</li>
@@ -505,35 +505,35 @@ const Purchase = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="glass-card rounded-2xl p-8 mb-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+              className="glass-card rounded-2xl p-5 mb-6 border border-osint-border hover:border-white/30 transition-all duration-300"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <i className='bx bx-crown text-3xl text-white'></i>
-                <h2 className="text-xl font-semibold">Select a Plan</h2>
+              <div className="flex items-center gap-3 mb-4">
+                <i className='bx bx-crown text-2xl text-white'></i>
+                <h2 className="text-lg font-semibold">Select a Plan</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 {Object.entries(PLAN_PRICING).map(([key, plan]) => (
                   <motion.button
                     key={key}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedPlan(key)}
-                    className={`p-6 rounded-xl border-2 transition-all ${
+                    className={`p-4 rounded-xl border-2 transition-all ${
                       selectedPlan === key
                         ? 'border-white bg-white/10'
                         : 'border-osint-border hover:border-white/50'
                     }`}
                   >
-                    <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                    <div className="text-3xl font-bold mb-2">${plan.price}</div>
-                    <p className="text-sm text-osint-muted mb-4">{plan.duration}</p>
-                    <div className="text-left space-y-2">
-                      <div className="flex justify-between text-sm">
+                    <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
+                    <div className="text-2xl font-bold mb-1">${plan.price}</div>
+                    <p className="text-xs text-osint-muted mb-3">{plan.duration}</p>
+                    <div className="text-left space-y-1">
+                      <div className="flex justify-between text-xs">
                         <span className="text-osint-muted">Daily Requests:</span>
                         <span className="text-white font-medium">{plan.dailyRequests}</span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs">
                         <span className="text-osint-muted">IntelX Uses:</span>
                         <span className="text-white font-medium">{plan.intelxUses}</span>
                       </div>
@@ -549,21 +549,21 @@ const Purchase = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="glass-card rounded-2xl p-8 border border-osint-border hover:border-white/30 transition-all duration-300"
+                className="glass-card rounded-2xl p-5 border border-osint-border hover:border-white/30 transition-all duration-300"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <i className='bx bx-shopping-cart text-3xl text-white'></i>
-                  <h2 className="text-xl font-semibold">Purchase {PLAN_PRICING[selectedPlan].name} Plan</h2>
+                <div className="flex items-center gap-3 mb-4">
+                  <i className='bx bx-shopping-cart text-2xl text-white'></i>
+                  <h2 className="text-lg font-semibold">Purchase {PLAN_PRICING[selectedPlan].name} Plan</h2>
                 </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm text-osint-muted mb-3">Select Cryptocurrency</label>
-                  <div className="grid grid-cols-5 gap-3">
+                <div className="mb-4">
+                  <label className="block text-xs text-osint-muted mb-2">Select Cryptocurrency</label>
+                  <div className="grid grid-cols-5 gap-2">
                     {Object.keys(PAYMENT_ADDRESSES).map(coin => (
                       <button
                         key={coin}
                         onClick={() => setPlanCoin(coin)}
-                        className={`p-4 rounded-xl border transition-all ${
+                        className={`p-3 rounded-lg border transition-all ${
                           planCoin === coin
                             ? 'border-white bg-white/10 text-white'
                             : 'border-osint-border text-gray-500 hover:border-white/50'
@@ -574,15 +574,15 @@ const Purchase = () => {
                           coin === 'ETH' ? 'bx-cube' :
                           coin === 'LTC' ? 'bx-coin' :
                           coin === 'SOL' ? 'bx-sun' : 'bx-dollar'
-                        } text-2xl block mb-2`}></i>
-                        <span className="text-sm font-medium">{coin}</span>
+                        } text-xl block mb-1`}></i>
+                        <span className="text-xs font-medium">{coin}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm text-osint-muted mb-3">
+                <div className="mb-4">
+                  <label className="block text-xs text-osint-muted mb-2">
                     Your Sender Address <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -590,17 +590,17 @@ const Purchase = () => {
                     value={senderAddress}
                     onChange={(e) => setSenderAddress(e.target.value)}
                     placeholder="Enter the address you'll send from"
-                    className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border rounded-xl text-osint-secondary focus:border-white focus:outline-none transition-colors"
+                    className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border rounded-lg text-osint-secondary focus:border-white focus:outline-none transition-colors text-sm"
                   />
-                  <p className="text-xs text-osint-muted mt-2">
+                  <p className="text-xs text-osint-muted mt-1">
                     Required for blockchain verification. This is the address you will send the payment from.
                   </p>
                 </div>
 
                 {planPurchaseAddress && (
-                  <div className="mb-6 p-4 bg-osint-bg/50 rounded-xl border border-osint-border">
+                  <div className="mb-4 p-3 bg-osint-bg/50 rounded-lg border border-osint-border">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="text-sm text-osint-muted">Send {planCryptoAmount} {planCoin} from {senderAddress} to:</label>
+                      <label className="text-xs text-osint-muted">Send {planCryptoAmount} {planCoin} from {senderAddress} to:</label>
                       <button
                         onClick={copyPlanAddress}
                         className="text-xs text-white hover:text-gray-300 flex items-center gap-1"
@@ -608,14 +608,14 @@ const Purchase = () => {
                         <i className='bx bx-copy'></i> Copy
                       </button>
                     </div>
-                    <div className="font-mono text-sm text-white break-all mb-2">{planPurchaseAddress}</div>
+                    <div className="font-mono text-xs text-white break-all mb-2">{planPurchaseAddress}</div>
                   </div>
                 )}
 
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     onClick={handleCreatePlanPurchase}
-                    className="flex-1 px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-white/25 transition-all"
+                    className="flex-1 px-4 py-2 bg-white hover:bg-gray-200 text-black font-semibold rounded-lg hover:shadow-lg hover:shadow-white/25 transition-all text-sm"
                   >
                     Create Purchase
                   </button>
@@ -623,7 +623,7 @@ const Purchase = () => {
                     <button
                       onClick={handleVerifyPlanPurchase}
                       disabled={verifyingPlan}
-                      className="px-6 py-3 border border-white/30 text-white rounded-xl hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 border border-white/30 text-white rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                     >
                       {verifyingPlan ? (
                         <span className="flex items-center gap-2">
@@ -636,11 +636,11 @@ const Purchase = () => {
                   )}
                 </div>
 
-                <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/20">
-                  <div className="flex items-start gap-3">
-                    <i className='bx bx-info-circle text-white mt-0.5'></i>
-                    <div className="text-sm text-osint-muted">
-                      <p className="mb-2"><strong className="text-osint-secondary">Important:</strong></p>
+                <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/20">
+                  <div className="flex items-start gap-2">
+                    <i className='bx bx-info-circle text-white mt-0.5 text-sm'></i>
+                    <div className="text-xs text-osint-muted">
+                      <p className="mb-1"><strong className="text-osint-secondary">Important:</strong></p>
                       <ul className="space-y-1 list-disc list-inside">
                         <li>You must send from the exact sender address provided</li>
                         <li>Payments are verified on the blockchain</li>

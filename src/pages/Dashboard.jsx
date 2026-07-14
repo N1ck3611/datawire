@@ -1040,6 +1040,8 @@ const Dashboard = () => {
   const [toast, setToast] = useState(null)
   const [activeTab, setActiveTab] = useState('search')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [timeRemaining, setTimeRemaining] = useState(null)
+  const [expiredModal, setExpiredModal] = useState(false)
   
   // OSINT Search State
   const [providers, setProviders] = useState(null)
@@ -1091,6 +1093,30 @@ const Dashboard = () => {
     fetchUserData()
     fetchProviders()
   }, [])
+
+  useEffect(() => {
+    if (planExpiresAt) {
+      const checkExpiration = () => {
+        const now = new Date()
+        const expires = new Date(planExpiresAt)
+        const diff = expires - now
+        
+        if (diff <= 0) {
+          setTimeRemaining(null)
+          setExpiredModal(true)
+        } else {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+          setTimeRemaining(`${days}d ${hours}h ${minutes}m`)
+        }
+      }
+      
+      checkExpiration()
+      const interval = setInterval(checkExpiration, 60000)
+      return () => clearInterval(interval)
+    }
+  }, [planExpiresAt])
 
   const fetchUserData = async () => {
     try {
@@ -2062,7 +2088,7 @@ Lookup made by https://datawire.cc
                 >
                   <span className="text-osint-muted">Expires:</span>
                   <span className="text-white font-semibold font-mono">
-                    {new Date(planExpiresAt).toLocaleDateString()}
+                    {timeRemaining || new Date(planExpiresAt).toLocaleDateString()}
                   </span>
                 </motion.div>
               )}
@@ -3064,6 +3090,40 @@ Lookup made by https://datawire.cc
               toast.type === 'error' ? 'bx-x-circle' : 'bx-info-circle'
             } text-xl`}></i>
             <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Plan Expired Modal */}
+      {expiredModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[300]">
+          <div className="glass-card rounded-2xl p-8 max-w-md w-full mx-4 border border-osint-border animate-fade-in">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+                <i className='bx bx-time text-3xl text-red-400'></i>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Plan Expired</h3>
+              <p className="text-osint-muted">
+                Your {plan} plan has expired. Your daily credits have been reset to 0.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setExpiredModal(false)
+                  navigate('/purchase')
+                }}
+                className="w-full px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all"
+              >
+                Renew Plan
+              </button>
+              <button
+                onClick={() => setExpiredModal(false)}
+                className="w-full px-6 py-3 border border-osint-border text-osint-secondary hover:bg-osint-bg/50 rounded-xl transition-all"
+              >
+                Continue to Dashboard
+              </button>
+            </div>
           </div>
         </div>
       )}

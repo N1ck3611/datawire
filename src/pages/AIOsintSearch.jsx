@@ -174,7 +174,7 @@ const AIOsintSearch = () => {
       <div className="glass-card p-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-1 h-8 bg-white animate-pulse-glow"></div>
-          <h2 className="text-2xl font-bold text-white">AI OSINT Search</h2>
+          <h2 className="text-2xl font-bold text-white">Live Intel</h2>
         </div>
         <p className="text-osint-muted text-sm">
           Intelligent OSINT investigation powered by AI. Enter identifiers below and let our AI orchestrator analyze across multiple sources.
@@ -529,7 +529,7 @@ const AIOsintSearch = () => {
                       </div>
                       {item.identifier && <p className="text-osint-muted text-xs mb-1">Identifier: {item.identifier}</p>}
                       {item.data && (
-                        <div className="bg-black/30 rounded p-3 mt-2 overflow-x-auto">
+                        <div className="bg-black/30 rounded p-3 mt-2 overflow-auto max-h-64">
                           <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">
                             {typeof item.data === 'string' ? item.data : JSON.stringify(item.data, null, 2)}
                           </pre>
