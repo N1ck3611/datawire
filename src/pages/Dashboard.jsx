@@ -619,249 +619,249 @@ const SEARCH_COST = '0.10'
 // Manual provider definitions - matching newapi.txt exactly
 const MANUAL_PROVIDERS = {
   snusbase: [
-    { name: 'search', description: 'Snusbase search', path: '/snusbase', queryParam: 'query' },
-    { name: 'combo-lookup', description: 'Combo lookup', path: '/snusbase/combo-lookup', queryParam: 'query' },
-    { name: 'hash-lookup', description: 'Hash lookup', path: '/snusbase/hash-lookup', queryParam: 'hash' },
-    { name: 'ip-whois', description: 'IP WHOIS', path: '/snusbase/ip-whois', queryParam: 'ip' }
+    { name: 'search', description: 'Snusbase search', path: '/snusbase', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'combo-lookup', description: 'Combo lookup', path: '/snusbase/combo-lookup', queryParam: 'query', inputType: 'text', example: 'username:password' },
+    { name: 'hash-lookup', description: 'Hash lookup', path: '/snusbase/hash-lookup', queryParam: 'hash', inputType: 'text', example: 'md5_hash' },
+    { name: 'ip-whois', description: 'IP WHOIS', path: '/snusbase/ip-whois', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' }
   ],
   leakosint: [
-    { name: 'search', description: 'LeakOSint search', path: '/leakosint', queryParam: 'query' }
+    { name: 'search', description: 'LeakOSint search', path: '/leakosint', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   leakcheck: [
     { name: 'search', description: 'LeakCheck V2', path: '/leakcheck/v2', queryParam: 'query' }
   ],
   breachbase: [
-    { name: 'search', description: 'BreachBase search', path: '/breachbase', queryParam: 'query' }
+    { name: 'search', description: 'BreachBase search', path: '/breachbase', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   intelvault: [
-    { name: 'search', description: 'IntelVault search', path: '/intelvault', queryParam: 'query' },
-    { name: 'breaches', description: 'IntelVault breaches', path: '/intelvault/breaches', queryParam: 'query' },
-    { name: 'stealer-logs', description: 'IntelVault stealer logs', path: '/intelvault/stealer-logs', queryParam: 'query' }
+    { name: 'search', description: 'IntelVault search', path: '/intelvault', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'breaches', description: 'IntelVault breaches', path: '/intelvault/breaches', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'stealer-logs', description: 'IntelVault stealer logs', path: '/intelvault/stealer-logs', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   breachdirectory: [
-    { name: 'search', description: 'BreachDirectory search', path: '/breachdirectory', queryParam: 'query' }
+    { name: 'search', description: 'BreachDirectory search', path: '/breachdirectory', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   hackcheck: [
     { name: 'search', description: 'HackCheck search', path: '/hackcheck', queryParam: 'query' }
   ],
   osintkit: [
-    { name: 'search', description: 'OSINTKit search', path: '/osintkit', queryParam: 'query' }
+    { name: 'search', description: 'OSINTKit search', path: '/osintkit', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   breachvip: [
-    { name: 'search', description: 'BreachVIP search', path: '/breachvip', queryParam: 'query' }
+    { name: 'search', description: 'BreachVIP search', path: '/breachvip', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   cordcat: [
-    { name: 'search', description: 'Cordcat search', path: '/cordcat', queryParam: 'query' },
-    { name: 'user', description: 'Cordcat user', path: '/cordcat/user', queryParam: 'id' },
-    { name: 'invite', description: 'Cordcat invite', path: '/cordcat/invite', queryParam: 'code' },
-    { name: 'guild-widget', description: 'Cordcat guild widget', path: '/cordcat/guild-widget', queryParam: 'id' },
-    { name: 'ip', description: 'Cordcat IP', path: '/cordcat/ip', queryParam: 'ip' }
+    { name: 'search', description: 'Cordcat search', path: '/cordcat', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'user', description: 'Cordcat user', path: '/cordcat/user', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'invite', description: 'Cordcat invite', path: '/cordcat/invite', queryParam: 'code', inputType: 'text', example: 'invite_code' },
+    { name: 'guild-widget', description: 'Cordcat guild widget', path: '/cordcat/guild-widget', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'ip', description: 'Cordcat IP', path: '/cordcat/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' }
   ],
   intelx: [
-    { name: 'download', description: 'IntelX file download', path: '/intelx', queryParam: 'query' }
+    { name: 'download', description: 'IntelX file download', path: '/intelx', queryParam: 'query', inputType: 'text', example: 'search query' }
   ],
   osintcat: [
-    { name: 'user', description: 'OsintCat user info', path: '/user', queryParam: '' },
-    { name: 'breach', description: 'OsintCat breach lookup', path: '/breach', queryParam: 'query' },
-    { name: 'discord', description: 'OsintCat Discord lookup', path: '/discord', queryParam: 'query' },
-    { name: 'roblox', description: 'OsintCat Roblox lookup', path: '/roblox', queryParam: 'query' },
-    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/discord-to-roblox', queryParam: 'query' },
-    { name: 'email-osint', description: 'Email OSINT', path: '/email-osint', queryParam: 'email' },
-    { name: 'phone-osint', description: 'Phone OSINT', path: '/phone-osint', queryParam: 'phone' },
-    { name: 'ip', description: 'IP Info', path: '/ip', queryParam: 'ip' },
-    { name: 'dns-resolver', description: 'DNS Resolver', path: '/dns-resolver', queryParam: 'domain' },
-    { name: 'domain', description: 'Domain lookup', path: '/domain', queryParam: 'domain' },
-    { name: 'user-footprint', description: 'Username footprint', path: '/user-footprint', queryParam: 'username' },
-    { name: 'email-footprint', description: 'Email footprint', path: '/email-footprint', queryParam: 'email' },
-    { name: 'minecraft', description: 'Minecraft lookup', path: '/minecraft', queryParam: 'username' },
-    { name: 'minecraft-osint', description: 'Minecraft OSINT', path: '/minecraft-osint', queryParam: 'username' },
-    { name: 'vin', description: 'VIN lookup', path: '/vin', queryParam: 'vin' }
+    { name: 'user', description: 'OsintCat user info', path: '/user', queryParam: '', inputType: 'none', example: '' },
+    { name: 'breach', description: 'OsintCat breach lookup', path: '/breach', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'discord', description: 'OsintCat Discord lookup', path: '/discord', queryParam: 'query', inputType: 'text', example: 'username or ID' },
+    { name: 'roblox', description: 'OsintCat Roblox lookup', path: '/roblox', queryParam: 'query', inputType: 'text', example: 'username' },
+    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/discord-to-roblox', queryParam: 'query', inputType: 'text', example: '123456789012345678' },
+    { name: 'email-osint', description: 'Email OSINT', path: '/email-osint', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'phone-osint', description: 'Phone OSINT', path: '/phone-osint', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'ip', description: 'IP Info', path: '/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'dns-resolver', description: 'DNS Resolver', path: '/dns-resolver', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'domain', description: 'Domain lookup', path: '/domain', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'user-footprint', description: 'Username footprint', path: '/user-footprint', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'email-footprint', description: 'Email footprint', path: '/email-footprint', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'minecraft', description: 'Minecraft lookup', path: '/minecraft', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'minecraft-osint', description: 'Minecraft OSINT', path: '/minecraft-osint', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'vin', description: 'VIN lookup', path: '/vin', queryParam: 'vin', inputType: 'text', example: '1HGCM82633A123456' }
   ],
   xosint: [
-    { name: 'search', description: 'XOSINT search', path: '/xosint/search', queryParam: 'query' }
+    { name: 'search', description: 'XOSINT search', path: '/xosint/search', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   seeknow: [
-    { name: 'search', description: 'Seeknow search', path: '/seeknow/search', queryParam: 'query', method: 'POST' },
-    { name: 'stealer', description: 'Seeknow stealer', path: '/seeknow/stealer', queryParam: 'query', method: 'POST' },
-    { name: 'discord-user', description: 'Discord user', path: '/seeknow/discord/user', queryParam: 'id' },
-    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/seeknow/discord/to-roblox', queryParam: 'id' },
-    { name: 'github', description: 'GitHub username', path: '/seeknow/username/github', queryParam: 'username' },
-    { name: 'twitter', description: 'Twitter username', path: '/seeknow/username/twitter', queryParam: 'username' },
-    { name: 'tiktok', description: 'TikTok username', path: '/seeknow/username/tiktok', queryParam: 'username' },
-    { name: 'reddit', description: 'Reddit username', path: '/seeknow/username/reddit', queryParam: 'username' },
-    { name: 'social', description: 'Social username', path: '/seeknow/username/social', queryParam: 'username' },
-    { name: 'history', description: 'Username history', path: '/seeknow/username/history', queryParam: 'username' },
-    { name: 'network-ip', description: 'Network IP', path: '/seeknow/network/ip', queryParam: 'ip' },
-    { name: 'network-email-check', description: 'Network email check', path: '/seeknow/network/email-check', queryParam: 'email' },
-    { name: 'network-phone', description: 'Network phone', path: '/seeknow/network/phone', queryParam: 'phone' },
-    { name: 'domain-intel', description: 'Domain intel', path: '/seeknow/domain/intel', queryParam: 'domain' },
-    { name: 'domain-whois', description: 'Domain WHOIS', path: '/seeknow/domain/whois', queryParam: 'domain' },
-    { name: 'xbox', description: 'Xbox gamertag', path: '/seeknow/gaming/xbox', queryParam: 'gamertag' },
-    { name: 'roblox', description: 'Roblox username', path: '/seeknow/gaming/roblox', queryParam: 'username' },
-    { name: 'minecraft', description: 'Minecraft username', path: '/seeknow/gaming/minecraft', queryParam: 'username' }
+    { name: 'search', description: 'Seeknow search', path: '/seeknow/search', queryParam: 'query', method: 'POST', inputType: 'text', example: 'username or email' },
+    { name: 'stealer', description: 'Seeknow stealer', path: '/seeknow/stealer', queryParam: 'query', method: 'POST', inputType: 'text', example: 'username or email' },
+    { name: 'discord-user', description: 'Discord user', path: '/seeknow/discord/user', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/seeknow/discord/to-roblox', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'github', description: 'GitHub username', path: '/seeknow/username/github', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'twitter', description: 'Twitter username', path: '/seeknow/username/twitter', queryParam: 'username', inputType: 'text', example: '@username' },
+    { name: 'tiktok', description: 'TikTok username', path: '/seeknow/username/tiktok', queryParam: 'username', inputType: 'text', example: '@username' },
+    { name: 'reddit', description: 'Reddit username', path: '/seeknow/username/reddit', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'social', description: 'Social username', path: '/seeknow/username/social', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'history', description: 'Username history', path: '/seeknow/username/history', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'network-ip', description: 'Network IP', path: '/seeknow/network/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'network-email-check', description: 'Network email check', path: '/seeknow/network/email-check', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'network-phone', description: 'Network phone', path: '/seeknow/network/phone', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'domain-intel', description: 'Domain intel', path: '/seeknow/domain/intel', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'domain-whois', description: 'Domain WHOIS', path: '/seeknow/domain/whois', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'xbox', description: 'Xbox gamertag', path: '/seeknow/gaming/xbox', queryParam: 'gamertag', inputType: 'text', example: 'Gamertag' },
+    { name: 'roblox', description: 'Roblox username', path: '/seeknow/gaming/roblox', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'minecraft', description: 'Minecraft username', path: '/seeknow/gaming/minecraft', queryParam: 'username', inputType: 'text', example: 'Steve123' }
   ],
   seekria: [
-    { name: 'user-footprint', description: 'User footprint', path: '/seekria/user-footprint', queryParam: 'query' },
-    { name: 'email-osint', description: 'Email OSINT', path: '/seekria/email-osint', queryParam: 'email' },
-    { name: 'domain-lookup', description: 'Domain lookup', path: '/seekria/domain-lookup', queryParam: 'domain' },
-    { name: 'discord', description: 'Discord', path: '/seekria/discord', queryParam: 'id' },
-    { name: 'roblox', description: 'Roblox', path: '/seekria/roblox', queryParam: 'username' },
-    { name: 'minecraft', description: 'Minecraft', path: '/seekria/minecraft', queryParam: 'username' },
-    { name: 'ip', description: 'IP', path: '/seekria/ip', queryParam: 'ip' },
-    { name: 'dns-resolver', description: 'DNS resolver', path: '/seekria/dns-resolver', queryParam: 'domain' },
-    { name: 'email-breach', description: 'Email breach', path: '/seekria/email-breach', queryParam: 'email' },
-    { name: 'username-breach', description: 'Username breach', path: '/seekria/username-breach', queryParam: 'username' },
-    { name: 'phone-breach', description: 'Phone breach', path: '/seekria/phone-breach', queryParam: 'phone' },
-    { name: 'discord-profile', description: 'Discord profile', path: '/seekria/discord-profile', queryParam: 'id' },
-    { name: 'discord-to-rat', description: 'Discord to RAT', path: '/seekria/discord-to-rat', queryParam: 'id' },
-    { name: 'fivem', description: 'FiveM', path: '/seekria/fivem', queryParam: 'identifier' },
-    { name: 'minecraft-osint', description: 'Minecraft OSINT', path: '/seekria/minecraft-osint', queryParam: 'username' },
-    { name: 'name-history', description: 'Name history', path: '/seekria/name-history', queryParam: 'uuid' },
-    { name: 'laby-stats', description: 'Laby stats', path: '/seekria/laby-stats', queryParam: 'username' },
-    { name: 'minecraft-texture', description: 'Minecraft texture', path: '/seekria/minecraft-texture', queryParam: 'uuid' },
-    { name: 'tiktok-lookup', description: 'TikTok lookup', path: '/seekria/tiktok-lookup', queryParam: 'username' },
-    { name: 'tiktok-breach', description: 'TikTok breach', path: '/seekria/tiktok-breach', queryParam: 'username' },
-    { name: 'snusbase-breach', description: 'Snusbase breach', path: '/seekria/snusbase-breach', queryParam: 'query' },
-    { name: 'leakcheck-breach', description: 'LeakCheck breach', path: '/seekria/leakcheck-breach', queryParam: 'query' }
+    { name: 'user-footprint', description: 'User footprint', path: '/seekria/user-footprint', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'email-osint', description: 'Email OSINT', path: '/seekria/email-osint', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'domain-lookup', description: 'Domain lookup', path: '/seekria/domain-lookup', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'discord', description: 'Discord', path: '/seekria/discord', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'roblox', description: 'Roblox', path: '/seekria/roblox', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'minecraft', description: 'Minecraft', path: '/seekria/minecraft', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'ip', description: 'IP', path: '/seekria/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'dns-resolver', description: 'DNS resolver', path: '/seekria/dns-resolver', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'email-breach', description: 'Email breach', path: '/seekria/email-breach', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'username-breach', description: 'Username breach', path: '/seekria/username-breach', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'phone-breach', description: 'Phone breach', path: '/seekria/phone-breach', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'discord-profile', description: 'Discord profile', path: '/seekria/discord-profile', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'discord-to-rat', description: 'Discord to RAT', path: '/seekria/discord-to-rat', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'fivem', description: 'FiveM', path: '/seekria/fivem', queryParam: 'identifier', inputType: 'text', example: 'license:abc123' },
+    { name: 'minecraft-osint', description: 'Minecraft OSINT', path: '/seekria/minecraft-osint', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'name-history', description: 'Name history', path: '/seekria/name-history', queryParam: 'uuid', inputType: 'text', example: 'uuid' },
+    { name: 'laby-stats', description: 'Laby stats', path: '/seekria/laby-stats', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'minecraft-texture', description: 'Minecraft texture', path: '/seekria/minecraft-texture', queryParam: 'uuid', inputType: 'text', example: 'uuid' },
+    { name: 'tiktok-lookup', description: 'TikTok lookup', path: '/seekria/tiktok-lookup', queryParam: 'username', inputType: 'text', example: '@username' },
+    { name: 'tiktok-breach', description: 'TikTok breach', path: '/seekria/tiktok-breach', queryParam: 'username', inputType: 'text', example: '@username' },
+    { name: 'snusbase-breach', description: 'Snusbase breach', path: '/seekria/snusbase-breach', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'leakcheck-breach', description: 'LeakCheck breach', path: '/seekria/leakcheck-breach', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   datahound: [
-    { name: 'username', description: 'DataHound username OSINT', path: '/username', queryParam: 'query' },
-    { name: 'email', description: 'DataHound email OSINT', path: '/email', queryParam: 'query' },
-    { name: 'phone', description: 'DataHound phone OSINT', path: '/phone', queryParam: 'query' },
-    { name: 'ip', description: 'DataHound IP OSINT', path: '/ip', queryParam: 'query' },
-    { name: 'stealer', description: 'DataHound stealer logs', path: '/stealer', queryParam: 'query' },
-    { name: 'hudsonrock-ip', description: 'Hudson Rock IP', path: '/hudsonrock/ip', queryParam: 'query' },
-    { name: 'hudsonrock-email', description: 'Hudson Rock Email', path: '/hudsonrock/email', queryParam: 'query' },
-    { name: 'hudsonrock-username', description: 'Hudson Rock Username', path: '/hudsonrock/username', queryParam: 'query' }
+    { name: 'username', description: 'DataHound username OSINT', path: '/username', queryParam: 'query', inputType: 'text', example: 'username123' },
+    { name: 'email', description: 'DataHound email OSINT', path: '/email', queryParam: 'query', inputType: 'email', example: 'user@domain.com' },
+    { name: 'phone', description: 'DataHound phone OSINT', path: '/phone', queryParam: 'query', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'ip', description: 'DataHound IP OSINT', path: '/ip', queryParam: 'query', inputType: 'text', example: '1.1.1.1' },
+    { name: 'stealer', description: 'DataHound stealer logs', path: '/stealer', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'hudsonrock-ip', description: 'Hudson Rock IP', path: '/hudsonrock/ip', queryParam: 'query', inputType: 'text', example: '1.1.1.1' },
+    { name: 'hudsonrock-email', description: 'Hudson Rock Email', path: '/hudsonrock/email', queryParam: 'query', inputType: 'email', example: 'user@domain.com' },
+    { name: 'hudsonrock-username', description: 'Hudson Rock Username', path: '/hudsonrock/username', queryParam: 'query', inputType: 'text', example: 'username123' }
   ],
   wentyn: [
     { name: 'search', description: 'Wentyn search', path: '/wentyn', queryParam: 'query' }
   ],
   hudsonrock: [
-    { name: 'search-by-domain', description: 'Search by domain', path: '/hudsonrock/search-by-domain', queryParam: 'domain' },
-    { name: 'domain-overview', description: 'Domain overview', path: '/hudsonrock/search-by-domain/overview', queryParam: 'domain' },
-    { name: 'domain-assessment', description: 'Domain assessment', path: '/hudsonrock/search-by-domain/assessment', queryParam: 'domain' },
-    { name: 'domain-discovery', description: 'Domain discovery', path: '/hudsonrock/search-by-domain/discovery', queryParam: 'domain' },
-    { name: 'login-emails', description: 'Login emails', path: '/hudsonrock/search-by-login/emails', queryParam: 'login' },
-    { name: 'login-usernames', description: 'Login usernames', path: '/hudsonrock/search-by-login/usernames', queryParam: 'login' },
-    { name: 'search-by-ip', description: 'Search by IP', path: '/hudsonrock/search-by-ip', queryParam: 'ip' },
-    { name: 'search-by-keyword', description: 'Search by keyword', path: '/hudsonrock/search-by-keyword', queryParam: 'keyword' },
-    { name: 'keyword-urls', description: 'Keyword URLs', path: '/hudsonrock/search-by-keyword/urls', queryParam: 'keyword' },
-    { name: 'stealer-infection', description: 'Stealer infection analysis', path: '/hudsonrock/search-by-stealer/infection-analysis', queryParam: 'query' }
+    { name: 'search-by-domain', description: 'Search by domain', path: '/hudsonrock/search-by-domain', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'domain-overview', description: 'Domain overview', path: '/hudsonrock/search-by-domain/overview', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'domain-assessment', description: 'Domain assessment', path: '/hudsonrock/search-by-domain/assessment', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'domain-discovery', description: 'Domain discovery', path: '/hudsonrock/search-by-domain/discovery', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'login-emails', description: 'Login emails', path: '/hudsonrock/search-by-login/emails', queryParam: 'login', inputType: 'text', example: 'username' },
+    { name: 'login-usernames', description: 'Login usernames', path: '/hudsonrock/search-by-login/usernames', queryParam: 'login', inputType: 'text', example: 'username' },
+    { name: 'search-by-ip', description: 'Search by IP', path: '/hudsonrock/search-by-ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'search-by-keyword', description: 'Search by keyword', path: '/hudsonrock/search-by-keyword', queryParam: 'keyword', inputType: 'text', example: 'keyword' },
+    { name: 'keyword-urls', description: 'Keyword URLs', path: '/hudsonrock/search-by-keyword/urls', queryParam: 'keyword', inputType: 'text', example: 'keyword' },
+    { name: 'stealer-infection', description: 'Stealer infection analysis', path: '/hudsonrock/search-by-stealer/infection-analysis', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   leaksight: [
-    { name: 'search', description: 'Leaksight search', path: '/leaksight', queryParam: 'query' }
+    { name: 'search', description: 'Leaksight search', path: '/leaksight', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   nbrs: [
-    { name: 'roblox', description: 'NBRS Roblox', path: '/nbrs/roblox', queryParam: 'id' }
+    { name: 'roblox', description: 'NBRS Roblox', path: '/nbrs/roblox', queryParam: 'id', inputType: 'text', example: '123456789' }
   ],
   room101: [
-    { name: 'analyze', description: 'Room101 analyze', path: '/room101/analyze', queryParam: 'username' },
-    { name: 'search', description: 'Room101 search', path: '/room101/search', queryParam: 'query' },
-    { name: 'v2-search', description: 'Room101 V2 search', path: '/room101/v2/search', queryParam: 'query' },
-    { name: 'user', description: 'Room101 user', path: '/room101/user', queryParam: 'username' },
-    { name: 'subreddit', description: 'Room101 subreddit', path: '/room101/subreddit', queryParam: 'name' }
+    { name: 'analyze', description: 'Room101 analyze', path: '/room101/analyze', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'search', description: 'Room101 search', path: '/room101/search', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'v2-search', description: 'Room101 V2 search', path: '/room101/v2/search', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'user', description: 'Room101 user', path: '/room101/user', queryParam: 'username', inputType: 'text', example: 'username' },
+    { name: 'subreddit', description: 'Room101 subreddit', path: '/room101/subreddit', queryParam: 'name', inputType: 'text', example: 'subreddit_name' }
   ],
   seon: [
-    { name: 'phone', description: 'SEON phone', path: '/seon/phone', queryParam: 'phone' },
-    { name: 'email', description: 'SEON email', path: '/seon/email', queryParam: 'email' },
-    { name: 'ip', description: 'SEON IP', path: '/seon/ip', queryParam: 'ip' },
-    { name: 'bin', description: 'SEON BIN', path: '/seon/bin', queryParam: 'bin' },
-    { name: 'email-verification', description: 'SEON email verification', path: '/seon/email-verification', queryParam: 'email' }
+    { name: 'phone', description: 'SEON phone', path: '/seon/phone', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'email', description: 'SEON email', path: '/seon/email', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'ip', description: 'SEON IP', path: '/seon/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'bin', description: 'SEON BIN', path: '/seon/bin', queryParam: 'bin', inputType: 'text', example: '123456' },
+    { name: 'email-verification', description: 'SEON email verification', path: '/seon/email-verification', queryParam: 'email', inputType: 'email', example: 'user@domain.com' }
   ],
   oathnet: [
-    { name: 'breach', description: 'Oathnet breach', path: '/oathnet/breach', queryParam: 'query' },
-    { name: 'stealer', description: 'Oathnet stealer', path: '/oathnet/stealer', queryParam: 'query' },
-    { name: 'stealer-subdomain', description: 'Stealer subdomain', path: '/oathnet/stealer-subdomain', queryParam: 'domain' },
-    { name: 'victims', description: 'Victims list', path: '/oathnet/victims', queryParam: '' },
-    { name: 'victim-info', description: 'Victim info', path: '/oathnet/victims/{log_id}', queryParam: 'log_id', pathIncludesQuery: true },
-    { name: 'victim-file', description: 'Victim file', path: '/oathnet/victims/{log_id}/files/{file_id}', queryParam: 'log_id', pathIncludesQuery: true },
-    { name: 'victim-archive', description: 'Victim archive', path: '/oathnet/victims/{log_id}/archive', queryParam: 'log_id', pathIncludesQuery: true },
-    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/oathnet/discord-to-roblox', queryParam: 'id' },
-    { name: 'discord-userinfo', description: 'Discord userinfo', path: '/oathnet/discord-userinfo', queryParam: 'id' },
-    { name: 'discord-username-history', description: 'Discord username history', path: '/oathnet/discord-username-history', queryParam: 'id' },
-    { name: 'steam', description: 'Steam', path: '/oathnet/steam', queryParam: 'id' },
-    { name: 'xbox', description: 'Xbox', path: '/oathnet/xbox', queryParam: 'gamertag' },
-    { name: 'roblox-userinfo', description: 'Roblox userinfo', path: '/oathnet/roblox-userinfo', queryParam: 'id' },
-    { name: 'mc-history', description: 'Minecraft history', path: '/oathnet/mc-history', queryParam: 'username' },
-    { name: 'ip-info', description: 'IP info', path: '/oathnet/ip-info', queryParam: 'ip' },
-    { name: 'holehe', description: 'Holehe', path: '/oathnet/holehe', queryParam: 'email' },
-    { name: 'ghunt', description: 'GHunt', path: '/oathnet/ghunt', queryParam: 'email' },
-    { name: 'extract-subdomain', description: 'Extract subdomain', path: '/oathnet/extract-subdomain', queryParam: 'domain' }
+    { name: 'breach', description: 'Oathnet breach', path: '/oathnet/breach', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'stealer', description: 'Oathnet stealer', path: '/oathnet/stealer', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'stealer-subdomain', description: 'Stealer subdomain', path: '/oathnet/stealer-subdomain', queryParam: 'domain', inputType: 'text', example: 'example.com' },
+    { name: 'victims', description: 'Victims list', path: '/oathnet/victims', queryParam: '', inputType: 'none', example: '' },
+    { name: 'victim-info', description: 'Victim info', path: '/oathnet/victims/{log_id}', queryParam: 'log_id', pathIncludesQuery: true, inputType: 'text', example: 'log_12345' },
+    { name: 'victim-file', description: 'Victim file', path: '/oathnet/victims/{log_id}/files/{file_id}', queryParam: 'log_id', pathIncludesQuery: true, extraParams: ['file_id'], inputType: 'text', example: 'log_12345' },
+    { name: 'victim-archive', description: 'Victim archive', path: '/oathnet/victims/{log_id}/archive', queryParam: 'log_id', pathIncludesQuery: true, inputType: 'text', example: 'log_12345' },
+    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/oathnet/discord-to-roblox', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'discord-userinfo', description: 'Discord userinfo', path: '/oathnet/discord-userinfo', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'discord-username-history', description: 'Discord username history', path: '/oathnet/discord-username-history', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'steam', description: 'Steam', path: '/oathnet/steam', queryParam: 'id', inputType: 'text', example: 'steam_id' },
+    { name: 'xbox', description: 'Xbox', path: '/oathnet/xbox', queryParam: 'gamertag', inputType: 'text', example: 'Gamertag' },
+    { name: 'roblox-userinfo', description: 'Roblox userinfo', path: '/oathnet/roblox-userinfo', queryParam: 'id', inputType: 'text', example: '123456789' },
+    { name: 'mc-history', description: 'Minecraft history', path: '/oathnet/mc-history', queryParam: 'username', inputType: 'text', example: 'Steve123' },
+    { name: 'ip-info', description: 'IP info', path: '/oathnet/ip-info', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' },
+    { name: 'holehe', description: 'Holehe', path: '/oathnet/holehe', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'ghunt', description: 'GHunt', path: '/oathnet/ghunt', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'extract-subdomain', description: 'Extract subdomain', path: '/oathnet/extract-subdomain', queryParam: 'domain', inputType: 'text', example: 'example.com' }
   ],
   memory: [
-    { name: 'search', description: 'Memory.lol search', path: '/memory', queryParam: 'username' }
+    { name: 'search', description: 'Memory.lol search', path: '/memory', queryParam: 'username', inputType: 'text', example: 'username' }
   ],
   nosint: [
-    { name: 'search', description: 'NoSINT search', path: '/nosint/search', queryParam: 'query' },
-    { name: 'ip', description: 'NoSINT IP', path: '/nosint/ip', queryParam: 'ip' }
+    { name: 'search', description: 'NoSINT search', path: '/nosint/search', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'ip', description: 'NoSINT IP', path: '/nosint/ip', queryParam: 'ip', inputType: 'text', example: '1.1.1.1' }
   ],
   reconly: [
-    { name: 'search', description: 'Reconly search', path: '/reconly', queryParam: 'query' }
+    { name: 'search', description: 'Reconly search', path: '/reconly', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   tiktok: [
-    { name: 'search', description: 'TikTok OSINT', path: '/tiktok', queryParam: 'username' }
+    { name: 'search', description: 'TikTok OSINT', path: '/tiktok', queryParam: 'username', inputType: 'text', example: '@username' }
   ],
   binlist: [
-    { name: 'search', description: 'Binlist', path: '/binlist', queryParam: 'bin' }
+    { name: 'search', description: 'Binlist', path: '/binlist', queryParam: 'bin', inputType: 'text', example: '123456' }
   ],
   inf0sec: [
-    { name: 'search', description: 'Inf0sec', path: '/inf0sec', queryParam: 'query' }
+    { name: 'search', description: 'Inf0sec', path: '/inf0sec', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   vin: [
-    { name: 'search', description: 'VIN Recorder', path: '/vin', queryParam: 'vin' }
+    { name: 'search', description: 'VIN Recorder', path: '/vin', queryParam: 'vin', inputType: 'text', example: '1HGCM82633A123456' }
   ],
   propertyradar: [
-    { name: 'search', description: 'PropertyRadar search', path: '/propertyradar/search', queryParam: 'query' },
-    { name: 'persons', description: 'PropertyRadar persons', path: '/propertyradar/persons', queryParam: 'query' },
-    { name: 'phone', description: 'PropertyRadar phone', path: '/propertyradar/phone', queryParam: 'phone' },
-    { name: 'email', description: 'PropertyRadar email', path: '/propertyradar/email', queryParam: 'email' },
-    { name: 'skiptrace', description: 'PropertyRadar skiptrace', path: '/propertyradar/skiptrace', queryParam: 'query' }
+    { name: 'search', description: 'PropertyRadar search', path: '/propertyradar/search', queryParam: 'query', inputType: 'text', example: 'address or name' },
+    { name: 'persons', description: 'PropertyRadar persons', path: '/propertyradar/persons', queryParam: 'query', inputType: 'text', example: 'name' },
+    { name: 'phone', description: 'PropertyRadar phone', path: '/propertyradar/phone', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' },
+    { name: 'email', description: 'PropertyRadar email', path: '/propertyradar/email', queryParam: 'email', inputType: 'email', example: 'user@domain.com' },
+    { name: 'skiptrace', description: 'PropertyRadar skiptrace', path: '/propertyradar/skiptrace', queryParam: 'query', inputType: 'text', example: 'name or address' }
   ],
   datavoid: [
-    { name: 'recovery', description: 'Datavoid recovery', path: '/datavoid/recovery', queryParam: 'query' },
-    { name: 'us', description: 'Datavoid US', path: '/datavoid/us', queryParam: 'query' },
-    { name: 'ca', description: 'Datavoid CA', path: '/datavoid/ca', queryParam: 'query' },
-    { name: 'il', description: 'Datavoid IL', path: '/datavoid/il', queryParam: 'query' },
-    { name: 'stealer', description: 'Datavoid stealer', path: '/datavoid/stealer', queryParam: 'query' },
-    { name: 'geocode', description: 'Datavoid geocode', path: '/datavoid/geocode', queryParam: 'address', method: 'POST' },
-    { name: 'reverse-geocode', description: 'Datavoid reverse geocode', path: '/datavoid/reverse-geocode', queryParam: 'lat', method: 'POST' },
-    { name: 'automotive', description: 'Datavoid automotive', path: '/datavoid/automotive', queryParam: 'query' },
-    { name: 'automotive-check', description: 'Datavoid automotive check', path: '/datavoid/automotive/check', queryParam: 'vin' },
-    { name: 'company', description: 'Datavoid company', path: '/datavoid/company', queryParam: 'query' },
-    { name: 'discord', description: 'Datavoid Discord', path: '/datavoid/discord', queryParam: 'id' },
-    { name: 'instagram', description: 'Datavoid Instagram', path: '/datavoid/instagram', queryParam: 'query', method: 'POST' },
-    { name: 'twitter', description: 'Datavoid Twitter', path: '/datavoid/twitter', queryParam: 'query' },
-    { name: 'google-docs', description: 'Datavoid Google Docs', path: '/datavoid/google-docs', queryParam: 'query', method: 'POST' },
-    { name: 'fivem', description: 'Datavoid FiveM', path: '/datavoid/fivem', queryParam: 'identifier' },
-    { name: 'roblox', description: 'Datavoid Roblox', path: '/datavoid/roblox', queryParam: 'username' }
+    { name: 'recovery', description: 'Datavoid recovery', path: '/datavoid/recovery', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'us', description: 'Datavoid US', path: '/datavoid/us', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'ca', description: 'Datavoid CA', path: '/datavoid/ca', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'il', description: 'Datavoid IL', path: '/datavoid/il', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'stealer', description: 'Datavoid stealer', path: '/datavoid/stealer', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'geocode', description: 'Datavoid geocode', path: '/datavoid/geocode', queryParam: 'address', method: 'POST', inputType: 'text', example: '123 Main St, City' },
+    { name: 'reverse-geocode', description: 'Datavoid reverse geocode', path: '/datavoid/reverse-geocode', queryParam: 'lat', method: 'POST', inputType: 'text', example: 'latitude,longitude' },
+    { name: 'automotive', description: 'Datavoid automotive', path: '/datavoid/automotive', queryParam: 'query', inputType: 'text', example: 'VIN or plate' },
+    { name: 'automotive-check', description: 'Datavoid automotive check', path: '/datavoid/automotive/check', queryParam: 'vin', inputType: 'text', example: '1HGCM82633A123456' },
+    { name: 'company', description: 'Datavoid company', path: '/datavoid/company', queryParam: 'query', inputType: 'text', example: 'company name' },
+    { name: 'discord', description: 'Datavoid Discord', path: '/datavoid/discord', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'instagram', description: 'Datavoid Instagram', path: '/datavoid/instagram', queryParam: 'query', method: 'POST', inputType: 'text', example: 'username' },
+    { name: 'twitter', description: 'Datavoid Twitter', path: '/datavoid/twitter', queryParam: 'query', inputType: 'text', example: '@username' },
+    { name: 'google-docs', description: 'Datavoid Google Docs', path: '/datavoid/google-docs', queryParam: 'query', method: 'POST', inputType: 'text', example: 'email' },
+    { name: 'fivem', description: 'Datavoid FiveM', path: '/datavoid/fivem', queryParam: 'identifier', inputType: 'text', example: 'license:abc123' },
+    { name: 'roblox', description: 'Datavoid Roblox', path: '/datavoid/roblox', queryParam: 'username', inputType: 'text', example: 'username' }
   ],
   checko: [
-    { name: 'search', description: 'Checko', path: '/checko', queryParam: 'query' }
+    { name: 'search', description: 'Checko', path: '/checko', queryParam: 'query', inputType: 'text', example: 'username or email' }
   ],
   github: [
-    { name: 'search', description: 'GitHub OSINT', path: '/github', queryParam: 'query' }
+    { name: 'search', description: 'GitHub OSINT', path: '/github', queryParam: 'query', inputType: 'text', example: 'username or repo' }
   ],
   discord: [
-    { name: 'user', description: 'Discord user', path: '/discord/user', queryParam: 'id' },
-    { name: 'history', description: 'Discord history', path: '/discord/history', queryParam: 'query' },
-    { name: 'export', description: 'Discord export', path: '/discord/export', queryParam: 'query' },
-    { name: 'snowflake', description: 'Discord snowflake', path: '/discord/snowflake', queryParam: 'id' }
+    { name: 'user', description: 'Discord user', path: '/discord/user', queryParam: 'id', inputType: 'text', example: '123456789012345678' },
+    { name: 'history', description: 'Discord history', path: '/discord/history', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'export', description: 'Discord export', path: '/discord/export', queryParam: 'query', inputType: 'text', example: 'username or email' },
+    { name: 'snowflake', description: 'Discord snowflake', path: '/discord/snowflake', queryParam: 'id', inputType: 'text', example: '123456789012345678' }
   ],
   telegram: [
-    { name: 'username', description: 'Telegram username', path: '/telegram/username', queryParam: 'username' },
-    { name: 'id', description: 'Telegram ID', path: '/telegram/id', queryParam: 'id' },
-    { name: 'phone', description: 'Telegram phone', path: '/telegram/phone', queryParam: 'phone' }
+    { name: 'username', description: 'Telegram username', path: '/telegram/username', queryParam: 'username', inputType: 'text', example: '@username' },
+    { name: 'id', description: 'Telegram ID', path: '/telegram/id', queryParam: 'id', inputType: 'text', example: '123456789' },
+    { name: 'phone', description: 'Telegram phone', path: '/telegram/phone', queryParam: 'phone', inputType: 'phone', example: '+1-555-123-4567' }
   ],
   snapchat: [
-    { name: 'search', description: 'Snapchat OSINT', path: '/snapchat', queryParam: 'username' }
+    { name: 'search', description: 'Snapchat OSINT', path: '/snapchat', queryParam: 'username', inputType: 'text', example: 'username' }
   ],
   instagram: [
-    { name: 'search', description: 'Instagram OSINT', path: '/instagram', queryParam: 'query' },
-    { name: 'id', description: 'Instagram ID', path: '/instagram/id', queryParam: 'id' }
+    { name: 'search', description: 'Instagram OSINT', path: '/instagram', queryParam: 'query', inputType: 'text', example: 'username' },
+    { name: 'id', description: 'Instagram ID', path: '/instagram/id', queryParam: 'id', inputType: 'text', example: '123456789' }
   ],
   medal: [
-    { name: 'search', description: 'Medal.tv OSINT', path: '/medal', queryParam: 'username' }
+    { name: 'search', description: 'Medal.tv OSINT', path: '/medal', queryParam: 'username', inputType: 'text', example: 'username' }
   ],
   openarchive: [
     { name: 'search', description: 'Multi-source search', path: '/search', queryParam: 'query' },
@@ -871,12 +871,40 @@ const MANUAL_PROVIDERS = {
     { name: 'status', description: 'API operational status', path: '/status', queryParam: '' }
   ],
   wolfeye: [
-    { name: 'health', description: 'Health check', path: '/health', queryParam: '' },
-    { name: 'status', description: 'Plan and usage status', path: '/status', queryParam: '' },
-    { name: 'search', description: 'OSINT search', path: '/search', queryParam: 'q' },
-    { name: 'analytics', description: 'Search statistics and history', path: '/analytics', queryParam: '' },
-    { name: 'horus-modules', description: 'List Horus modules', path: '/horus/modules', queryParam: '' },
-    { name: 'analyze', description: 'Folder/file analysis', path: '/analyze', queryParam: '' }
+    { name: 'email', description: 'Email search', path: '/search', queryParam: 'q', inputType: 'email', example: 'target@domain.com' },
+    { name: 'phone', description: 'Phone search', path: '/search', queryParam: 'q', inputType: 'phone', example: '+39 333 1234567' },
+    { name: 'telegram', description: 'Telegram search', path: '/search', queryParam: 'q', inputType: 'text', example: '@username or 123456789' },
+    { name: 'doxbin', description: 'Doxbin username search', path: '/search', queryParam: 'q', inputType: 'text', example: 'username' },
+    { name: 'dox-search', description: 'Dox search', path: '/search', queryParam: 'q', inputType: 'text', example: 'First Last or nickname' },
+    { name: 'fiscal-code', description: 'Fiscal code search', path: '/search', queryParam: 'q', inputType: 'text', example: 'RSSMRA85M01H501Z' },
+    { name: 'vat-search', description: 'VAT search', path: '/search', queryParam: 'q', inputType: 'text', example: '12345678901 or DE123456789' },
+    { name: 'business-search', description: 'Business search', path: '/search', queryParam: 'q', inputType: 'text', example: 'Acme Srl or P.IVA' },
+    { name: 'iban-intel', description: 'IBAN intelligence', path: '/search', queryParam: 'q', inputType: 'text', example: 'IT60X0542811101000000123456' },
+    { name: 'tax-id-search', description: 'Tax ID search', path: '/search', queryParam: 'q', inputType: 'text', example: 'CF, P.IVA, EIN, VAT or IBAN' },
+    { name: 'partial-recovery', description: 'Partial recovery', path: '/search', queryParam: 'q', inputType: 'text', example: 'email or +39...' },
+    { name: 'phone-to-email', description: 'Phone to email', path: '/search', queryParam: 'q', inputType: 'phone', example: '+39 333 1234567' },
+    { name: 'email-to-phone', description: 'Email to phone', path: '/search', queryParam: 'q', inputType: 'email', example: 'target@domain.com' },
+    { name: 'shadow-leak', description: 'Shadow leak search', path: '/search', queryParam: 'q', inputType: 'text', example: 'email, phone or username' },
+    { name: 'fivem-hunter', description: 'FiveM hunter', path: '/search', queryParam: 'q', inputType: 'text', example: 'username, steam, license, discord id' },
+    { name: 'discord-grave', description: 'Discord graveyard', path: '/search', queryParam: 'q', inputType: 'text', example: 'username, email or discord id' },
+    { name: 'paypal-trace', description: 'PayPal trace', path: '/search', queryParam: 'q', inputType: 'text', example: 'email, username or IP' },
+    { name: 'doordash', description: 'DoorDash recovery', path: '/search', queryParam: 'q', inputType: 'email', example: 'email' },
+    { name: 'paypal', description: 'PayPal recovery', path: '/search', queryParam: 'q', inputType: 'email', example: 'email' },
+    { name: 'dataavoid', description: 'DataAvoid recovery', path: '/search', queryParam: 'q', inputType: 'email', example: 'email' },
+    { name: 'stripe', description: 'Stripe dashboard', path: '/search', queryParam: 'q', inputType: 'email', example: 'merchant@email.com' },
+    { name: 'discord', description: 'Discord ID search', path: '/search', queryParam: 'q', inputType: 'text', example: '123456789012345678' },
+    { name: 'ip', description: 'IP search', path: '/search', queryParam: 'q', inputType: 'text', example: '192.168.1.1' },
+    { name: 'domain', description: 'Domain search', path: '/search', queryParam: 'q', inputType: 'text', example: 'example.com' },
+    { name: 'folder', description: 'Folder analysis', path: '/search', queryParam: 'q', inputType: 'text', example: 'breach/subfolder' },
+    { name: 'username', description: 'Username search', path: '/search', queryParam: 'q', inputType: 'text', example: 'handle' },
+    { name: 'github', description: 'GitHub search', path: '/search', queryParam: 'q', inputType: 'text', example: 'username or github.com/owner/repo' },
+    { name: 'minecraft', description: 'Minecraft search', path: '/search', queryParam: 'q', inputType: 'text', example: 'Steve123' },
+    { name: 'fivem', description: 'FiveM search', path: '/search', queryParam: 'q', inputType: 'text', example: 'license:abc123 or username' },
+    { name: 'wolflocate', description: 'WolfLocate photo upload', path: '/wolflocate', queryParam: '', inputType: 'file', example: 'Upload photo' },
+    { name: 'health', description: 'Health check', path: '/health', queryParam: '', inputType: 'none', example: '' },
+    { name: 'status', description: 'Plan and usage status', path: '/status', queryParam: '', inputType: 'none', example: '' },
+    { name: 'analytics', description: 'Search statistics and history', path: '/analytics', queryParam: '', inputType: 'none', example: '' },
+    { name: 'horus-modules', description: 'List Horus modules', path: '/horus/modules', queryParam: '', inputType: 'none', example: '' }
   ]
 }
 
@@ -1139,6 +1167,7 @@ const Dashboard = () => {
   const [selectedCommand, setSelectedCommand] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('footprint')
   const [query, setQuery] = useState('')
+  const [extraParams, setExtraParams] = useState({})
   const [searching, setSearch] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
   const [searchHistory, setSearchHistory] = useState([])
@@ -1297,7 +1326,8 @@ const Dashboard = () => {
         body: JSON.stringify({
           provider: selectedProvider,
           command: selectedCommand,
-          query: query.trim()
+          query: query.trim(),
+          extraParams: extraParams
         })
       })
 
@@ -2349,7 +2379,7 @@ Lookup made by https://datawire.cc
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        placeholder="Enter username, email, IP address, or ID..."
+                        placeholder="Example: user@email.com, 1.1.1.1, username123, or ID..."
                         className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
                       />
                       <motion.i 
@@ -2482,14 +2512,30 @@ Lookup made by https://datawire.cc
                               {command.queryParam}
                             </label>
                             <motion.input
-                              type="text"
+                              type={command.inputType || 'text'}
                               value={query}
                               onChange={(e) => setQuery(e.target.value)}
                               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                              placeholder={`Enter ${command.queryParam}...`}
+                              placeholder={command.example || `Example: log_12345`}
                               className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
                               whileFocus={{ scale: 1.01 }}
                             />
+                            {command.extraParams && command.extraParams.map((param) => (
+                              <div key={param}>
+                                <label className="block text-sm text-osint-muted mb-2 tracking-wide">
+                                  {param}
+                                </label>
+                                <motion.input
+                                  type="text"
+                                  value={extraParams[param] || ''}
+                                  onChange={(e) => setExtraParams(prev => ({ ...prev, [param]: e.target.value }))}
+                                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                  placeholder={`Example: file_${param}`}
+                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                                  whileFocus={{ scale: 1.01 }}
+                                />
+                              </div>
+                            ))}
                           </motion.div>
                         )
                       }
@@ -2502,18 +2548,31 @@ Lookup made by https://datawire.cc
                           transition={{ duration: 0.3 }}
                           className="space-y-3"
                         >
-                          <label className="block text-sm text-osint-muted mb-2 tracking-wide">
-                            {command.queryParam}
-                          </label>
-                          <motion.input
-                            type="text"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            placeholder={`Enter ${command.queryParam}...`}
-                            className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                            whileFocus={{ scale: 1.01 }}
-                          />
+                          {command.inputType !== 'none' && (
+                            <>
+                              <label className="block text-sm text-osint-muted mb-2 tracking-wide">
+                                {command.queryParam}
+                              </label>
+                              {command.inputType === 'file' ? (
+                                <motion.input
+                                  type="file"
+                                  onChange={(e) => setQuery(e.target.files[0])}
+                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                                  whileFocus={{ scale: 1.01 }}
+                                />
+                              ) : (
+                                <motion.input
+                                  type={command.inputType || 'text'}
+                                  value={query}
+                                  onChange={(e) => setQuery(e.target.value)}
+                                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                  placeholder={command.example || `Enter ${command.queryParam}...`}
+                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
+                                  whileFocus={{ scale: 1.01 }}
+                                />
+                              )}
+                            </>
+                          )}
                         </motion.div>
                       )
                     })()}
@@ -3069,7 +3128,7 @@ Lookup made by https://datawire.cc
                     <label className="block text-xs text-osint-muted mb-2 tracking-wide">Source</label>
                     <input
                       type="text"
-                      placeholder="Enter source (provider name or URL)..."
+                      placeholder="Example: snusbase, leakcheck, or https://example.com"
                       value={newLead.source}
                       onChange={(e) => setNewLead(prev => ({ ...prev, source: e.target.value }))}
                       className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
