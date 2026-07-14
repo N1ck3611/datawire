@@ -128,6 +128,62 @@ const SOCIAL_LOGOS = {
   reddit: 'https://brandfetch.com/reddit.com/logo'
 }
 
+// Provider logos
+const PROVIDER_LOGOS = {
+  datahound: 'https://www.google.com/s2/favicons?domain=datahound.tools&sz=64',
+  osintcat: 'https://www.google.com/s2/favicons?domain=osintcat.net&sz=64',
+  noticed: 'https://www.google.com/s2/favicons?domain=noticed.wtf&sz=64',
+  snusbase: 'https://logos.osint.ly/snusbase.com',
+  leakosint: 'https://www.google.com/s2/favicons?domain=leakosint.io&sz=64',
+  leakcheck: 'https://logos.osint.ly/leakcheck.io',
+  breachbase: 'https://www.google.com/s2/favicons?domain=breachbase.io&sz=64',
+  intelvault: 'https://www.google.com/s2/favicons?domain=intelvault.io&sz=64',
+  breachdirectory: 'https://logos.osint.ly/breachdirectory.org',
+  hackcheck: 'https://www.google.com/s2/favicons?domain=hackcheck.io&sz=64',
+  osintkit: 'https://www.google.com/s2/favicons?domain=osintkit.io&sz=64',
+  breachvip: 'https://www.google.com/s2/favicons?domain=breachvip.io&sz=64',
+  cordcat: 'https://www.google.com/s2/favicons?domain=cord.cat&sz=64',
+  intelx: 'https://logos.osint.ly/intelx.io',
+  xosint: 'https://www.google.com/s2/favicons?domain=xosint.io&sz=64',
+  seeknow: 'https://www.google.com/s2/favicons?domain=see-know.icu&sz=64',
+  seekria: 'https://www.google.com/s2/favicons?domain=seekria.cc&sz=64',
+  wentyn: 'https://www.google.com/s2/favicons?domain=wentyn.io&sz=64',
+  hudsonrock: 'https://logos.osint.ly/hudsonrock.com',
+  leaksight: 'https://www.google.com/s2/favicons?domain=leaksight.io&sz=64',
+  nbrs: 'https://www.google.com/s2/favicons?domain=nbrs.site&sz=64',
+  room101: 'https://www.google.com/s2/favicons?domain=think-pol.com&sz=64',
+  seon: 'https://logos.osint.ly/seon.io',
+  oathnet: 'https://www.google.com/s2/favicons?domain=oathnet.io&sz=64',
+  memory: 'https://www.google.com/s2/favicons?domain=memory.lol&sz=64',
+  nosint: 'https://www.google.com/s2/favicons?domain=nosint.org&sz=64',
+  reconly: 'https://www.google.com/s2/favicons?domain=reconly.io&sz=64',
+  tiktok: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TikTok_logo.svg/512px-TikTok_logo.svg.png',
+  binlist: 'https://www.google.com/s2/favicons?domain=binlist.net&sz=64',
+  inf0sec: 'https://www.google.com/s2/favicons?domain=inf0sec.xyz&sz=64',
+  vin: 'https://www.google.com/s2/favicons?domain=vindecoderz.com&sz=64',
+  propertyradar: 'https://www.google.com/s2/favicons?domain=propertyradar.com&sz=64',
+  datavoid: 'https://www.google.com/s2/favicons?domain=datavoid.sh&sz=64',
+  checko: 'https://www.google.com/s2/favicons?domain=checko.io&sz=64',
+  github: 'https://dl.svgcdn.com/svg/logos/github.svg',
+  discord: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Discord_logo.svg/512px-Discord_logo.svg.png',
+  telegram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/512px-Telegram_logo.svg.png',
+  snapchat: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Snapchat_logo.svg/512px-Snapchat_logo.svg.png',
+  instagram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/512px-Instagram_logo_2022.svg.png',
+  medal: 'https://www.google.com/s2/favicons?domain=medal.tv&sz=64',
+  openarchive: 'https://www.google.com/s2/favicons?domain=openarchive.lol&sz=64',
+  ip: 'https://www.google.com/s2/favicons?domain=ipinfo.io&sz=64',
+  domain: 'https://www.google.com/s2/favicons?domain=who.is&sz=64',
+  dns: 'https://www.google.com/s2/favicons?domain=dns.google&sz=64',
+  whois: 'https://www.google.com/s2/favicons?domain=whois.com&sz=64',
+  roblox: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_logo.svg/512px-Roblox_logo.svg.png',
+  minecraft: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Minecraft_logo.svg/512px-Minecraft_logo.svg.png',
+  xbox: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Xbox_one_logo.svg/512px-Xbox_one_logo.svg.png',
+  steam: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png',
+  fivem: 'https://www.google.com/s2/favicons?domain=fivem.net&sz=64',
+  twitter: 'https://seeklogo.com/vector-logo/492396/twitter-x',
+  reddit: 'https://brandfetch.com/reddit.com/logo'
+}
+
 // Hide ReactFlow watermark
 const style = document.createElement('style')
 style.textContent = `
@@ -604,15 +660,21 @@ const MANUAL_PROVIDERS = {
     { name: 'download', description: 'IntelX file download', path: '/intelx', queryParam: 'query' }
   ],
   osintcat: [
-    { name: 'database-search', description: 'OSINTCat database search', path: '/osintcat/database-search', queryParam: 'query' },
-    { name: 'ip', description: 'OSINTCat IP', path: '/osintcat/ip', queryParam: 'ip' },
-    { name: 'twitter-osint', description: 'OSINTCat Twitter OSINT', path: '/osintcat/twitter-osint', queryParam: 'username' },
-    { name: 'machine-viewer-search', description: 'Machine viewer search', path: '/osintcat/machine-viewer/search', queryParam: 'query' },
-    { name: 'machine-info', description: 'Machine info', path: '/osintcat/machine-viewer/machines/{machine_id}/info', queryParam: 'machine_id', pathIncludesQuery: true },
-    { name: 'machine-files', description: 'Machine files', path: '/osintcat/machine-viewer/machines/{machine_id}/files/treeview', queryParam: 'machine_id', pathIncludesQuery: true },
-    { name: 'machine-download', description: 'Machine download', path: '/osintcat/machine-viewer/machines/{machine_id}/download', queryParam: 'machine_id', pathIncludesQuery: true, responseType: 'binary' },
-    { name: 'file-info', description: 'File info', path: '/osintcat/machine-viewer/files/{file_id}/info', queryParam: 'file_id', pathIncludesQuery: true },
-    { name: 'file-download', description: 'File download', path: '/osintcat/machine-viewer/files/{file_id}/download', queryParam: 'file_id', pathIncludesQuery: true, responseType: 'binary' }
+    { name: 'user', description: 'OsintCat user info', path: '/user', queryParam: '' },
+    { name: 'breach', description: 'OsintCat breach lookup', path: '/breach', queryParam: 'query' },
+    { name: 'discord', description: 'OsintCat Discord lookup', path: '/discord', queryParam: 'id' },
+    { name: 'roblox', description: 'OsintCat Roblox lookup', path: '/roblox', queryParam: 'username' },
+    { name: 'discord-to-roblox', description: 'Discord to Roblox', path: '/discord-to-roblox', queryParam: 'id' },
+    { name: 'email-osint', description: 'Email OSINT', path: '/email-osint', queryParam: 'email' },
+    { name: 'phone-osint', description: 'Phone OSINT', path: '/phone-osint', queryParam: 'phone' },
+    { name: 'ip', description: 'IP Info', path: '/ip', queryParam: 'ip' },
+    { name: 'dns-resolver', description: 'DNS Resolver', path: '/dns-resolver', queryParam: 'domain' },
+    { name: 'domain', description: 'Domain lookup', path: '/domain', queryParam: 'domain' },
+    { name: 'user-footprint', description: 'Username footprint', path: '/user-footprint', queryParam: 'username' },
+    { name: 'email-footprint', description: 'Email footprint', path: '/email-footprint', queryParam: 'email' },
+    { name: 'minecraft', description: 'Minecraft lookup', path: '/minecraft', queryParam: 'username' },
+    { name: 'minecraft-osint', description: 'Minecraft OSINT', path: '/minecraft-osint', queryParam: 'username' },
+    { name: 'vin', description: 'VIN lookup', path: '/vin', queryParam: 'vin' }
   ],
   xosint: [
     { name: 'search', description: 'XOSINT search', path: '/xosint/search', queryParam: 'query' }
@@ -662,7 +724,14 @@ const MANUAL_PROVIDERS = {
     { name: 'leakcheck-breach', description: 'LeakCheck breach', path: '/seekria/leakcheck-breach', queryParam: 'query' }
   ],
   datahound: [
-    { name: 'search', description: 'DataHound search', path: '/datahound/search', queryParam: 'query' }
+    { name: 'username', description: 'DataHound username OSINT', path: '/username', queryParam: 'query' },
+    { name: 'email', description: 'DataHound email OSINT', path: '/email', queryParam: 'query' },
+    { name: 'phone', description: 'DataHound phone OSINT', path: '/phone', queryParam: 'query' },
+    { name: 'ip', description: 'DataHound IP OSINT', path: '/ip', queryParam: 'query' },
+    { name: 'stealer', description: 'DataHound stealer logs', path: '/stealer', queryParam: 'query' },
+    { name: 'hudsonrock-ip', description: 'Hudson Rock IP', path: '/hudsonrock/ip', queryParam: 'query' },
+    { name: 'hudsonrock-email', description: 'Hudson Rock Email', path: '/hudsonrock/email', queryParam: 'query' },
+    { name: 'hudsonrock-username', description: 'Hudson Rock Username', path: '/hudsonrock/username', queryParam: 'query' }
   ],
   wentyn: [
     { name: 'search', description: 'Wentyn search', path: '/wentyn', queryParam: 'query' }
@@ -794,7 +863,11 @@ const MANUAL_PROVIDERS = {
     { name: 'search', description: 'Medal.tv OSINT', path: '/medal', queryParam: 'username' }
   ],
   openarchive: [
-    { name: 'search', description: 'OpenArchive search', path: '/openarchive/search', queryParam: 'query' }
+    { name: 'search', description: 'Multi-source search', path: '/search', queryParam: 'query' },
+    { name: 'sources', description: 'List available sources', path: '/sources', queryParam: '' },
+    { name: 'source', description: 'Query specific source', path: '/source', queryParam: 'sourceId' },
+    { name: 'usage', description: 'API usage stats', path: '/usage', queryParam: '' },
+    { name: 'status', description: 'API status', path: '/status', queryParam: '' }
   ]
 }
 
@@ -2024,7 +2097,7 @@ Lookup made by https://datawire.cc
             <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
             <div className="space-y-1 max-h-96 overflow-y-auto">
               {Object.keys(providers || {}).map((provider) => {
-                const icon = PROVIDER_ICONS[provider] || 'bx-search'
+                const logo = PROVIDER_LOGOS[provider]
                 
                 return (
                   <button
@@ -2042,7 +2115,22 @@ Lookup made by https://datawire.cc
                         : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
                     }`}
                   >
-                    <i className={`bx ${icon} text-lg`}></i>
+                    <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                      {logo ? (
+                        <img 
+                          src={logo} 
+                          alt={provider}
+                          className="w-full h-full object-contain"
+                          style={{ filter: 'grayscale(100%) brightness(0.7)' }}
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.parentElement.innerHTML = `<span class="text-xs font-bold text-white">${provider.charAt(0).toUpperCase()}</span>`
+                          }}
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-white">{provider.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
                     <span className="font-medium text-sm capitalize">{provider}</span>
                   </button>
                 )

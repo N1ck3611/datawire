@@ -115,6 +115,16 @@ const ProviderScroll = () => {
       logo: "https://www.google.com/s2/favicons?domain=notalivex.xyz&sz=64",
       url: "https://notalivex.xyz",
     },
+    { 
+      name: "OPENARCHIVE", 
+      logo: "https://www.google.com/s2/favicons?domain=openarchive.lol&sz=64",
+      url: "https://openarchive.lol",
+    },
+    { 
+      name: "DATAHOUND", 
+      logo: "https://www.google.com/s2/favicons?domain=datahound.tools&sz=64",
+      url: "https://datahound.tools",
+    },
   ]
 
   const duplicatedProviders = [...providers, ...providers, ...providers]
