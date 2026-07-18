@@ -178,13 +178,16 @@ const PROVIDER_CATEGORIES = {
   }
 }
 
-// Social media logos
+// Social media logos - using favicons
 const SOCIAL_LOGOS = {
-  twitter: 'https://seeklogo.com/vector-logo/492396/twitter-x',
-  instagram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/512px-Instagram_logo_2022.svg.png',
-  github: 'https://dl.svgcdn.com/svg/logos/github.svg',
-  snapchat: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Snapchat_logo.svg/512px-Snapchat_logo.svg.png',
-  reddit: 'https://brandfetch.com/reddit.com/logo'
+  twitter: 'https://www.google.com/s2/favicons?domain=x.com&sz=64',
+  instagram: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=64',
+  github: 'https://www.google.com/s2/favicons?domain=github.com&sz=64',
+  snapchat: 'https://www.google.com/s2/favicons?domain=snapchat.com&sz=64',
+  reddit: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
+  discord: 'https://www.google.com/s2/favicons?domain=discord.com&sz=64',
+  telegram: 'https://www.google.com/s2/favicons?domain=t.me&sz=64',
+  tiktok: 'https://www.google.com/s2/favicons?domain=tiktok.com&sz=64'
 }
 
 // Provider logos
@@ -1517,10 +1520,10 @@ Lookup made by https://datawire.cc
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-osint-bg">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-          <p className="text-osint-muted">Loading dashboard...</p>
+          <p className="text-white/50">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -1560,7 +1563,7 @@ Lookup made by https://datawire.cc
         <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
             <img 
-              src="/logo.png" 
+              src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
               alt="DataWire" 
               className="w-10 h-10 rounded-xl"
               onError={(e) => {
