@@ -44,11 +44,10 @@ const Input = ({
           onBlur={() => setFocused(false)}
           className={cn(
             'w-full px-4 py-3 rounded-xl',
-            'bg-white/[0.05] border border-white/[0.08]',
-            'text-white placeholder:text-white/30',
+            'bg-black border border-white/20',
+            'text-white placeholder:text-white/40',
             'transition-all duration-300 ease-out',
-            'focus:bg-white/[0.08] focus:border-white/[0.2]',
-            'focus:shadow-[0_0_0_3px_rgba(255,255,255,0.05)]',
+            'focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.1)]',
             icon && 'pl-12',
             className
           )}

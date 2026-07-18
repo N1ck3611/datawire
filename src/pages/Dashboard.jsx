@@ -627,6 +627,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [timeRemaining, setTimeRemaining] = useState(null)
   const [expiredModal, setExpiredModal] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
   
   // OSINT Search State
   const [providers, setProviders] = useState(null)
@@ -678,6 +679,13 @@ const Dashboard = () => {
   useEffect(() => {
     fetchUserData()
     fetchProviders()
+    
+    // Update time every second
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    
+    return () => clearInterval(timeInterval)
   }, [])
 
   useEffect(() => {
@@ -1551,7 +1559,16 @@ Lookup made by https://datawire.cc
         {/* Logo */}
         <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center border border-white/10">
+            <img 
+              src="/logo.png" 
+              alt="DataWire" 
+              className="w-10 h-10 rounded-xl"
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}
+            />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center border border-white/10 hidden">
               <span className="text-xl font-bold text-white">DW</span>
             </div>
             <div>
@@ -1606,7 +1623,7 @@ Lookup made by https://datawire.cc
             <p className="text-xs text-white/30 uppercase tracking-wider mb-3 px-4 font-medium">Providers</p>
             <div className="space-y-1 max-h-96 overflow-y-auto custom-scrollbar">
               {Object.keys(providers || {}).map((provider) => {
-                const IconComponent = PROVIDER_ICONS[provider] || QuestionMark
+                const logoUrl = PROVIDER_LOGOS[provider]
                 
                 return (
                   <motion.button
@@ -1627,7 +1644,18 @@ Lookup made by https://datawire.cc
                     }`}
                   >
                     <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                      <IconComponent className="w-4 h-4" />
+                      {logoUrl && !logoUrl.startsWith('bx-') ? (
+                        <img 
+                          src={logoUrl} 
+                          alt={provider}
+                          className="w-5 h-5 rounded"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'flex'
+                          }}
+                        />
+                      ) : null}
+                      <QuestionMark className="w-4 h-4 hidden" />
                     </div>
                     <span className="font-medium text-sm capitalize">{provider}</span>
                   </motion.button>
@@ -1640,7 +1668,28 @@ Lookup made by https://datawire.cc
         {/* User Section */}
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
+            {user?.avatar && user?.id ? (
+              <img 
+                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`}
+                alt={user.username}
+                className="w-10 h-10 rounded-xl border border-white/20"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                  e.target.nextSibling.style.display = 'flex'
+                }}
+              />
+            ) : user?.discriminator ? (
+              <img 
+                src={`https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`}
+                alt={user.username}
+                className="w-10 h-10 rounded-xl border border-white/20"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                  e.target.nextSibling.style.display = 'flex'
+                }}
+              />
+            ) : null}
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 hidden">
               <span className="font-bold text-white text-sm">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </span>
@@ -1762,6 +1811,20 @@ Lookup made by https://datawire.cc
               Available Searches: <span className="text-white font-semibold font-mono">
                 {Math.floor(parseFloat(balance) / parseFloat(SEARCH_COST))}
               </span>
+            </motion.div>
+            <motion.div 
+              className="text-sm text-white/50 hidden md:block"
+              whileHover={{ scale: 1.05 }}
+            >
+              Plan: <span className="text-white font-semibold font-mono capitalize">
+                {plan || 'No Plan'}
+              </span>
+            </motion.div>
+            <motion.div 
+              className="text-sm text-white/50 font-mono hidden md:block"
+              whileHover={{ scale: 1.05 }}
+            >
+              {currentTime.toLocaleTimeString()}
             </motion.div>
           </div>
         </motion.div>
