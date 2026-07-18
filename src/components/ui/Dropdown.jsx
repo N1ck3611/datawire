@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils'
 
 const Dropdown = ({ 
@@ -16,7 +17,13 @@ const Dropdown = ({
   const [searchQuery, setSearchQuery] = useState('')
   const dropdownRef = useRef(null)
   const triggerRef = useRef(null)
+  const [mounted, setMounted] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 })
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   const selectedOption = options?.find(opt => opt.value === value)
 
@@ -125,117 +132,120 @@ const Dropdown = ({
         </motion.button>
       </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-            <motion.div
-              ref={dropdownRef}
-              initial={{ opacity: 0, y: -8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.98 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-              className="fixed z-50"
-              style={{
-                top: `${position.top}px`,
-                left: `${position.left}px`,
-                width: `${position.width}px`
-              }}
-            >
-              <div className={cn(
-                'rounded-xl overflow-hidden',
-                'bg-black/90 backdrop-blur-2xl border border-white/10',
-                'shadow-[0_20px_60px_rgba(0,0,0,0.8)]'
-              )}>
-                {searchable && (
-                  <div className="p-3 border-b border-white/10">
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-black border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20"
-                      autoFocus
-                    />
-                  </div>
-                )}
-                
-                <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                  {filteredOptions.length === 0 ? (
-                    <div className="p-4 text-center text-white/40 text-sm">
-                      No results found
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+              <motion.div
+                ref={dropdownRef}
+                initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="fixed z-50"
+                style={{
+                  top: `${position.top}px`,
+                  left: `${position.left}px`,
+                  width: `${position.width}px`
+                }}
+              >
+                <div className={cn(
+                  'rounded-xl overflow-hidden',
+                  'bg-black/90 backdrop-blur-2xl border border-white/10',
+                  'shadow-[0_20px_60px_rgba(0,0,0,0.8)]'
+                )}>
+                  {searchable && (
+                    <div className="p-3 border-b border-white/10">
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-black border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20"
+                        autoFocus
+                      />
                     </div>
-                  ) : grouped ? (
-                    Object.entries(
-                      filteredOptions.reduce((acc, opt) => {
-                        const group = opt.group || 'Other'
-                        acc[group] = acc[group] || []
-                        acc[group].push(opt)
-                        return acc
-                      }, {})
-                    ).map(([group, groupOptions]) => (
-                      <div key={group}>
-                        <div className="px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider border-b border-white/5">
-                          {group}
-                        </div>
-                        {groupOptions.map((option) => (
-                          <motion.button
-                            key={option.value}
-                            onClick={() => handleSelect(option)}
-                            className={cn(
-                              'w-full px-4 py-3 text-left text-sm transition-colors',
-                              'flex items-center gap-3 border-b border-white/5 last:border-b-0',
-                              option.value === value
-                                ? 'bg-white/10 text-white'
-                                : 'text-white/60 hover:bg-white/5 hover:text-white'
-                            )}
-                            whileHover={{ x: 4 }}
-                          >
-                            {option.icon && (
-                              <span className="text-white/40 flex-shrink-0">{option.icon}</span>
-                            )}
-                            <span className="flex-1 truncate">{option.label}</span>
-                            {option.value === value && (
-                              <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </motion.button>
-                        ))}
-                      </div>
-                    ))
-                  ) : (
-                    filteredOptions.map((option) => (
-                      <motion.button
-                        key={option.value}
-                        onClick={() => handleSelect(option)}
-                        className={cn(
-                          'w-full px-4 py-3 text-left text-sm transition-colors',
-                          'flex items-center gap-3 border-b border-white/5 last:border-b-0',
-                          option.value === value
-                            ? 'bg-white/10 text-white'
-                            : 'text-white/60 hover:bg-white/5 hover:text-white'
-                        )}
-                        whileHover={{ x: 4 }}
-                      >
-                        {option.icon && (
-                          <span className="text-white/40 flex-shrink-0">{option.icon}</span>
-                        )}
-                        <span className="flex-1 truncate">{option.label}</span>
-                        {option.value === value && (
-                          <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        )}
-                      </motion.button>
-                    ))
                   )}
+                  
+                  <div className="max-h-80 overflow-y-auto custom-scrollbar">
+                    {filteredOptions.length === 0 ? (
+                      <div className="p-4 text-center text-white/40 text-sm">
+                        No results found
+                      </div>
+                    ) : grouped ? (
+                      Object.entries(
+                        filteredOptions.reduce((acc, opt) => {
+                          const group = opt.group || 'Other'
+                          acc[group] = acc[group] || []
+                          acc[group].push(opt)
+                          return acc
+                        }, {})
+                      ).map(([group, groupOptions]) => (
+                        <div key={group}>
+                          <div className="px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider border-b border-white/5">
+                            {group}
+                          </div>
+                          {groupOptions.map((option) => (
+                            <motion.button
+                              key={option.value}
+                              onClick={() => handleSelect(option)}
+                              className={cn(
+                                'w-full px-4 py-3 text-left text-sm transition-colors',
+                                'flex items-center gap-3 border-b border-white/5 last:border-b-0',
+                                option.value === value
+                                  ? 'bg-white/10 text-white'
+                                  : 'text-white/60 hover:bg-white/5 hover:text-white'
+                              )}
+                              whileHover={{ x: 4 }}
+                            >
+                              {option.icon && (
+                                <span className="text-white/40 flex-shrink-0">{option.icon}</span>
+                              )}
+                              <span className="flex-1 truncate">{option.label}</span>
+                              {option.value === value && (
+                                <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </motion.button>
+                          ))}
+                        </div>
+                      ))
+                    ) : (
+                      filteredOptions.map((option) => (
+                        <motion.button
+                          key={option.value}
+                          onClick={() => handleSelect(option)}
+                          className={cn(
+                            'w-full px-4 py-3 text-left text-sm transition-colors',
+                            'flex items-center gap-3 border-b border-white/5 last:border-b-0',
+                            option.value === value
+                              ? 'bg-white/10 text-white'
+                              : 'text-white/60 hover:bg-white/5 hover:text-white'
+                          )}
+                          whileHover={{ x: 4 }}
+                        >
+                          {option.icon && (
+                            <span className="text-white/40 flex-shrink-0">{option.icon}</span>
+                          )}
+                          <span className="flex-1 truncate">{option.label}</span>
+                          {option.value === value && (
+                            <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </motion.button>
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </>
+          )
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   )
 }

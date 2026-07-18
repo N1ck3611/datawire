@@ -1549,7 +1549,7 @@ Lookup made by https://datawire.cc
 
   const sidebarItems = [
     { id: 'search', icon: Search, label: 'Search' },
-    { id: 'ai-osint', icon: Brain, label: 'AI OSINT' },
+    { id: 'ai-osint', icon: Brain, label: 'Live Intel' },
     { id: 'intelx', icon: CloudDownload, label: 'IntelX' },
     { id: 'geolocation', icon: Map, label: 'Geolocation' },
     { id: 'mapping', icon: Link2, label: 'Lead Mapping' },
@@ -1679,28 +1679,43 @@ Lookup made by https://datawire.cc
         {/* User Section */}
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-4">
-            {user?.avatar && user?.id ? (
-              <img 
-                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`}
-                alt={user.username}
-                className="w-10 h-10 rounded-xl border border-white/20"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'flex'
-                }}
-              />
-            ) : user?.discriminator && user.discriminator !== '0' ? (
-              <img 
-                src={`https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`}
-                alt={user.username}
-                className="w-10 h-10 rounded-xl border border-white/20"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'flex'
-                }}
-              />
-            ) : null}
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 hidden">
+            {(() => {
+              // Try to get Discord avatar
+              if (user?.avatar && user?.id) {
+                return (
+                  <img 
+                    src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`}
+                    alt={user.username}
+                    className="w-10 h-10 rounded-xl border border-white/20"
+                    onError={(e) => {
+                      console.log('Avatar load failed, trying fallback')
+                      e.target.style.display = 'none'
+                      const fallback = e.target.parentElement.querySelector('.fallback-avatar')
+                      if (fallback) fallback.style.display = 'flex'
+                    }}
+                  />
+                )
+              }
+              // Try default avatar based on discriminator
+              if (user?.discriminator && user.discriminator !== '0') {
+                return (
+                  <img 
+                    src={`https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`}
+                    alt={user.username}
+                    className="w-10 h-10 rounded-xl border border-white/20"
+                    onError={(e) => {
+                      console.log('Default avatar load failed')
+                      e.target.style.display = 'none'
+                      const fallback = e.target.parentElement.querySelector('.fallback-avatar')
+                      if (fallback) fallback.style.display = 'flex'
+                    }}
+                  />
+                )
+              }
+              // Show fallback
+              return null
+            })()}
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 fallback-avatar hidden">
               <span className="font-bold text-white text-sm">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </span>
@@ -2026,7 +2041,7 @@ Lookup made by https://datawire.cc
                                   <input
                                     type="file"
                                     onChange={(e) => setQuery(e.target.files[0])}
-                                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-border text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
+                                    className="w-full px-4 py-3 rounded-xl bg-black border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
                                   />
                                 </div>
                               ) : (
@@ -2325,7 +2340,7 @@ Lookup made by https://datawire.cc
                       type="file"
                       accept=".txt"
                       onChange={importGraph}
-                      className="hidden"
+                      className="w-full px-4 py-3 rounded-xl bg-black border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
                     />
                   </label>
                   
