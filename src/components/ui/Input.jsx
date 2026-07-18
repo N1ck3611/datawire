@@ -44,7 +44,7 @@ const Input = ({
           onBlur={() => setFocused(false)}
           className={cn(
             'w-full px-4 py-3 rounded-xl',
-            'bg-black border border-white/20',
+            'bg-black/60 backdrop-blur-xl border border-white/20',
             'text-white placeholder:text-white/40',
             'transition-all duration-300 ease-out',
             'focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.1)]',

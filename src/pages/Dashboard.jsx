@@ -1559,11 +1559,11 @@ Lookup made by https://datawire.cc
   ]
 
   return (
-    <div className="min-h-screen bg-background text-white flex">
+    <div className="h-screen bg-background text-white flex overflow-hidden">
       <PremiumBackground />
       
       {/* Sidebar */}
-      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-black/60 backdrop-blur-2xl border-r border-white/10 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className={`fixed lg:relative z-50 w-72 h-screen bg-black/60 backdrop-blur-2xl border-r border-white/10 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
         <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -1803,10 +1803,10 @@ Lookup made by https://datawire.cc
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col relative z-10">
+      <div className="flex-1 flex flex-col relative z-10 overflow-hidden">
         {/* Top Bar */}
         <motion.div 
-          className="h-16 bg-black/60 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 md:px-8"
+          className="h-16 flex-shrink-0 bg-black/60 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 md:px-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -1880,23 +1880,23 @@ Lookup made by https://datawire.cc
         </motion.div>
 
         {/* Content Area */}
-        <div className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
           {activeTab === 'search' && (
-            <div className="max-w-5xl mx-auto space-y-8">
+            <div className="max-w-5xl mx-auto space-y-6">
               {/* Main Search Form - only shown when searchMode is 'main' */}
               {searchMode === 'main' && (
-                <GlassCard className="p-8">
+                <GlassCard className="p-6">
                   <motion.div 
-                    className="flex items-center gap-3 mb-8"
+                    className="flex items-center gap-3 mb-6"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <div className="w-1 h-8 bg-white/80 rounded-full" />
-                    <h3 className="text-xl font-semibold tracking-tight">OSINT Search</h3>
+                    <div className="w-1 h-6 bg-white/80 rounded-full" />
+                    <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
                   </motion.div>
                   
-                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <Dropdown
                       options={getCategoryProviders(selectedCategory).map(p => ({
                         value: p,
@@ -1920,7 +1920,7 @@ Lookup made by https://datawire.cc
                     />
                   </div>
 
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <Input
                       label="Search Query"
                       placeholder="Example: user@email.com, 1.1.1.1, username123, or ID..."
@@ -1931,7 +1931,7 @@ Lookup made by https://datawire.cc
                     />
                   </div>
 
-                  <motion.div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <motion.div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <motion.p 
                       className="text-sm text-white/50"
                       animate={{ opacity: searching ? 0.5 : 1 }}
@@ -2041,7 +2041,7 @@ Lookup made by https://datawire.cc
                                   <input
                                     type="file"
                                     onChange={(e) => setQuery(e.target.files[0])}
-                                    className="w-full px-4 py-3 rounded-xl bg-black border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
+                                    className="w-full px-4 py-3 rounded-xl bg-black/60 backdrop-blur-xl border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
                                   />
                                 </div>
                               ) : (
@@ -2086,9 +2086,9 @@ Lookup made by https://datawire.cc
 
               {/* Search Results */}
               {searchResults && (
-                <GlassCard className="p-8">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                    <h3 className="text-xl font-semibold tracking-tight">Search Results</h3>
+                <GlassCard className="p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                    <h3 className="text-lg font-semibold tracking-tight">Search Results</h3>
                     <Button
                       onClick={() => {
                         const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
@@ -2129,8 +2129,8 @@ Lookup made by https://datawire.cc
                       Download .txt
                     </Button>
                   </div>
-                  <div className="bg-white/[0.02] p-6 rounded-xl overflow-auto border border-border custom-scrollbar" style={{ maxHeight: '400px' }}>
-                    <pre className="text-sm text-white/70 whitespace-pre-wrap font-mono">
+                  <div className="bg-white/[0.02] p-4 rounded-xl overflow-auto border border-border custom-scrollbar" style={{ maxHeight: '300px' }}>
+                    <pre className="text-xs text-white/70 whitespace-pre-wrap font-mono">
                       {JSON.stringify(searchResults.result || searchResults, null, 2)}
                     </pre>
                   </div>
@@ -2139,9 +2139,9 @@ Lookup made by https://datawire.cc
 
               {/* Recent Searches */}
               {searchHistory.length > 0 && (
-                <GlassCard className="p-8">
-                  <h3 className="text-xl font-semibold mb-6 tracking-tight">Recent Searches</h3>
-                  <div className="space-y-3">
+                <GlassCard className="p-6">
+                  <h3 className="text-lg font-semibold mb-4 tracking-tight">Recent Searches</h3>
+                  <div className="space-y-2">
                     {searchHistory.map((search, index) => (
                       <motion.div
                         key={index}
@@ -2155,17 +2155,17 @@ Lookup made by https://datawire.cc
                           setSelectedProvider(search.provider)
                           setSelectedCommand(search.command)
                         }}
-                        className="p-4 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-xl"
+                        className="p-3 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-lg"
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-white/90">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-medium text-white/90">
                             {search.provider} / {search.command}
                           </span>
                           <span className="text-xs text-white/40 font-mono">
                             {new Date(search.timestamp).toLocaleTimeString()}
                           </span>
                         </div>
-                        <p className="text-sm text-white/50 truncate">{search.query}</p>
+                        <p className="text-xs text-white/50 truncate">{search.query}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -2176,14 +2176,14 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'intelx' && (
             <div className="max-w-4xl mx-auto">
-              <GlassCard className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 bg-white/80 rounded-full" />
-                  <h3 className="text-xl font-semibold tracking-tight">IntelX File Download</h3>
+              <GlassCard className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 bg-white/80 rounded-full" />
+                  <h3 className="text-lg font-semibold tracking-tight">IntelX File Download</h3>
                 </div>
-                <p className="text-sm text-white/50 mb-6">Download files from IntelX by System ID</p>
+                <p className="text-sm text-white/50 mb-4">Download files from IntelX by System ID</p>
                 
-                <div className="mb-6">
+                <div className="mb-4">
                   <Input
                     label="System ID"
                     value={intelxSystemId}
@@ -2208,14 +2208,14 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'geolocation' && (
             <div className="h-full flex flex-col">
-              <GlassCard className="p-6 mb-4">
-                <div className="flex items-center justify-between mb-6">
+              <GlassCard className="p-4 mb-3">
+                <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-                      <Map className="w-5 h-5" />
+                    <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
+                      <Map className="w-4 h-4" />
                       Geolocation Map
                     </h3>
-                    <p className="text-sm text-white/50 mt-1">Track locations from IP addresses, phone numbers, and domains</p>
+                    <p className="text-xs text-white/50 mt-1">Track locations from IP addresses, phone numbers, and domains</p>
                   </div>
                   <Button
                     onClick={() => setGeoLocations([])}
@@ -2228,10 +2228,10 @@ Lookup made by https://datawire.cc
                 </div>
                 
                 {/* Manual Location Input */}
-                <div className="mt-6 pt-6 border-t border-border">
-                  <div className="flex items-center gap-2 mb-4">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="flex items-center gap-2 mb-3">
                     <Plus className="w-4 h-4 text-white/40" />
-                    <span className="text-sm font-medium text-white/50">Add Location by Input</span>
+                    <span className="text-xs font-medium text-white/50">Add Location by Input</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <Dropdown
@@ -2267,7 +2267,7 @@ Lookup made by https://datawire.cc
                 </div>
               </GlassCard>
               
-              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
+              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: 'calc(100vh - 250px)', minHeight: '400px' }}>
                 {geoLocations.length > 0 ? (
                   <GeolocationMap 
                     locations={geoLocations}
@@ -2275,7 +2275,7 @@ Lookup made by https://datawire.cc
                   />
                 ) : (
                   <EmptyState
-                    icon={<Map className="w-12 h-12" />}
+                    icon={<Map className="w-10 h-10" />}
                     title="No locations tracked yet"
                     description="Search for IP addresses, phone numbers, or domains to see their locations on the map"
                   />
@@ -2291,8 +2291,8 @@ Lookup made by https://datawire.cc
           {activeTab === 'mapping' && (
             <div className="h-full flex flex-col">
               {/* Graph Controls */}
-              <GlassCard className="p-4 mb-4">
-                <div className="flex flex-wrap items-center gap-4">
+              <GlassCard className="p-3 mb-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-1 min-w-[200px]">
                     <Input
                       placeholder="Search nodes by value (email, phone, IP, username)..."
@@ -2340,7 +2340,7 @@ Lookup made by https://datawire.cc
                       type="file"
                       accept=".txt"
                       onChange={importGraph}
-                      className="w-full px-4 py-3 rounded-xl bg-black border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
+                      className="w-full px-4 py-3 rounded-xl bg-black/60 backdrop-blur-xl border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
                     />
                   </label>
                   
@@ -2356,7 +2356,7 @@ Lookup made by https://datawire.cc
               </GlassCard>
               
               {/* Graph Container */}
-              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: '600px', minHeight: '400px' }}>
+              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: 'calc(100vh - 200px)', minHeight: '350px' }}>
                 <ReactFlow
                   nodes={filterNodes()}
                   edges={filterEdges()}
@@ -2460,10 +2460,10 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'history' && (
             <div className="max-w-4xl mx-auto">
-              <GlassCard className="p-8">
-                <h3 className="text-xl font-semibold mb-6 tracking-tight">Search History</h3>
+              <GlassCard className="p-6">
+                <h3 className="text-lg font-semibold mb-4 tracking-tight">Search History</h3>
                 {searchHistory.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {searchHistory.map((search, index) => (
                       <motion.div
                         key={index}
@@ -2478,17 +2478,17 @@ Lookup made by https://datawire.cc
                           setSelectedProvider(search.provider)
                           setSelectedCommand(search.command)
                         }}
-                        className="p-4 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-xl"
+                        className="p-3 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-lg"
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-white/90">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-medium text-white/90">
                             {search.provider} / {search.command}
                           </span>
                           <span className="text-xs text-white/40 font-mono">
                             {new Date(search.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <p className="text-sm text-white/50 truncate">{search.query}</p>
+                        <p className="text-xs text-white/50 truncate">{search.query}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -2505,14 +2505,14 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'transactions' && (
             <div className="max-w-4xl mx-auto">
-              <GlassCard className="p-8">
-                <h3 className="text-xl font-semibold mb-6 tracking-tight">Transaction History</h3>
+              <GlassCard className="p-6">
+                <h3 className="text-lg font-semibold mb-4 tracking-tight">Transaction History</h3>
                 {transactions.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {transactions.map(tx => (
-                      <div key={tx.id} className="p-4 bg-white/[0.03] border border-border rounded-xl">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium capitalize text-white/90">{tx.type}</span>
+                      <div key={tx.id} className="p-3 bg-white/[0.03] border border-border rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-medium capitalize text-white/90">{tx.type}</span>
                           <span className={`text-xs px-2 py-1 rounded-lg ${
                             tx.status === 'completed' ? 'bg-white/10 text-white' :
                             tx.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
@@ -2521,7 +2521,7 @@ Lookup made by https://datawire.cc
                             {tx.status}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center justify-between text-xs">
                           <span className="text-white/50 font-mono">${tx.amount}</span>
                           <span className="text-white/40 font-mono">
                             {new Date(tx.createdAt).toLocaleString()}
@@ -2532,7 +2532,7 @@ Lookup made by https://datawire.cc
                   </div>
                 ) : (
                   <EmptyState
-                    icon={<Receipt className="w-12 h-12" />}
+                    icon={<Receipt className="w-10 h-10" />}
                     title="No transactions yet"
                     description="Your transaction history will appear here"
                   />
@@ -2543,22 +2543,22 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'settings' && (
             <div className="max-w-4xl mx-auto">
-              <GlassCard className="p-8">
-                <h3 className="text-xl font-semibold mb-6 tracking-tight">Account Settings</h3>
-                <div className="space-y-4">
-                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+              <GlassCard className="p-6">
+                <h3 className="text-lg font-semibold mb-4 tracking-tight">Account Settings</h3>
+                <div className="space-y-3">
+                  <div className="p-3 bg-white/[0.03] border border-border rounded-lg">
                     <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Username</p>
                     <p className="font-medium text-white">{user?.username}</p>
                   </div>
-                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                  <div className="p-3 bg-white/[0.03] border border-border rounded-lg">
                     <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Display Name</p>
                     <p className="font-medium text-white">{user?.global_name || user?.username}</p>
                   </div>
-                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                  <div className="p-3 bg-white/[0.03] border border-border rounded-lg">
                     <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Discord ID</p>
                     <p className="font-medium font-mono text-white">{user?.discordId}</p>
                   </div>
-                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                  <div className="p-3 bg-white/[0.03] border border-border rounded-lg">
                     <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Member Since</p>
                     <p className="font-medium text-white">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
                   </div>
