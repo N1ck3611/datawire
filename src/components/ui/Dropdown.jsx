@@ -48,14 +48,25 @@ const Dropdown = ({
       }
     }
 
+    const handleResize = () => {
+      if (isOpen && triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect()
+        setPosition({
+          top: rect.bottom + 8,
+          left: rect.left,
+          width: rect.width
+        })
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
     window.addEventListener('scroll', handleScroll, true)
-    window.addEventListener('resize', handleScroll)
+    window.addEventListener('resize', handleResize)
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       window.removeEventListener('scroll', handleScroll, true)
-      window.removeEventListener('resize', handleScroll)
+      window.removeEventListener('resize', handleResize)
     }
   }, [isOpen])
 
@@ -133,24 +144,23 @@ const Dropdown = ({
             >
               <div className={cn(
                 'rounded-xl overflow-hidden',
-                'bg-[#0a0a0f] border border-white/[0.1]',
-                'shadow-[0_20px_60px_rgba(0,0,0,0.5)]',
-                'backdrop-blur-xl'
+                'bg-black/90 backdrop-blur-2xl border border-white/10',
+                'shadow-[0_20px_60px_rgba(0,0,0,0.8)]'
               )}>
                 {searchable && (
-                  <div className="p-3 border-b border-white/[0.08]">
+                  <div className="p-3 border-b border-white/10">
                     <input
                       type="text"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/[0.15]"
+                      className="w-full px-3 py-2 rounded-lg bg-black border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20"
                       autoFocus
                     />
                   </div>
                 )}
                 
-                <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                <div className="max-h-80 overflow-y-auto custom-scrollbar">
                   {filteredOptions.length === 0 ? (
                     <div className="p-4 text-center text-white/40 text-sm">
                       No results found
@@ -165,7 +175,7 @@ const Dropdown = ({
                       }, {})
                     ).map(([group, groupOptions]) => (
                       <div key={group}>
-                        <div className="px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider">
+                        <div className="px-4 py-2 text-xs font-medium text-white/30 uppercase tracking-wider border-b border-white/5">
                           {group}
                         </div>
                         {groupOptions.map((option) => (
@@ -174,19 +184,19 @@ const Dropdown = ({
                             onClick={() => handleSelect(option)}
                             className={cn(
                               'w-full px-4 py-3 text-left text-sm transition-colors',
-                              'flex items-center gap-3',
+                              'flex items-center gap-3 border-b border-white/5 last:border-b-0',
                               option.value === value
-                                ? 'bg-white/[0.1] text-white'
-                                : 'text-white/60 hover:bg-white/[0.05] hover:text-white'
+                                ? 'bg-white/10 text-white'
+                                : 'text-white/60 hover:bg-white/5 hover:text-white'
                             )}
                             whileHover={{ x: 4 }}
                           >
                             {option.icon && (
-                              <span className="text-white/40">{option.icon}</span>
+                              <span className="text-white/40 flex-shrink-0">{option.icon}</span>
                             )}
-                            <span className="flex-1">{option.label}</span>
+                            <span className="flex-1 truncate">{option.label}</span>
                             {option.value === value && (
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             )}
@@ -201,19 +211,19 @@ const Dropdown = ({
                         onClick={() => handleSelect(option)}
                         className={cn(
                           'w-full px-4 py-3 text-left text-sm transition-colors',
-                          'flex items-center gap-3',
+                          'flex items-center gap-3 border-b border-white/5 last:border-b-0',
                           option.value === value
-                            ? 'bg-white/[0.1] text-white'
-                            : 'text-white/60 hover:bg-white/[0.05] hover:text-white'
+                            ? 'bg-white/10 text-white'
+                            : 'text-white/60 hover:bg-white/5 hover:text-white'
                         )}
                         whileHover={{ x: 4 }}
                       >
                         {option.icon && (
-                          <span className="text-white/40">{option.icon}</span>
+                          <span className="text-white/40 flex-shrink-0">{option.icon}</span>
                         )}
-                        <span className="flex-1">{option.label}</span>
+                        <span className="flex-1 truncate">{option.label}</span>
                         {option.value === value && (
-                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         )}

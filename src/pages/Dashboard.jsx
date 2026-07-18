@@ -244,9 +244,7 @@ const PROVIDER_LOGOS = {
   minecraft: 'bx-cube',
   xbox: 'bx-xbox',
   steam: 'bx-steam',
-  fivem: 'https://www.google.com/s2/favicons?domain=fivem.net&sz=64',
-  twitter: 'bx-twitter',
-  reddit: 'bx-reddit'
+  fivem: 'https://www.google.com/s2/favicons?domain=fivem.net&sz=64'
 }
 
 
