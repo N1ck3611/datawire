@@ -71,7 +71,8 @@ import {
   LogOut,
   DollarSign,
   Video,
-  DoorOpen
+  DoorOpen,
+  HelpCircle as QuestionMark
 } from 'lucide-react'
 
 // Provider icons mapping - using Lucide React icons
