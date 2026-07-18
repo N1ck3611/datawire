@@ -208,7 +208,7 @@ const AIOsintSearch = () => {
                         value={value}
                         onChange={(e) => updateIdentifier(type, index, e.target.value)}
                         placeholder={config.placeholder}
-                        className="flex-1 px-4 py-2.5 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm"
+                        className="flex-1 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none transition-all text-sm"
                       />
                       {values.length > 1 && (
                         <button
