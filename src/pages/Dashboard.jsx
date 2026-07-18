@@ -178,19 +178,19 @@ const PROVIDER_CATEGORIES = {
   }
 }
 
-// Social media logos - using favicons
-const SOCIAL_LOGOS = {
-  twitter: 'https://www.google.com/s2/favicons?domain=x.com&sz=64',
-  instagram: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=64',
-  github: 'https://www.google.com/s2/favicons?domain=github.com&sz=64',
-  snapchat: 'https://www.google.com/s2/favicons?domain=snapchat.com&sz=64',
-  reddit: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
-  discord: 'https://www.google.com/s2/favicons?domain=discord.com&sz=64',
-  telegram: 'https://www.google.com/s2/favicons?domain=t.me&sz=64',
-  tiktok: 'https://www.google.com/s2/favicons?domain=tiktok.com&sz=64'
+// Social media icons - using boxicons
+const SOCIAL_ICONS = {
+  twitter: 'bxl-twitter',
+  instagram: 'bxl-instagram',
+  github: 'bxl-github',
+  snapchat: 'bxl-snapchat',
+  reddit: 'bxl-reddit',
+  discord: 'bxl-discord-alt',
+  telegram: 'bxl-telegram',
+  tiktok: 'bxl-tiktok'
 }
 
-// Provider logos
+// Provider logos - using boxicons for socials, favicons for others
 const PROVIDER_LOGOS = {
   datahound: 'https://www.google.com/s2/favicons?domain=datahound.tools&sz=64',
   osintcat: 'https://www.google.com/s2/favicons?domain=osintcat.net&sz=64',
@@ -204,7 +204,7 @@ const PROVIDER_LOGOS = {
   hackcheck: 'https://www.google.com/s2/favicons?domain=hackcheck.io&sz=64',
   osintkit: 'https://www.google.com/s2/favicons?domain=osintkit.io&sz=64',
   breachvip: 'https://www.google.com/s2/favicons?domain=breachvip.io&sz=64',
-  cordcat: 'https://www.google.com/s2/favicons?domain=cord.cat&sz=64',
+  cordcat: 'bxl-discord-alt',
   intelx: 'https://logos.osint.ly/intelx.io',
   xosint: 'https://www.google.com/s2/favicons?domain=xosint.io&sz=64',
   seeknow: 'https://www.google.com/s2/favicons?domain=see-know.icu&sz=64',
@@ -215,22 +215,24 @@ const PROVIDER_LOGOS = {
   nbrs: 'https://www.google.com/s2/favicons?domain=nbrs.site&sz=64',
   room101: 'https://www.google.com/s2/favicons?domain=think-pol.com&sz=64',
   seon: 'https://logos.osint.ly/seon.io',
-  oathnet: 'https://www.google.com/s2/favicons?domain=oathnet.io&sz=64',
+  oathnet: 'bxl-discord-alt',
   memory: 'https://www.google.com/s2/favicons?domain=memory.lol&sz=64',
   nosint: 'https://www.google.com/s2/favicons?domain=nosint.org&sz=64',
   reconly: 'https://www.google.com/s2/favicons?domain=reconly.io&sz=64',
-  tiktok: 'bx-tiktok',
+  tiktok: 'bxl-tiktok',
   binlist: 'https://www.google.com/s2/favicons?domain=binlist.net&sz=64',
   inf0sec: 'https://www.google.com/s2/favicons?domain=inf0sec.xyz&sz=64',
   vin: 'https://www.google.com/s2/favicons?domain=vindecoderz.com&sz=64',
   propertyradar: 'https://www.google.com/s2/favicons?domain=propertyradar.com&sz=64',
-  datavoid: 'https://www.google.com/s2/favicons?domain=datavoid.sh&sz=64',
+  datavoid: 'bxl-discord-alt',
   checko: 'https://www.google.com/s2/favicons?domain=checko.io&sz=64',
-  github: 'bx-github',
-  discord: 'bx-discord-alt',
-  telegram: 'bx-telegram',
-  snapchat: 'bx-snapchat',
-  instagram: 'bx-instagram',
+  github: 'bxl-github',
+  discord: 'bxl-discord-alt',
+  telegram: 'bxl-telegram',
+  snapchat: 'bxl-snapchat',
+  instagram: 'bxl-instagram',
+  twitter: 'bxl-twitter',
+  reddit: 'bxl-reddit',
   medal: 'https://www.google.com/s2/favicons?domain=medal.tv&sz=64',
   openarchive: 'https://www.google.com/s2/favicons?domain=openarchive.lol&sz=64',
   wolfeye: 'https://www.wolfeye.xyz/logo.png',
@@ -238,7 +240,7 @@ const PROVIDER_LOGOS = {
   domain: 'https://www.google.com/s2/favicons?domain=who.is&sz=64',
   dns: 'https://www.google.com/s2/favicons?domain=dns.google&sz=64',
   whois: 'https://www.google.com/s2/favicons?domain=whois.com&sz=64',
-  roblox: 'bx-game',
+  roblox: 'bxl-play-store',
   minecraft: 'bx-cube',
   xbox: 'bx-xbox',
   steam: 'bx-steam',
@@ -631,6 +633,9 @@ const Dashboard = () => {
   const [timeRemaining, setTimeRemaining] = useState(null)
   const [expiredModal, setExpiredModal] = useState(false)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [searchesToday, setSearchesToday] = useState(0)
+  const [totalSearches, setTotalSearches] = useState(0)
+  const [apiStatus, setApiStatus] = useState('online')
   
   // OSINT Search State
   const [providers, setProviders] = useState(null)
@@ -756,6 +761,8 @@ const Dashboard = () => {
         setPlanExpiresAt(balanceData.planExpiresAt)
         setDailyCredits(balanceData.dailyCredits)
         setDailyIntelxUses(balanceData.dailyIntelxUses)
+        setSearchesToday(balanceData.searchesToday || 0)
+        setTotalSearches(balanceData.totalSearches || 0)
       }
       if (txData.success) setTransactions(txData.transactions || [])
     } catch (error) {
@@ -1558,7 +1565,7 @@ Lookup made by https://datawire.cc
       <PremiumBackground />
       
       {/* Sidebar */}
-      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-surface/80 backdrop-blur-xl border-r border-border flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-black/60 backdrop-blur-2xl border-r border-white/10 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
         <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -1627,6 +1634,7 @@ Lookup made by https://datawire.cc
             <div className="space-y-1 max-h-96 overflow-y-auto custom-scrollbar">
               {Object.keys(providers || {}).map((provider) => {
                 const logoUrl = PROVIDER_LOGOS[provider]
+                const isBoxicon = logoUrl && logoUrl.startsWith('bx')
                 
                 return (
                   <motion.button
@@ -1647,7 +1655,9 @@ Lookup made by https://datawire.cc
                     }`}
                   >
                     <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                      {logoUrl && !logoUrl.startsWith('bx-') ? (
+                      {isBoxicon ? (
+                        <i className={`${logoUrl} text-lg`}></i>
+                      ) : logoUrl ? (
                         <img 
                           src={logoUrl} 
                           alt={provider}
@@ -1669,11 +1679,11 @@ Lookup made by https://datawire.cc
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-4">
             {user?.avatar && user?.id ? (
               <img 
-                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`}
+                src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`}
                 alt={user.username}
                 className="w-10 h-10 rounded-xl border border-white/20"
                 onError={(e) => {
@@ -1681,7 +1691,7 @@ Lookup made by https://datawire.cc
                   e.target.nextSibling.style.display = 'flex'
                 }}
               />
-            ) : user?.discriminator ? (
+            ) : user?.discriminator && user.discriminator !== '0' ? (
               <img 
                 src={`https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`}
                 alt={user.username}
@@ -1747,7 +1757,7 @@ Lookup made by https://datawire.cc
               size="sm"
               className="w-full"
             >
-              <DollarSign className="w-4 h-4 mr-2" />
+              <DollarSign className="w-4 h-4" />
               Add Funds
             </Button>
             <Button
@@ -1764,7 +1774,7 @@ Lookup made by https://datawire.cc
               size="sm"
               className="w-full"
             >
-              <LogOut className="w-4 h-4 mr-2" />
+              <LogOut className="w-4 h-4" />
               Logout
             </Button>
           </div>
@@ -1783,7 +1793,7 @@ Lookup made by https://datawire.cc
       <div className="flex-1 flex flex-col relative z-10">
         {/* Top Bar */}
         <motion.div 
-          className="h-16 bg-surface/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-8"
+          className="h-16 bg-black/60 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-4 md:px-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -1811,8 +1821,32 @@ Lookup made by https://datawire.cc
               className="text-sm text-white/50"
               whileHover={{ scale: 1.05 }}
             >
-              Available Searches: <span className="text-white font-semibold font-mono">
+              Available: <span className="text-white font-semibold font-mono">
                 {Math.floor(parseFloat(balance) / parseFloat(SEARCH_COST))}
+              </span>
+            </motion.div>
+            <motion.div 
+              className="text-sm text-white/50 hidden md:block"
+              whileHover={{ scale: 1.05 }}
+            >
+              searches today: <span className="text-white font-semibold font-mono">
+                {searchesToday}
+              </span>
+            </motion.div>
+            <motion.div 
+              className="text-sm text-white/50 hidden md:block"
+              whileHover={{ scale: 1.05 }}
+            >
+              total: <span className="text-white font-semibold font-mono">
+                {totalSearches}
+              </span>
+            </motion.div>
+            <motion.div 
+              className="text-sm text-white/50 hidden md:block"
+              whileHover={{ scale: 1.05 }}
+            >
+              API: <span className="text-green-400 font-semibold font-mono">
+                {apiStatus}
               </span>
             </motion.div>
             <motion.div 
@@ -1897,7 +1931,7 @@ Lookup made by https://datawire.cc
                       loading={searching}
                       size="lg"
                     >
-                      <Search className="w-4 h-4 mr-2" />
+                      <Search className="w-4 h-4" />
                       {cooldown ? 'Cooldown...' : 'Search'}
                     </Button>
                   </motion.div>
@@ -2028,7 +2062,7 @@ Lookup made by https://datawire.cc
                           loading={searching}
                           size="lg"
                         >
-                          <Search className="w-4 h-4 mr-2" />
+                          <Search className="w-4 h-4" />
                           {cooldown ? 'Cooldown...' : 'Search'}
                         </Button>
                       </div>
@@ -2078,7 +2112,7 @@ Lookup made by https://datawire.cc
                       variant="secondary"
                       size="sm"
                     >
-                      <Download className="w-4 h-4 mr-2" />
+                      <Download className="w-4 h-4" />
                       Download .txt
                     </Button>
                   </div>
@@ -2152,7 +2186,7 @@ Lookup made by https://datawire.cc
                   loading={intelxDownloading}
                   size="lg"
                 >
-                  <CloudDownload className="w-4 h-4 mr-2" />
+                  <CloudDownload className="w-4 h-4" />
                   Download File
                 </Button>
               </GlassCard>
@@ -2175,7 +2209,7 @@ Lookup made by https://datawire.cc
                     variant="danger"
                     size="sm"
                   >
-                    <Trash className="w-4 h-4 mr-2" />
+                    <Trash className="w-4 h-4" />
                     Clear
                   </Button>
                 </div>
@@ -2214,7 +2248,7 @@ Lookup made by https://datawire.cc
                     size="sm"
                     className="mt-4"
                   >
-                    <MapPin className="w-4 h-4 mr-2" />
+                    <MapPin className="w-4 h-4" />
                     Add Location
                   </Button>
                 </div>
@@ -2280,13 +2314,13 @@ Lookup made by https://datawire.cc
                     variant="secondary"
                     size="sm"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4" />
                     Export
                   </Button>
                   
                   <label className="cursor-pointer">
                     <Button variant="secondary" size="sm">
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-4 h-4" />
                       Import
                     </Button>
                     <input
@@ -2302,7 +2336,7 @@ Lookup made by https://datawire.cc
                     variant="danger"
                     size="sm"
                   >
-                    <Trash className="w-4 h-4 mr-2" />
+                    <Trash className="w-4 h-4" />
                     Clear
                   </Button>
                 </div>
@@ -2403,7 +2437,7 @@ Lookup made by https://datawire.cc
                   <Button
                     onClick={() => addManualNode(newLead.type, newLead.value, newLead.source)}
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-4 h-4" />
                     Add Node
                   </Button>
                 </div>

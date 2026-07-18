@@ -26,7 +26,7 @@ const Button = ({
   return (
     <motion.button
       className={cn(
-        'relative overflow-hidden rounded-xl font-medium',
+        'relative overflow-hidden rounded-xl font-medium flex items-center justify-center gap-2',
         'transition-all duration-300 ease-out',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variants[variant],
@@ -45,7 +45,7 @@ const Button = ({
       {/* Loading spinner */}
       {loading && (
         <motion.span
-          className="inline-block mr-2"
+          className="inline-block"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         >
