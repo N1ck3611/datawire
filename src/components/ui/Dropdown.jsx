@@ -133,7 +133,7 @@ const Dropdown = ({
       </div>
 
       {mounted && createPortal(
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {isOpen && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
@@ -242,7 +242,7 @@ const Dropdown = ({
                 </div>
               </motion.div>
             </>
-          )
+          )}
         </AnimatePresence>,
         document.body
       )}
