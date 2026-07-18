@@ -15,59 +15,117 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import AIOsintSearch from './AIOsintSearch'
 import GeolocationMap from '../components/GeolocationMap'
+import GlassCard from '../components/ui/GlassCard'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Dropdown from '../components/ui/Dropdown'
+import EmptyState from '../components/ui/EmptyState'
+import PremiumBackground from '../components/ui/PremiumBackground'
+import { 
+  Search, 
+  Brain, 
+  CloudDownload, 
+  Map, 
+  Link2, 
+  History, 
+  Receipt, 
+  Settings, 
+  Menu, 
+  X, 
+  ChevronDown,
+  Download,
+  Trash,
+  Plus,
+  Upload,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  CheckCircle,
+  XCircle,
+  Info,
+  Clock,
+  Globe,
+  Phone,
+  MapPin,
+  Mail as Envelope,
+  User,
+  Server,
+  Database,
+  Shield,
+  Vault,
+  Book,
+  Wrench,
+  Crown,
+  Cloud,
+  Archive,
+  Users,
+  ShieldX,
+  Eye,
+  Compass,
+  CreditCard,
+  Terminal,
+  Car,
+  Building,
+  HelpCircle,
+  ChevronRight,
+  LogOut,
+  DollarSign,
+  Video,
+  DoorOpen
+} from 'lucide-react'
 
-// Provider icons mapping
+// Provider icons mapping - using Lucide React icons
 const PROVIDER_ICONS = {
-  snusbase: 'bx-database',
-  leakosint: 'bx-file-find',
-  leakcheck: 'bx-shield-quarter',
-  breachbase: 'bx-server',
-  intelvault: 'bx-vault',
-  breachdirectory: 'bx-book',
-  hackcheck: 'bx-hacker',
-  osintkit: 'bx-toolbox',
-  breachvip: 'bx-crown',
-  cordcat: 'bxl-discord',
-  intelx: 'bx-cloud-download',
-  osintcat: 'bx-cat',
-  xosint: 'bx-search-alt',
-  seeknow: 'bx-search',
-  seekria: 'bx-radar',
-  datahound: 'bx-dog',
-  openarchive: 'bx-archive',
-  telegram: 'bxl-telegram',
-  tiktok: 'bxl-tiktok',
-  roblox: 'bx-game',
-  minecraft: 'bx-cube',
-  xbox: 'bx-x',
-  steam: 'bx-steam',
-  fivem: 'bx-car',
-  twitter: 'bxl-twitter',
-  instagram: 'bxl-instagram',
-  github: 'bxl-github',
-  snapchat: 'bxl-snapchat',
-  reddit: 'bxl-reddit',
-  ip: 'bx-globe',
-  domain: 'bx-world',
-  dns: 'bx-network-chart',
-  whois: 'bx-info-circle',
-  hudsonrock: 'bx-shield-x',
-  leaksight: 'bx-eye',
-  nbrs: 'bx-user',
-  room101: 'bx-door-open',
-  seon: 'bx-fingerprint',
-  memory: 'bx-memory-card',
-  nosint: 'bx-search',
-  reconly: 'bx-compass',
-  binlist: 'bx-credit-card',
-  inf0sec: 'bx-terminal',
-  vin: 'bx-car',
-  propertyradar: 'bx-building',
-  datavoid: 'bx-data',
-  checko: 'bx-check-circle',
-  medal: 'bx-medal',
-  discord: 'bxl-discord',
-  oathnet: 'bx-shield'
+  snusbase: Database,
+  leakosint: Search,
+  leakcheck: Shield,
+  breachbase: Server,
+  intelvault: Vault,
+  breachdirectory: Book,
+  hackcheck: Wrench,
+  osintkit: Wrench,
+  breachvip: Crown,
+  cordcat: HelpCircle,
+  intelx: CloudDownload,
+  osintcat: HelpCircle,
+  xosint: Search,
+  seeknow: Search,
+  seekria: Compass,
+  datahound: HelpCircle,
+  openarchive: Archive,
+  telegram: HelpCircle,
+  tiktok: Video,
+  roblox: HelpCircle,
+  minecraft: HelpCircle,
+  xbox: HelpCircle,
+  steam: HelpCircle,
+  fivem: Car,
+  twitter: HelpCircle,
+  instagram: HelpCircle,
+  github: HelpCircle,
+  snapchat: HelpCircle,
+  reddit: HelpCircle,
+  ip: Globe,
+  domain: Globe,
+  dns: HelpCircle,
+  whois: Info,
+  hudsonrock: ShieldX,
+  leaksight: Eye,
+  nbrs: User,
+  room101: DoorOpen,
+  seon: HelpCircle,
+  memory: HelpCircle,
+  nosint: Search,
+  reconly: Compass,
+  binlist: CreditCard,
+  inf0sec: Terminal,
+  vin: Car,
+  propertyradar: Building,
+  datavoid: HelpCircle,
+  checko: CheckCircle,
+  medal: HelpCircle,
+  discord: HelpCircle,
+  oathnet: Shield
 }
 
 // Provider categories with logos (kept for reference)
@@ -185,423 +243,66 @@ const PROVIDER_LOGOS = {
   reddit: 'bx-reddit'
 }
 
-// Hide ReactFlow watermark
-const style = document.createElement('style')
-style.textContent = `
-  .react-flow__attribution {
-    display: none !important;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); }
-    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
-  }
-  
-  .animate-slide-in {
-    animation: slideIn 0.4s ease-out;
-  }
-  
-  .animate-scale-in {
-    animation: scaleIn 0.3s ease-out;
-  }
-  
-  .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-  }
-  
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  .glass-card {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.02) 50%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  }
-  
-  .glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg, 
-      transparent, 
-      rgba(255, 255, 255, 0.1), 
-      transparent
-    );
-    transition: left 1s ease;
-  }
-  
-  .glass-card::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.03) 0%,
-      transparent 70%
-    );
-    pointer-events: none;
-  }
-  
-  .glass-card:hover::before {
-    left: 100%;
-  }
-  
-  .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 25px 80px rgba(0, 0, 0, 0.6),
-      0 0 0 1px rgba(255, 255, 255, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 40px rgba(255, 255, 255, 0.05);
-    transform: translateY(-6px) scale(1.02);
-  }
-  
-  button {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-  
-  button:active::after {
-    width: 300px;
-    height: 300px;
-  }
-  
-  /* Enhanced input styles */
-  input, select {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-  }
-  
-  input:focus, select:focus {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 0 20px rgba(255, 255, 255, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: rgba(10, 10, 16, 0.5);
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.2) 0%,
-      rgba(255, 255, 255, 0.1) 100%
-    );
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0.2) 100%
-    );
-  }
-  
-  /* Glow effects */
-  .glow-effect {
-    box-shadow: 
-      0 0 20px rgba(255, 255, 255, 0.1),
-      0 0 40px rgba(255, 255, 255, 0.05);
-  }
-  
-  .glow-effect-purple {
-    box-shadow: 
-      0 0 20px rgba(168, 85, 247, 0.3),
-      0 0 40px rgba(168, 85, 247, 0.1);
-  }
-  
-  .glow-effect-blue {
-    box-shadow: 
-      0 0 20px rgba(59, 130, 246, 0.3),
-      0 0 40px rgba(59, 130, 246, 0.1);
-  }
-  
-  .glow-effect-green {
-    box-shadow: 
-      0 0 20px rgba(34, 197, 94, 0.3),
-      0 0 40px rgba(34, 197, 94, 0.1);
-  }
-  
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(
-      135deg,
-      #ffffff 0%,
-      #a855f7 50%,
-      #3b82f6 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  /* Animated border */
-  .animated-border {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .animated-border::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(
-      45deg,
-      #ff6b6b,
-      #4ecdc4,
-      #45b7d1,
-      #96ceb4,
-      #ffeaa7,
-      #dfe6e9,
-      #ff6b6b
-    );
-    background-size: 400% 400%;
-    animation: gradient-border 3s ease infinite;
-    border-radius: inherit;
-    z-index: -1;
-  }
-  
-  @keyframes gradient-border {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  /* Floating particles effect */
-  .particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  
-  .particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    animation: float-particle 10s infinite;
-  }
-  
-  @keyframes float-particle {
-    0%, 100% {
-      transform: translateY(100vh) rotate(0deg);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-100vh) rotate(720deg);
-      opacity: 0;
-    }
-  }
-  
-  input:focus {
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
-  }
-`
-document.head.appendChild(style)
 
-// Custom Node Component
+// Custom Node Component - Premium styling
 const CustomNode = ({ data, selected }) => {
+  const IconComponent = data.icon || QuestionMark
+  
   return (
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '140px',
-      padding: '10px'
-    }}>
+    <div className="relative flex flex-col items-center w-32 p-3">
       {/* Connection handles */}
       <Handle
         type="target"
         position={Position.Top}
         id="top"
-        style={{
-          background: '#ffffff',
-          border: '2px solid #1a1a2e',
-          width: '12px',
-          height: '12px',
-          top: '-6px'
-        }}
+        className="w-3 h-3 bg-white border-2 border-[#0a0a0f] rounded-full"
+        style={{ top: '-6px' }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         id="bottom"
-        style={{
-          background: '#ffffff',
-          border: '2px solid #1a1a2e',
-          width: '12px',
-          height: '12px',
-          bottom: '-6px'
-        }}
+        className="w-3 h-3 bg-white border-2 border-[#0a0a0f] rounded-full"
+        style={{ bottom: '-6px' }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left"
-        style={{
-          background: '#ffffff',
-          border: '2px solid #1a1a2e',
-          width: '12px',
-          height: '12px',
-          left: '-6px'
-        }}
+        className="w-3 h-3 bg-white border-2 border-[#0a0a0f] rounded-full"
+        style={{ left: '-6px' }}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="right"
-        style={{
-          background: '#ffffff',
-          border: '2px solid #1a1a2e',
-          width: '12px',
-          height: '12px',
-          right: '-6px'
-        }}
+        className="w-3 h-3 bg-white border-2 border-[#0a0a0f] rounded-full"
+        style={{ right: '-6px' }}
       />
       
-      {/* Type label outside circle */}
-      <div style={{
-        position: 'absolute',
-        top: '-25px',
-        fontSize: '11px',
-        color: '#ffffff',
-        textTransform: 'capitalize',
-        fontWeight: '500',
-        whiteSpace: 'nowrap'
-      }}>
+      {/* Type label */}
+      <div className="absolute -top-6 text-[10px] text-white/60 uppercase tracking-wider font-medium whitespace-nowrap">
         {data.type}
       </div>
       
-      {/* Circle with icon */}
-      <div style={{
-        width: '70px',
-        height: '70px',
-        borderRadius: '50%',
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-        border: selected ? '3px solid #ffffff' : '2px solid #ffffff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: selected ? '0 0 30px rgba(255, 255, 255, 0.3)' : '0 0 20px rgba(255, 255, 255, 0.2)',
-        position: 'relative',
-        cursor: 'pointer'
-      }}>
-        <i className={`bx ${data.icon || 'bx-question-mark'}`} style={{
-          fontSize: '28px',
-          color: '#ffffff'
-        }}></i>
-      </div>
+      {/* Premium node circle */}
+      <motion.div
+        className="relative w-16 h-16 rounded-full flex items-center justify-center cursor-pointer"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%)',
+          border: selected ? '2px solid rgba(255,255,255,0.4)' : '1px solid rgba(255,255,255,0.15)',
+          boxShadow: selected 
+            ? '0 0 30px rgba(255,255,255,0.15), 0 0 0 1px rgba(255,255,255,0.1) inset'
+            : '0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset',
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <IconComponent className="w-6 h-6 text-white/80" />
+      </motion.div>
       
-      {/* Value under icon */}
-      <div style={{
-        marginTop: '8px',
-        fontSize: '11px',
-        color: '#a0a0c0',
-        textAlign: 'center',
-        maxWidth: '100%',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }}>
+      {/* Value label */}
+      <div className="mt-2 text-[10px] text-white/40 text-center max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-medium">
         {data.label}
       </div>
     </div>
@@ -908,242 +609,7 @@ const MANUAL_PROVIDERS = {
   ]
 }
 
-// Custom Dropdown Component
-const CustomDropdown = ({ options, value, onChange, placeholder, className = '' }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
-  const dropdownMenuRef = useRef(null)
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
-          dropdownMenuRef.current && !dropdownMenuRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
-    }
-    
-    const handleScroll = () => {
-      if (isOpen && dropdownRef.current) {
-        const rect = dropdownRef.current.getBoundingClientRect()
-        setMenuPosition({
-          top: rect.bottom + 4,
-          left: rect.left,
-          width: rect.width
-        })
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside)
-    window.addEventListener('scroll', handleScroll, true)
-    window.addEventListener('resize', handleScroll)
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      window.removeEventListener('scroll', handleScroll, true)
-      window.removeEventListener('resize', handleScroll)
-    }
-  }, [isOpen])
-
-  const toggleDropdown = () => {
-    if (!isOpen && dropdownRef.current) {
-      const rect = dropdownRef.current.getBoundingClientRect()
-      setMenuPosition({
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width
-      })
-    }
-    setIsOpen(!isOpen)
-  }
-
-  const selectedOption = options?.find(opt => opt.value === value)
-
-  return (
-    <>
-      <div ref={dropdownRef} className={`relative ${className}`}>
-        <button
-          onClick={toggleDropdown}
-          className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
-        >
-          <span className={selectedOption ? 'text-osint-secondary' : 'text-osint-muted'}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
-          <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
-        </button>
-      </div>
-
-      {isOpen && createPortal(
-        <div 
-          ref={dropdownMenuRef}
-          className="fixed z-[999999] bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in"
-          style={{
-            top: `${menuPosition.top}px`,
-            left: `${menuPosition.left}px`,
-            width: `${menuPosition.width}px`
-          }}
-        >
-          {options?.map((option) => (
-            <button
-              key={option.value}
-              onMouseDown={(e) => {
-                e.preventDefault()
-                onChange(option.value)
-                setIsOpen(false)
-              }}
-              className={`w-full px-4 py-3 text-left hover:bg-white/10 transition-colors ${
-                option.value === value ? 'bg-white/20 text-white' : 'text-osint-secondary'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
-
-// Categorized Provider Dropdown Component
-const CategorizedProviderDropdown = ({ providers, selectedCategory, selectedProvider, onCategoryChange, onProviderChange }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
-  const dropdownMenuRef = useRef(null)
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
-          dropdownMenuRef.current && !dropdownMenuRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
-    }
-    
-    const handleScroll = () => {
-      if (isOpen && dropdownRef.current) {
-        const rect = dropdownRef.current.getBoundingClientRect()
-        setMenuPosition({
-          top: rect.bottom + 4,
-          left: rect.left,
-          width: rect.width
-        })
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside)
-    window.addEventListener('scroll', handleScroll, true)
-    window.addEventListener('resize', handleScroll)
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      window.removeEventListener('scroll', handleScroll, true)
-      window.removeEventListener('resize', handleScroll)
-    }
-  }, [isOpen])
-
-  const getCategoryProviders = (category) => {
-    const categoryData = PROVIDER_CATEGORIES[category]
-    if (!categoryData) return []
-    return categoryData.providers.filter(p => providers && providers[p])
-  }
-
-  const currentCategory = PROVIDER_CATEGORIES[selectedCategory]
-  const availableProviders = getCategoryProviders(selectedCategory)
-
-  const toggleDropdown = () => {
-    if (!isOpen && dropdownRef.current) {
-      const rect = dropdownRef.current.getBoundingClientRect()
-      setMenuPosition({
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width
-      })
-    }
-    setIsOpen(!isOpen)
-  }
-
-  return (
-    <>
-      <div ref={dropdownRef} className="relative">
-        <button
-          onClick={toggleDropdown}
-          className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-colors text-left flex items-center justify-between"
-        >
-          <span className="text-osint-secondary">
-            {currentCategory?.label || 'Select Category'}
-          </span>
-          <i className={`bx bx-chevron-down text-osint-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
-        </button>
-      </div>
-
-      {isOpen && createPortal(
-        <div 
-          ref={dropdownMenuRef}
-          className="fixed z-[1000000] bg-osint-card border border-osint-border shadow-2xl max-h-96 overflow-y-auto animate-scale-in"
-          style={{
-            top: `${menuPosition.top}px`,
-            left: `${menuPosition.left}px`,
-            width: `${menuPosition.width}px`
-          }}
-        >
-          {Object.entries(PROVIDER_CATEGORIES).map(([key, category]) => (
-            <div key={key}>
-              <button
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  onCategoryChange(key)
-                  const providers = getCategoryProviders(key)
-                  if (providers.length > 0) {
-                    onProviderChange(providers[0])
-                  }
-                }}
-                className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-white/10 transition-colors ${
-                  key === selectedCategory ? 'bg-white/20 text-white' : 'text-osint-secondary'
-                }`}
-              >
-                {category.logo ? (
-                  <img 
-                    src={category.logo} 
-                    alt={category.label}
-                    className="w-6 h-6 object-contain filter grayscale brightness-0 contrast-100"
-                  />
-                ) : (
-                  <i className={`bx ${category.icon} text-lg`}></i>
-                )}
-                <span className="font-medium">{category.label}</span>
-                <span className="text-xs text-osint-muted ml-auto">
-                  {getCategoryProviders(key).length}
-                </span>
-              </button>
-              
-              {key === selectedCategory && (
-                <div className="pl-8 border-l border-osint-border/50 ml-4">
-                  {availableProviders.map(provider => (
-                    <button
-                      key={provider}
-                      onMouseDown={(e) => {
-                        e.preventDefault()
-                        onProviderChange(provider)
-                        setIsOpen(false)
-                      }}
-                      className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${
-                        provider === selectedProvider ? 'text-white' : 'text-gray-500'
-                      }`}
-                    >
-                      {provider.charAt(0).toUpperCase() + provider.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -1766,14 +1232,14 @@ Lookup made by https://datawire.cc
 
   const getEntityIcon = (type) => {
     const icons = {
-      email: 'bx-envelope',
-      phone: 'bx-phone',
-      ip: 'bx-globe',
-      crypto: 'bx-bitcoin',
-      username: 'bx-user',
-      domain: 'bx-world',
-      name: 'bx-user-pin',
-      unknown: 'bx-question-mark'
+      email: Envelope,
+      phone: Phone,
+      ip: Globe,
+      crypto: Database,
+      username: User,
+      domain: World,
+      name: User,
+      unknown: QuestionMark
     }
     return icons[type] || icons.unknown
   }
@@ -2065,82 +1531,87 @@ Lookup made by https://datawire.cc
   }))
 
   const sidebarItems = [
-    { id: 'search', icon: 'bx-search', label: 'Search', isCategory: false },
-    { id: 'ai-osint', icon: 'bx-brain', label: 'AI OSINT', isCategory: false },
-    { id: 'intelx', icon: 'bx-cloud-download', label: 'IntelX', isCategory: false },
-    { id: 'geolocation', icon: 'bx-map', label: 'Geolocation', isCategory: false },
-    { id: 'mapping', icon: 'bx-link', label: 'Lead Mapping', isCategory: false },
-    { id: 'history', icon: 'bx-history', label: 'Search History', isCategory: false },
-    { id: 'transactions', icon: 'bx-receipt', label: 'Transactions', isCategory: false },
-    { id: 'settings', icon: 'bx-cog', label: 'Settings', isCategory: false }
+    { id: 'search', icon: Search, label: 'Search' },
+    { id: 'ai-osint', icon: Brain, label: 'AI OSINT' },
+    { id: 'intelx', icon: CloudDownload, label: 'IntelX' },
+    { id: 'geolocation', icon: Map, label: 'Geolocation' },
+    { id: 'mapping', icon: Link2, label: 'Lead Mapping' },
+    { id: 'history', icon: History, label: 'Search History' },
+    { id: 'transactions', icon: Receipt, label: 'Transactions' },
+    { id: 'settings', icon: Settings, label: 'Settings' }
   ]
 
   return (
-    <div className="min-h-screen bg-osint-bg text-osint-secondary flex">
+    <div className="min-h-screen bg-background text-white flex">
+      <PremiumBackground />
+      
       {/* Sidebar */}
-      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-osint-card border-r border-osint-border flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className={`fixed lg:relative z-50 w-72 h-screen lg:h-auto bg-surface/80 backdrop-blur-xl border-r border-border flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
-        <div className="p-6 border-b border-osint-border flex-shrink-0">
+        <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
-            <img 
-              src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
-              alt="Datawire.cc" 
-              className="w-10 h-10"
-            />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center border border-white/10">
+              <span className="text-xl font-bold text-white">DW</span>
+            </div>
             <div>
-              <h1 className="font-bold text-xl tracking-tight">Datawire.cc</h1>
-              <p className="text-xs text-osint-muted tracking-wider uppercase">OSINT Platform</p>
+              <h1 className="font-bold text-lg tracking-tight">Datawire.cc</h1>
+              <p className="text-xs text-white/40 tracking-wider uppercase">OSINT Platform</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
           {/* Main Navigation Items */}
-          {sidebarItems.map((item, index) => (
-            <motion.button
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.3 }}
-              whileHover={{ scale: 1.02, x: 4 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                setActiveTab(item.id)
-                if (item.id === 'search') setSearchMode('main')
-                setSidebarOpen(false)
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 relative overflow-hidden ${
-                activeTab === item.id 
-                  ? 'bg-white/10 text-white border-white' 
-                  : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
-              }`}
-            >
-              <AnimatePresence>
-                {activeTab === item.id && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"
-                  />
-                )}
-              </AnimatePresence>
-              <i className={`bx ${item.icon} text-lg relative z-10`}></i>
-              <span className="font-medium tracking-wide relative z-10">{item.label}</span>
-            </motion.button>
-          ))}
+          {sidebarItems.map((item, index) => {
+            const IconComponent = item.icon
+            return (
+              <motion.button
+                key={item.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
+                whileHover={{ scale: 1.02, x: 4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setActiveTab(item.id)
+                  if (item.id === 'search') setSearchMode('main')
+                  setSidebarOpen(false)
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 relative overflow-hidden rounded-lg ${
+                  activeTab === item.id 
+                    ? 'bg-white/10 text-white border-white' 
+                    : 'text-white/50 border-transparent hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <AnimatePresence>
+                  {activeTab === item.id && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"
+                    />
+                  )}
+                </AnimatePresence>
+                <IconComponent className="w-5 h-5 relative z-10" />
+                <span className="font-medium tracking-wide text-sm relative z-10">{item.label}</span>
+              </motion.button>
+            )
+          })}
 
           {/* Providers Section */}
-          <div className="mt-6 pt-4 border-t border-osint-border">
-            <p className="text-xs text-osint-muted uppercase tracking-wider mb-3 px-4">Providers</p>
-            <div className="space-y-1 max-h-96 overflow-y-auto">
+          <div className="mt-6 pt-4 border-t border-border">
+            <p className="text-xs text-white/30 uppercase tracking-wider mb-3 px-4 font-medium">Providers</p>
+            <div className="space-y-1 max-h-96 overflow-y-auto custom-scrollbar">
               {Object.keys(providers || {}).map((provider) => {
-                const logo = PROVIDER_LOGOS[provider]
+                const IconComponent = PROVIDER_ICONS[provider] || QuestionMark
                 
                 return (
-                  <button
+                  <motion.button
                     key={provider}
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setSelectedProvider(provider)
                       setSelectedCommand(providers?.[provider]?.[0]?.name || '')
@@ -2148,37 +1619,17 @@ Lookup made by https://datawire.cc
                       setSearchMode('provider')
                       setSidebarOpen(false)
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 ${
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 rounded-lg ${
                       selectedProvider === provider && activeTab === 'search' && searchMode === 'provider'
                         ? 'bg-white/10 text-white border-white' 
-                        : 'text-gray-500 border-transparent hover:bg-osint-bg/30 hover:text-white'
+                        : 'text-white/50 border-transparent hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                      {logo ? (
-                        logo.startsWith('bx-') ? (
-                          <i className={`bx ${logo} text-lg`}></i>
-                        ) : (
-                          <img 
-                            src={logo} 
-                            alt={provider}
-                            className="w-full h-full object-contain"
-                            style={{ filter: 'grayscale(100%) brightness(0.7)' }}
-                            onError={(e) => {
-                              e.target.style.display = 'none'
-                              const span = document.createElement('span')
-                              span.className = 'text-xs font-bold text-white'
-                              span.textContent = provider.charAt(0).toUpperCase()
-                              e.target.parentElement.appendChild(span)
-                            }}
-                          />
-                        )
-                      ) : (
-                        <span className="text-xs font-bold text-white">{provider.charAt(0).toUpperCase()}</span>
-                      )}
+                      <IconComponent className="w-4 h-4" />
                     </div>
                     <span className="font-medium text-sm capitalize">{provider}</span>
-                  </button>
+                  </motion.button>
                 )
               })}
             </div>
@@ -2186,19 +1637,19 @@ Lookup made by https://datawire.cc
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-osint-border">
+        <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-white/10 flex items-center justify-center border border-white/30">
-              <span className="font-bold text-white">
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
+              <span className="font-bold text-white text-sm">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate text-sm">{user?.global_name || user?.username}</p>
               {plan ? (
-                <p className="text-xs text-osint-muted font-mono capitalize">{plan} Plan</p>
+                <p className="text-xs text-white/40 font-mono capitalize">{plan} Plan</p>
               ) : (
-                <p className="text-xs text-osint-muted font-mono">${balance} USD</p>
+                <p className="text-xs text-white/40 font-mono">${balance} USD</p>
               )}
             </div>
           </div>
@@ -2209,7 +1660,7 @@ Lookup made by https://datawire.cc
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center justify-between text-xs"
               >
-                <span className="text-osint-muted">Daily Credits:</span>
+                <span className="text-white/40">Daily Credits:</span>
                 <span className="text-white font-semibold font-mono">{dailyCredits}</span>
               </motion.div>
               <motion.div
@@ -2218,7 +1669,7 @@ Lookup made by https://datawire.cc
                 transition={{ delay: 0.1 }}
                 className="flex items-center justify-between text-xs"
               >
-                <span className="text-osint-muted">IntelX Uses:</span>
+                <span className="text-white/40">IntelX Uses:</span>
                 <span className="text-white font-semibold font-mono">{dailyIntelxUses}</span>
               </motion.div>
               {planExpiresAt && (
@@ -2228,7 +1679,7 @@ Lookup made by https://datawire.cc
                   transition={{ delay: 0.2 }}
                   className="flex items-center justify-between text-xs"
                 >
-                  <span className="text-osint-muted">Expires:</span>
+                  <span className="text-white/40">Expires:</span>
                   <span className="text-white font-semibold font-mono">
                     {timeRemaining || new Date(planExpiresAt).toLocaleDateString()}
                   </span>
@@ -2237,24 +1688,32 @@ Lookup made by https://datawire.cc
             </div>
           )}
           <div className="space-y-2">
-            <button
+            <Button
               onClick={() => navigate('/purchase')}
-              className="w-full px-4 py-2.5 bg-white text-black font-semibold text-sm hover:bg-gray-200 transition-all tracking-wide"
+              variant="primary"
+              size="sm"
+              className="w-full"
             >
+              <DollarSign className="w-4 h-4 mr-2" />
               Add Funds
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => navigate('/')}
-              className="w-full px-4 py-2 border border-osint-border text-osint-muted text-sm hover:bg-osint-bg/30 transition-all tracking-wide"
+              variant="secondary"
+              size="sm"
+              className="w-full"
             >
               Back to Site
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleLogout}
-              className="w-full px-4 py-2 border border-red-500/20 text-red-400 text-sm hover:bg-red-500/10 transition-all tracking-wide"
+              variant="danger"
+              size="sm"
+              className="w-full"
             >
+              <LogOut className="w-4 h-4 mr-2" />
               Logout
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -2262,35 +1721,28 @@ Lookup made by https://datawire.cc
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         {/* Top Bar */}
         <motion.div 
-          className="h-16 bg-osint-card/80 backdrop-blur-xl border-b border-osint-border flex items-center justify-between px-4 md:px-8"
+          className="h-16 bg-surface/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          style={{
-            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3)'
-          }}
         >
           <div className="flex items-center gap-4">
             <motion.button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="lg:hidden p-2 text-osint-muted hover:text-osint-secondary transition-colors"
+              className="lg:hidden p-2 text-white/50 hover:text-white transition-colors"
             >
-              <motion.i 
-                className={`bx ${sidebarOpen ? 'bx-x' : 'bx-menu'} text-xl`}
-                animate={{ rotate: sidebarOpen ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-              ></motion.i>
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </motion.button>
             <motion.h2 
               className="text-lg font-semibold tracking-tight capitalize"
@@ -2303,7 +1755,7 @@ Lookup made by https://datawire.cc
           </div>
           <div className="flex items-center gap-4 md:gap-6">
             <motion.div 
-              className="text-sm text-osint-muted"
+              className="text-sm text-white/50"
               whileHover={{ scale: 1.05 }}
             >
               Available Searches: <span className="text-white font-semibold font-mono">
@@ -2314,155 +1766,103 @@ Lookup made by https://datawire.cc
         </motion.div>
 
         {/* Content Area */}
-        <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
           {activeTab === 'search' && (
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="max-w-5xl mx-auto space-y-8">
               {/* Main Search Form - only shown when searchMode is 'main' */}
               {searchMode === 'main' && (
-                <motion.div 
-                  className="glass-card p-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <GlassCard className="p-8">
                   <motion.div 
-                    className="flex items-center gap-3 mb-6"
+                    className="flex items-center gap-3 mb-8"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <motion.div 
-                      className="w-1 h-8 bg-white animate-pulse-glow"
-                      initial={{ height: 0 }}
-                      animate={{ height: 32 }}
-                      transition={{ duration: 0.3 }}
-                    ></motion.div>
-                    <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
+                    <div className="w-1 h-8 bg-white/80 rounded-full" />
+                    <h3 className="text-xl font-semibold tracking-tight">OSINT Search</h3>
                   </motion.div>
                   
-                  <div className="grid md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Provider</label>
-                      <CustomDropdown
-                        options={getCategoryProviders(selectedCategory).map(p => ({
-                          value: p,
-                          label: p.charAt(0).toUpperCase() + p.slice(1)
-                        }))}
-                        value={selectedProvider}
-                        onChange={(provider) => {
-                          setSelectedProvider(provider)
-                          setSelectedCommand(providers?.[provider]?.[0]?.name || '')
-                        }}
-                        placeholder="Select provider (e.g., snusbase, leakcheck, breachbase)"
-                      />
-                    </div>
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <Dropdown
+                      options={getCategoryProviders(selectedCategory).map(p => ({
+                        value: p,
+                        label: p.charAt(0).toUpperCase() + p.slice(1)
+                      }))}
+                      value={selectedProvider}
+                      onChange={(provider) => {
+                        setSelectedProvider(provider)
+                        setSelectedCommand(providers?.[provider]?.[0]?.name || '')
+                      }}
+                      placeholder="Select provider"
+                      label="Provider"
+                    />
                     
-                    <div>
-                      <label className="block text-sm text-osint-muted mb-2 tracking-wide">Command</label>
-                      <CustomDropdown
-                        options={commandOptions}
-                        value={selectedCommand}
-                        onChange={setSelectedCommand}
-                        placeholder="Select command (e.g., search, combo-lookup, hash-lookup)"
-                      />
-                    </div>
+                    <Dropdown
+                      options={commandOptions}
+                      value={selectedCommand}
+                      onChange={setSelectedCommand}
+                      placeholder="Select command"
+                      label="Command"
+                    />
                   </div>
 
-                  <div className="mb-4">
-                    <label className="block text-sm text-osint-muted mb-2 tracking-wide">Search Query</label>
-                    <motion.div 
-                      className="relative"
-                      whileFocus={{ scale: 1.01 }}
-                    >
-                      <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        placeholder="Example: user@email.com, 1.1.1.1, username123, or ID..."
-                        className="w-full px-4 py-3 pl-12 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                      />
-                      <motion.i 
-                        className='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-osint-muted'
-                        animate={query ? { color: '#ffffff', scale: 1.1 } : { color: '#6b7280', scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                      ></motion.i>
-                    </motion.div>
+                  <div className="mb-6">
+                    <Input
+                      label="Search Query"
+                      placeholder="Example: user@email.com, 1.1.1.1, username123, or ID..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      icon={<Search className="w-5 h-5" />}
+                    />
                   </div>
 
                   <motion.div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <motion.p 
-                      className="text-sm text-osint-muted"
+                      className="text-sm text-white/50"
                       animate={{ opacity: searching ? 0.5 : 1 }}
                     >
                       Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
                     </motion.p>
-                    <motion.button
+                    <Button
                       onClick={handleSearch}
                       disabled={searching || cooldown}
-                      whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.3)' }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
+                      loading={searching}
+                      size="lg"
                     >
-                      {searching ? (
-                        <>
-                          <motion.i 
-                            className='bx bx-loader-alt'
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                          ></motion.i>
-                          Searching...
-                        </>
-                      ) : cooldown ? (
-                        <>
-                          <i className='bx bx-time'></i>
-                          Cooldown...
-                        </>
-                      ) : (
-                        <>
-                          <i className='bx bx-search'></i>
-                          Search
-                        </>
-                      )}
-                    </motion.button>
+                      <Search className="w-4 h-4 mr-2" />
+                      {cooldown ? 'Cooldown...' : 'Search'}
+                    </Button>
                   </motion.div>
-                </motion.div>
+                </GlassCard>
               )}
 
               {/* Provider-Specific Search Form - shown when searchMode is 'provider' */}
               {searchMode === 'provider' && (
-                <motion.div 
-                  className="glass-card p-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="flex items-center gap-3 mb-6">
-                    <i className={`bx ${PROVIDER_ICONS[selectedProvider] || 'bx-search'} text-2xl text-white`}></i>
-                    <h3 className="text-lg font-semibold tracking-tight capitalize">
+                <GlassCard className="p-8">
+                  <div className="flex items-center gap-3 mb-8">
+                    {(() => {
+                      const IconComponent = PROVIDER_ICONS[selectedProvider] || Search
+                      return <IconComponent className="w-8 h-8 text-white/80" />
+                    })()}
+                    <h3 className="text-xl font-semibold tracking-tight capitalize">
                       {selectedProvider} Search
                     </h3>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {/* Command Dropdown */}
                     {selectedProvider && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <label className="block text-sm text-osint-muted mb-2 tracking-wide">Command</label>
-                        <CustomDropdown
-                          options={providers?.[selectedProvider]?.map(cmd => ({
-                            value: cmd.name,
-                            label: cmd.description || cmd.name
-                          })) || []}
-                          value={selectedCommand}
-                          onChange={setSelectedCommand}
-                          placeholder="Select command"
-                        />
-                      </motion.div>
+                      <Dropdown
+                        options={providers?.[selectedProvider]?.map(cmd => ({
+                          value: cmd.name,
+                          label: cmd.description || cmd.name
+                        })) || []}
+                        value={selectedCommand}
+                        onChange={setSelectedCommand}
+                        placeholder="Select command"
+                        label="Command"
+                      />
                     )}
 
                     {/* Dynamic Input Fields */}
@@ -2473,171 +1873,111 @@ Lookup made by https://datawire.cc
                       // Handle commands with extraParams (multiple parameters)
                       if (command.extraParams) {
                         return (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="space-y-4"
-                          >
+                          <div className="space-y-4">
                             {Object.entries(command.extraParams).map(([paramName, paramValue]) => (
-                              <div key={paramName} className="space-y-2">
-                                <label className="block text-sm text-osint-muted mb-2 tracking-wide capitalize">
-                                  {paramName}
-                                </label>
-                                <motion.input
-                                  type="text"
-                                  value={query}
-                                  onChange={(e) => setQuery(e.target.value)}
-                                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                  placeholder={`Enter ${paramName}...`}
-                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                                  whileFocus={{ scale: 1.01 }}
-                                />
-                              </div>
+                              <Input
+                                key={paramName}
+                                label={paramName}
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                placeholder={`Enter ${paramName}...`}
+                              />
                             ))}
-                          </motion.div>
+                          </div>
                         )
                       }
                       
                       // Handle commands that need path parameters
                       if (command.pathIncludesQuery) {
                         return (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="space-y-3"
-                          >
-                            <label className="block text-sm text-osint-muted mb-2 tracking-wide">
-                              {command.queryParam}
-                            </label>
-                            <motion.input
+                          <div className="space-y-4">
+                            <Input
+                              label={command.queryParam}
                               type={command.inputType || 'text'}
                               value={query}
                               onChange={(e) => setQuery(e.target.value)}
                               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                               placeholder={command.example || `Example: log_12345`}
-                              className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                              whileFocus={{ scale: 1.01 }}
                             />
                             {command.extraParams && command.extraParams.map((param) => (
-                              <div key={param}>
-                                <label className="block text-sm text-osint-muted mb-2 tracking-wide">
-                                  {param}
-                                </label>
-                                <motion.input
-                                  type="text"
-                                  value={extraParams[param] || ''}
-                                  onChange={(e) => setExtraParams(prev => ({ ...prev, [param]: e.target.value }))}
-                                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                  placeholder={`Example: file_${param}`}
-                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                                  whileFocus={{ scale: 1.01 }}
-                                />
-                              </div>
+                              <Input
+                                key={param}
+                                label={param}
+                                value={extraParams[param] || ''}
+                                onChange={(e) => setExtraParams(prev => ({ ...prev, [param]: e.target.value }))}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                placeholder={`Example: file_${param}`}
+                              />
                             ))}
-                          </motion.div>
+                          </div>
                         )
                       }
                       
                       // Regular single parameter commands
                       return (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="space-y-3"
-                        >
+                        <div className="space-y-4">
                           {command.inputType !== 'none' && (
                             <>
-                              <label className="block text-sm text-osint-muted mb-2 tracking-wide">
-                                {command.queryParam}
-                              </label>
                               {command.inputType === 'file' ? (
-                                <motion.input
-                                  type="file"
-                                  onChange={(e) => setQuery(e.target.files[0])}
-                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                                  whileFocus={{ scale: 1.01 }}
-                                />
+                                <div>
+                                  <label className="block text-xs font-medium text-white/50 mb-2 tracking-wide">
+                                    {command.queryParam}
+                                  </label>
+                                  <input
+                                    type="file"
+                                    onChange={(e) => setQuery(e.target.files[0])}
+                                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-border text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white/50 file:cursor-pointer hover:file:bg-white/20"
+                                  />
+                                </div>
                               ) : (
-                                <motion.input
+                                <Input
+                                  label={command.queryParam}
                                   type={command.inputType || 'text'}
                                   value={query}
                                   onChange={(e) => setQuery(e.target.value)}
                                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                   placeholder={command.example || `Enter ${command.queryParam}...`}
-                                  className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all"
-                                  whileFocus={{ scale: 1.01 }}
                                 />
                               )}
                             </>
                           )}
-                        </motion.div>
+                        </div>
                       )
                     })()}
 
                     {/* Search Button */}
                     {selectedProvider && selectedCommand && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-                      >
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4">
                         <motion.p 
-                          className="text-sm text-osint-muted"
+                          className="text-sm text-white/50"
                           animate={{ opacity: searching ? 0.5 : 1 }}
                         >
                           Cost: <span className="text-white font-semibold font-mono">${SEARCH_COST}</span> per search
                         </motion.p>
-                        <motion.button
+                        <Button
                           onClick={handleSearch}
                           disabled={searching || cooldown}
-                          whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.3)' }}
-                          whileTap={{ scale: 0.95 }}
-                          className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-white/20 hover:shadow-white/30"
+                          loading={searching}
+                          size="lg"
                         >
-                          {searching ? (
-                            <>
-                              <motion.i 
-                                className='bx bx-loader-alt'
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                              ></motion.i>
-                              Searching...
-                            </>
-                          ) : cooldown ? (
-                            <>
-                              <i className='bx bx-time'></i>
-                              Cooldown...
-                            </>
-                          ) : (
-                            <>
-                              <i className='bx bx-search'></i>
-                              Search
-                            </>
-                          )}
-                        </motion.button>
-                      </motion.div>
+                          <Search className="w-4 h-4 mr-2" />
+                          {cooldown ? 'Cooldown...' : 'Search'}
+                        </Button>
+                      </div>
                     )}
                   </div>
-                </motion.div>
+                </GlassCard>
               )}
 
-                {/* Search Results */}
-                {searchResults && (
-                  <motion.div 
-                    className="glass-card p-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                  >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-                      <h3 className="text-lg font-semibold tracking-tight">Search Results</h3>
-                      <button
-                        onClick={() => {
-                          const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
+              {/* Search Results */}
+              {searchResults && (
+                <GlassCard className="p-8">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                    <h3 className="text-xl font-semibold tracking-tight">Search Results</h3>
+                    <Button
+                      onClick={() => {
+                        const asciiArt = `██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗
 ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝
 ██║  ██║███████║   ██║   ███████║██║ █╗ ██║██║██████╔╝█████╗     ██║     ██║     
 ██║  ██║██╔══██║   ██║   ██╔══██║██║███╗██║██║██╔══██╗██╔══╝     ██║     ██║     
@@ -2658,196 +1998,129 @@ ${JSON.stringify(searchResults.result || searchResults, null, 2)}
 Powered by https://datawire.cc
 Lookup made by https://datawire.cc
 `;
-                          const blob = new Blob([asciiArt], { type: 'text/plain' })
-                          const url = URL.createObjectURL(blob)
-                          const a = document.createElement('a')
-                          a.href = url
-                          a.download = `search-results-${Date.now()}.txt`
-                          document.body.appendChild(a)
-                          a.click()
-                          document.body.removeChild(a)
-                          URL.revokeObjectURL(url)
-                        }}
-                        className="px-4 py-2 bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-all text-sm flex items-center gap-2"
-                      >
-                        <i className='bx bx-download'></i>
-                        Download .txt
-                      </button>
-                    </div>
-                    <div className="bg-osint-bg/50 p-4 overflow-auto border border-osint-border" style={{ maxHeight: '400px' }}>
-                      <pre className="text-sm text-osint-secondary whitespace-pre-wrap font-mono">
-                        {JSON.stringify(searchResults.result || searchResults, null, 2)}
-                      </pre>
-                    </div>
-                  </motion.div>
-                )}
+                        const blob = new Blob([asciiArt], { type: 'text/plain' })
+                        const url = URL.createObjectURL(blob)
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download = `search-results-${Date.now()}.txt`
+                        document.body.appendChild(a)
+                        a.click()
+                        document.body.removeChild(a)
+                        URL.revokeObjectURL(url)
+                      }}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download .txt
+                    </Button>
+                  </div>
+                  <div className="bg-white/[0.02] p-6 rounded-xl overflow-auto border border-border custom-scrollbar" style={{ maxHeight: '400px' }}>
+                    <pre className="text-sm text-white/70 whitespace-pre-wrap font-mono">
+                      {JSON.stringify(searchResults.result || searchResults, null, 2)}
+                    </pre>
+                  </div>
+                </GlassCard>
+              )}
 
-                {/* Recent Searches */}
-                {searchHistory.length > 0 && (
-                  <motion.div 
-                    className="glass-card p-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                  >
-                    <h3 className="text-lg font-semibold mb-4 tracking-tight">Recent Searches</h3>
-                    <div className="space-y-3">
-                      {searchHistory.map((search, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.4 + index * 0.1 }}
-                          whileHover={{ scale: 1.02, x: 5 }}
-                          onClick={() => {
-                            setSearchResults(search.result)
-                            setQuery(search.query)
-                            setSelectedProvider(search.provider)
-                            setSelectedCommand(search.command)
-                          }}
-                          className="p-4 bg-osint-bg/50 border border-osint-border/50 hover:border-white/50 cursor-pointer transition-all rounded-xl"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">
-                              {search.provider} / {search.command}
-                            </span>
-                            <span className="text-xs text-osint-muted font-mono">
-                              {new Date(search.timestamp).toLocaleTimeString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-osint-muted truncate">{search.query}</p>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+              {/* Recent Searches */}
+              {searchHistory.length > 0 && (
+                <GlassCard className="p-8">
+                  <h3 className="text-xl font-semibold mb-6 tracking-tight">Recent Searches</h3>
+                  <div className="space-y-3">
+                    {searchHistory.map((search, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + index * 0.05 }}
+                        whileHover={{ scale: 1.01, x: 4 }}
+                        onClick={() => {
+                          setSearchResults(search.result)
+                          setQuery(search.query)
+                          setSelectedProvider(search.provider)
+                          setSelectedCommand(search.command)
+                        }}
+                        className="p-4 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-xl"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-white/90">
+                            {search.provider} / {search.command}
+                          </span>
+                          <span className="text-xs text-white/40 font-mono">
+                            {new Date(search.timestamp).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        <p className="text-sm text-white/50 truncate">{search.query}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </GlassCard>
+              )}
           </div>
           )}
 
           {activeTab === 'intelx' && (
-            <motion.div 
-              className="max-w-4xl mx-auto space-y-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <motion.div 
-                className="glass-card p-6"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1, duration: 0.4 }}
-              >
-                <motion.div 
-                  className="flex items-center gap-3 mb-4"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <motion.div 
-                    className="w-1 h-8 bg-white animate-pulse-glow"
-                    initial={{ height: 0 }}
-                    animate={{ height: 32 }}
-                    transition={{ duration: 0.3 }}
-                  ></motion.div>
-                  <h3 className="text-lg font-semibold tracking-tight">IntelX File Download</h3>
-                </motion.div>
-                <p className="text-sm text-osint-muted mb-4">Download files from IntelX by System ID</p>
+            <div className="max-w-4xl mx-auto">
+              <GlassCard className="p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-white/80 rounded-full" />
+                  <h3 className="text-xl font-semibold tracking-tight">IntelX File Download</h3>
+                </div>
+                <p className="text-sm text-white/50 mb-6">Download files from IntelX by System ID</p>
                 
-                <motion.div 
-                  className="mb-4"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <label className="block text-sm text-osint-muted mb-2 tracking-wide">System ID</label>
-                  <motion.input
-                    type="text"
+                <div className="mb-6">
+                  <Input
+                    label="System ID"
                     value={intelxSystemId}
                     onChange={(e) => setIntelxSystemId(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleIntelxDownload()}
                     placeholder="Enter IntelX System ID (UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"
-                    className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all rounded-xl"
-                    whileFocus={{ scale: 1.02, borderColor: 'rgba(255, 255, 255, 0.3)' }}
                   />
-                </motion.div>
+                </div>
 
-                <motion.button
+                <Button
                   onClick={handleIntelxDownload}
                   disabled={intelxDownloading}
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.2)' }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="px-6 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 rounded-xl shadow-lg shadow-white/10"
+                  loading={intelxDownloading}
+                  size="lg"
                 >
-                  {intelxDownloading ? (
-                    <>
-                      <motion.i 
-                        className='bx bx-loader-alt'
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      ></motion.i>
-                      Downloading...
-                    </>
-                  ) : (
-                    <>
-                      <i className='bx bx-cloud-download'></i>
-                      Download File
-                    </>
-                  )}
-                </motion.button>
-              </motion.div>
-            </motion.div>
+                  <CloudDownload className="w-4 h-4 mr-2" />
+                  Download File
+                </Button>
+              </GlassCard>
+            </div>
           )}
 
           {activeTab === 'geolocation' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="h-full flex flex-col"
-            >
-              <motion.div 
-                className="glass-card p-6 mb-4"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <motion.div className="flex items-center justify-between mb-4">
+            <div className="h-full flex flex-col">
+              <GlassCard className="p-6 mb-4">
+                <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="text-lg font-semibold tracking-tight flex items-center gap-2">
-                      <i className='bx bx-map text-xl'></i>
+                    <h3 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+                      <Map className="w-5 h-5" />
                       Geolocation Map
                     </h3>
-                    <p className="text-sm text-osint-muted mt-1">Track locations from IP addresses, phone numbers, and domains</p>
+                    <p className="text-sm text-white/50 mt-1">Track locations from IP addresses, phone numbers, and domains</p>
                   </div>
-                  <motion.div className="flex items-center gap-2">
-                    <motion.button
-                      onClick={() => setGeoLocations([])}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all text-sm flex items-center gap-2"
-                    >
-                      <i className='bx bx-trash'></i>
-                      Clear
-                    </motion.button>
-                  </motion.div>
-                </motion.div>
+                  <Button
+                    onClick={() => setGeoLocations([])}
+                    variant="danger"
+                    size="sm"
+                  >
+                    <Trash className="w-4 h-4 mr-2" />
+                    Clear
+                  </Button>
+                </div>
                 
                 {/* Manual Location Input */}
-                <motion.div 
-                  className="mt-4 pt-4 border-t border-osint-border"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <i className='bx bx-plus-circle text-sm text-osint-muted'></i>
-                    <span className="text-sm font-medium text-osint-muted">Add Location by Input</span>
+                <div className="mt-6 pt-6 border-t border-border">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Plus className="w-4 h-4 text-white/40" />
+                    <span className="text-sm font-medium text-white/50">Add Location by Input</span>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <CustomDropdown
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Dropdown
                       options={[
                         { value: 'address', label: 'Address' },
                         { value: 'ip', label: 'IP Address' },
@@ -2857,65 +2130,44 @@ Lookup made by https://datawire.cc
                       value={manualInput.type}
                       onChange={(value) => setManualInput(prev => ({ ...prev, type: value }))}
                       placeholder="Select type"
-                      className="md:col-span-1"
                     />
-                    <motion.input
-                      type="text"
+                    <Input
                       placeholder={manualInput.type === 'address' ? 'Enter address...' : manualInput.type === 'ip' ? 'Enter IP address...' : manualInput.type === 'phone' ? 'Enter phone number...' : 'Enter email...'}
                       value={manualInput.value}
                       onChange={(e) => setManualInput(prev => ({ ...prev, value: e.target.value }))}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddManualLocation()}
-                      className="md:col-span-3 px-3 py-2 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm rounded-lg"
-                      whileFocus={{ scale: 1.02 }}
+                      className="md:col-span-3"
                     />
                   </div>
-                  <motion.button
+                  <Button
                     onClick={handleAddManualLocation}
                     disabled={addingLocation}
-                    whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)' }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mt-3 px-4 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all text-sm flex items-center gap-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    loading={addingLocation}
+                    variant="secondary"
+                    size="sm"
+                    className="mt-4"
                   >
-                    {addingLocation ? (
-                      <>
-                        <motion.i 
-                          className='bx bx-loader-alt'
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        ></motion.i>
-                        Geocoding...
-                      </>
-                    ) : (
-                      <>
-                        <i className='bx bx-map-pin'></i>
-                        Add Location
-                      </>
-                    )}
-                  </motion.button>
-                </motion.div>
-              </motion.div>
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Add Location
+                  </Button>
+                </div>
+              </GlassCard>
               
-              <div className="flex-1 glass-card overflow-hidden relative border border-osint-border" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
+              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
                 {geoLocations.length > 0 ? (
                   <GeolocationMap 
                     locations={geoLocations}
                     onLocationClick={(location) => console.log('Location clicked:', location)}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="text-center"
-                    >
-                      <i className='bx bx-map text-6xl text-osint-muted mb-4'></i>
-                      <p className="text-osint-muted">No locations tracked yet</p>
-                      <p className="text-sm text-osint-muted mt-2">Search for IP addresses, phone numbers, or domains to see their locations on the map</p>
-                    </motion.div>
-                  </div>
+                  <EmptyState
+                    icon={<Map className="w-12 h-12" />}
+                    title="No locations tracked yet"
+                    description="Search for IP addresses, phone numbers, or domains to see their locations on the map"
+                  />
                 )}
               </div>
-            </motion.div>
+            </div>
           )}
 
           {activeTab === 'ai-osint' && (
@@ -2925,83 +2177,51 @@ Lookup made by https://datawire.cc
           {activeTab === 'mapping' && (
             <div className="h-full flex flex-col">
               {/* Graph Controls */}
-              <div className="glass-card p-4 mb-4 animate-fade-in">
+              <GlassCard className="p-4 mb-4">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex-1 min-w-[200px]">
-                    <input
-                      type="text"
+                    <Input
                       placeholder="Search nodes by value (email, phone, IP, username)..."
                       value={nodeSearch}
                       onChange={(e) => setNodeSearch(e.target.value)}
-                      className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
+                      icon={<Search className="w-4 h-4" />}
                     />
                   </div>
                   
-                  {/* Custom Entity Type Dropdown */}
-                  <div className="relative">
-                    <button
-                      onClick={() => setEntityTypeDropdownOpen(!entityTypeDropdownOpen)}
-                      className="px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm text-left flex items-center gap-2 min-w-[140px] hover:border-white/30"
-                    >
-                      <span className="capitalize">{selectedEntityType === 'all' ? 'All Types' : selectedEntityType}</span>
-                      <i className={`bx bx-chevron-down transition-transform ${entityTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
-                    </button>
-                    {entityTypeDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
-                        {['all', 'email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => (
-                          <button
-                            key={type}
-                            onClick={() => {
-                              setSelectedEntityType(type)
-                              setEntityTypeDropdownOpen(false)
-                            }}
-                            className="w-full px-4 py-3 text-left text-sm text-osint-secondary hover:bg-white/10 hover:text-white transition-colors capitalize"
-                          >
-                            {type === 'all' ? 'All Types' : type}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <Dropdown
+                    options={['all', 'email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => ({
+                      value: type,
+                      label: type === 'all' ? 'All Types' : type
+                    }))}
+                    value={selectedEntityType}
+                    onChange={setSelectedEntityType}
+                    placeholder="All Types"
+                  />
                   
-                  {/* Custom Relationship Type Dropdown */}
-                  <div className="relative">
-                    <button
-                      onClick={() => setRelationshipTypeDropdownOpen(!relationshipTypeDropdownOpen)}
-                      className="px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm text-left flex items-center gap-2 min-w-[180px] hover:border-white/30"
-                    >
-                      <span className="capitalize">{selectedRelationshipType === 'all' ? 'All Relationships' : selectedRelationshipType.replace('_', ' ')}</span>
-                      <i className={`bx bx-chevron-down transition-transform ${relationshipTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
-                    </button>
-                    {relationshipTypeDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
-                        {['all', 'same_value', 'found_in_result'].map(type => (
-                          <button
-                            key={type}
-                            onClick={() => {
-                              setSelectedRelationshipType(type)
-                              setRelationshipTypeDropdownOpen(false)
-                            }}
-                            className="w-full px-4 py-3 text-left text-sm text-osint-secondary hover:bg-white/10 hover:text-white transition-colors capitalize"
-                          >
-                            {type === 'all' ? 'All Relationships' : type.replace('_', ' ')}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <Dropdown
+                    options={['all', 'same_value', 'found_in_result'].map(type => ({
+                      value: type,
+                      label: type === 'all' ? 'All Relationships' : type.replace('_', ' ')
+                    }))}
+                    value={selectedRelationshipType}
+                    onChange={setSelectedRelationshipType}
+                    placeholder="All Relationships"
+                  />
                   
-                  <button
+                  <Button
                     onClick={exportGraph}
-                    className="px-4 py-3 bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-all text-sm flex items-center gap-2"
+                    variant="secondary"
+                    size="sm"
                   >
-                    <i className='bx bx-download'></i>
+                    <Download className="w-4 h-4 mr-2" />
                     Export
-                  </button>
+                  </Button>
                   
-                  <label className="px-4 py-3 bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-all text-sm flex items-center gap-2 cursor-pointer">
-                    <i className='bx bx-upload'></i>
-                    Import
+                  <label className="cursor-pointer">
+                    <Button variant="secondary" size="sm">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Import
+                    </Button>
                     <input
                       type="file"
                       accept=".txt"
@@ -3010,18 +2230,19 @@ Lookup made by https://datawire.cc
                     />
                   </label>
                   
-                  <button
+                  <Button
                     onClick={clearGraph}
-                    className="px-4 py-3 bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all text-sm flex items-center gap-2"
+                    variant="danger"
+                    size="sm"
                   >
-                    <i className='bx bx-trash'></i>
+                    <Trash className="w-4 h-4 mr-2" />
                     Clear
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </GlassCard>
               
               {/* Graph Container */}
-              <div className="flex-1 glass-card overflow-hidden relative border border-osint-border" style={{ height: '600px', minHeight: '400px' }}>
+              <div className="flex-1 glass-card overflow-hidden relative border border-border" style={{ height: '600px', minHeight: '400px' }}>
                 <ReactFlow
                   nodes={filterNodes()}
                   edges={filterEdges()}
@@ -3030,13 +2251,13 @@ Lookup made by https://datawire.cc
                   onConnect={onConnect}
                   fitView
                   nodeTypes={nodeTypes}
-                  className="bg-osint-bg"
-                  style={{ background: '#0a0a14', width: '100%', height: '100%' }}
+                  className="bg-background"
+                  style={{ background: '#080808', width: '100%', height: '100%' }}
                   defaultViewport={{ x: 0, y: 0, zoom: 1 }}
                   minZoom={0.1}
                   maxZoom={4}
                 >
-                  <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#1a1a2e" />
+                  <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="rgba(255,255,255,0.05)" />
                 </ReactFlow>
                 
                 {/* Custom Zoom Controls */}
@@ -3048,9 +2269,9 @@ Lookup made by https://datawire.cc
                         reactFlowInstance.zoomIn()
                       }
                     }}
-                    className="w-10 h-10 bg-osint-card border border-osint-border rounded-lg flex items-center justify-center text-white hover:border-white transition-all"
+                    className="w-10 h-10 bg-surface border border-border rounded-lg flex items-center justify-center text-white hover:border-border-hover transition-all"
                   >
-                    <i className='bx bx-plus'></i>
+                    <ZoomIn className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => {
@@ -3059,9 +2280,9 @@ Lookup made by https://datawire.cc
                         reactFlowInstance.zoomOut()
                       }
                     }}
-                    className="w-10 h-10 bg-osint-card border border-osint-border flex items-center justify-center text-white hover:border-white transition-all"
+                    className="w-10 h-10 bg-surface border border-border rounded-lg flex items-center justify-center text-white hover:border-border-hover transition-all"
                   >
-                    <i className='bx bx-minus'></i>
+                    <ZoomOut className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => {
@@ -3070,94 +2291,72 @@ Lookup made by https://datawire.cc
                         reactFlowInstance.fitView()
                       }
                     }}
-                    className="w-10 h-10 bg-osint-card border border-osint-border flex items-center justify-center text-white hover:border-white transition-all"
+                    className="w-10 h-10 bg-surface border border-border rounded-lg flex items-center justify-center text-white hover:border-border-hover transition-all"
                   >
-                    <i className='bx bx-expand'></i>
+                    <Maximize2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
               
               {/* Manual Node Addition */}
-              <div className="glass-card p-6 mt-4">
+              <GlassCard className="p-6 mt-4">
                 <h4 className="text-sm font-semibold mb-4 text-white tracking-wide">Add Manual Node</h4>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {/* Custom Dropdown for Type */}
-                  <div className="relative">
-                    <label className="block text-xs text-osint-muted mb-2 tracking-wide">Type</label>
-                    <div className="relative">
-                      <button
-                        onClick={() => setLeadTypeDropdownOpen(!leadTypeDropdownOpen)}
-                        className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm text-left flex items-center justify-between hover:border-white/50"
-                      >
-                        <span className={newLead.type ? 'text-osint-secondary' : 'text-osint-muted'}>
-                          {newLead.type || 'Select type'}
-                        </span>
-                        <i className={`bx bx-chevron-down transition-transform ${leadTypeDropdownOpen ? 'rotate-180' : ''}`}></i>
-                      </button>
-                      {leadTypeDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-osint-card border border-osint-border shadow-xl z-[99999] max-h-60 overflow-y-auto">
-                          {['email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => (
-                            <button
-                              key={type}
-                              onClick={() => {
-                                setNewLead(prev => ({ ...prev, type }))
-                                setLeadTypeDropdownOpen(false)
-                              }}
-                              className="w-full px-4 py-3 text-left text-sm text-osint-secondary hover:bg-white/10 hover:text-white transition-colors capitalize"
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <Dropdown
+                    options={['email', 'phone', 'ip', 'crypto', 'username', 'name', 'domain', 'unknown'].map(type => ({
+                      value: type,
+                      label: type
+                    }))}
+                    value={newLead.type}
+                    onChange={(type) => setNewLead(prev => ({ ...prev, type }))}
+                    placeholder="Select type"
+                    label="Type"
+                  />
                   
                   <div className="md:col-span-2">
-                    <label className="block text-xs text-osint-muted mb-2 tracking-wide">Value</label>
-                    <input
-                      type="text"
+                    <Input
+                      label="Value"
                       placeholder="Enter value (email, phone, IP, username, etc.)"
                       value={newLead.value}
                       onChange={(e) => setNewLead(prev => ({ ...prev, value: e.target.value }))}
-                      className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-xs text-osint-muted mb-2 tracking-wide">Source</label>
-                    <input
-                      type="text"
+                    <Input
+                      label="Source"
                       placeholder="Example: snusbase, leakcheck, or https://example.com"
                       value={newLead.source}
                       onChange={(e) => setNewLead(prev => ({ ...prev, source: e.target.value }))}
-                      className="w-full px-4 py-3 bg-osint-bg/50 border border-osint-border focus:border-white focus:outline-none transition-all text-sm hover:border-white/30"
                     />
                   </div>
                 </div>
                 
                 <div className="mt-4 flex justify-end">
-                  <button
+                  <Button
                     onClick={() => addManualNode(newLead.type, newLead.value, newLead.source)}
-                    className="px-6 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all text-sm flex items-center gap-2"
                   >
-                    <i className='bx bx-plus'></i>
+                    <Plus className="w-4 h-4 mr-2" />
                     Add Node
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </GlassCard>
             </div>
           )}
 
           {activeTab === 'history' && (
             <div className="max-w-4xl mx-auto">
-              <div className="glass-card p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4 tracking-tight">Search History</h3>
+              <GlassCard className="p-8">
+                <h3 className="text-xl font-semibold mb-6 tracking-tight">Search History</h3>
                 {searchHistory.length > 0 ? (
                   <div className="space-y-3">
                     {searchHistory.map((search, index) => (
-                      <div
+                      <motion.div
                         key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ scale: 1.01, x: 4 }}
                         onClick={() => {
                           setActiveTab('search')
                           setSearchResults(search.result)
@@ -3165,48 +2364,52 @@ Lookup made by https://datawire.cc
                           setSelectedProvider(search.provider)
                           setSelectedCommand(search.command)
                         }}
-                        className="p-4 bg-osint-bg/50 border border-osint-border/50 hover:border-white/50 cursor-pointer transition-all"
+                        className="p-4 bg-white/[0.03] border border-border hover:border-border-hover cursor-pointer transition-all rounded-xl"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-white/90">
                             {search.provider} / {search.command}
                           </span>
-                          <span className="text-xs text-osint-muted font-mono">
+                          <span className="text-xs text-white/40 font-mono">
                             {new Date(search.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <p className="text-sm text-osint-muted truncate">{search.query}</p>
-                      </div>
+                        <p className="text-sm text-white/50 truncate">{search.query}</p>
+                      </motion.div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-osint-muted text-center py-8">No search history yet</p>
+                  <EmptyState
+                    icon={<History className="w-12 h-12" />}
+                    title="No search history yet"
+                    description="Your recent searches will appear here"
+                  />
                 )}
-              </div>
+              </GlassCard>
             </div>
           )}
 
           {activeTab === 'transactions' && (
             <div className="max-w-4xl mx-auto">
-              <div className="glass-card p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4 tracking-tight">Transaction History</h3>
+              <GlassCard className="p-8">
+                <h3 className="text-xl font-semibold mb-6 tracking-tight">Transaction History</h3>
                 {transactions.length > 0 ? (
                   <div className="space-y-3">
                     {transactions.map(tx => (
-                      <div key={tx.id} className="p-4 bg-osint-bg/50 border border-osint-border/50">
+                      <div key={tx.id} className="p-4 bg-white/[0.03] border border-border rounded-xl">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium capitalize">{tx.type}</span>
-                          <span className={`text-xs px-2 py-1 ${
-                            tx.status === 'completed' ? 'bg-white/20 text-white' :
-                            tx.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
-                            'bg-red-500/20 text-red-500'
+                          <span className="text-sm font-medium capitalize text-white/90">{tx.type}</span>
+                          <span className={`text-xs px-2 py-1 rounded-lg ${
+                            tx.status === 'completed' ? 'bg-white/10 text-white' :
+                            tx.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                            'bg-red-500/10 text-red-500'
                           }`}>
                             {tx.status}
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-osint-muted font-mono">${tx.amount}</span>
-                          <span className="text-osint-muted font-mono">
+                          <span className="text-white/50 font-mono">${tx.amount}</span>
+                          <span className="text-white/40 font-mono">
                             {new Date(tx.createdAt).toLocaleString()}
                           </span>
                         </div>
@@ -3214,90 +2417,116 @@ Lookup made by https://datawire.cc
                     ))}
                   </div>
                 ) : (
-                  <p className="text-osint-muted text-center py-8">No transactions yet</p>
+                  <EmptyState
+                    icon={<Receipt className="w-12 h-12" />}
+                    title="No transactions yet"
+                    description="Your transaction history will appear here"
+                  />
                 )}
-              </div>
+              </GlassCard>
             </div>
           )}
 
           {activeTab === 'settings' && (
             <div className="max-w-4xl mx-auto">
-              <div className="glass-card p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4 tracking-tight">Account Settings</h3>
+              <GlassCard className="p-8">
+                <h3 className="text-xl font-semibold mb-6 tracking-tight">Account Settings</h3>
                 <div className="space-y-4">
-                  <div className="p-4 bg-osint-bg/50 border border-osint-border/50">
-                    <p className="text-sm text-osint-muted mb-1 tracking-wide">Username</p>
-                    <p className="font-medium">{user?.username}</p>
+                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                    <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Username</p>
+                    <p className="font-medium text-white">{user?.username}</p>
                   </div>
-                  <div className="p-4 bg-osint-bg/50 border border-osint-border/50">
-                    <p className="text-sm text-osint-muted mb-1 tracking-wide">Display Name</p>
-                    <p className="font-medium">{user?.global_name || user?.username}</p>
+                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                    <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Display Name</p>
+                    <p className="font-medium text-white">{user?.global_name || user?.username}</p>
                   </div>
-                  <div className="p-4 bg-osint-bg/50 border border-osint-border/50">
-                    <p className="text-sm text-osint-muted mb-1 tracking-wide">Discord ID</p>
-                    <p className="font-medium font-mono">{user?.discordId}</p>
+                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                    <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Discord ID</p>
+                    <p className="font-medium font-mono text-white">{user?.discordId}</p>
                   </div>
-                  <div className="p-4 bg-osint-bg/50 border border-osint-border/50">
-                    <p className="text-sm text-osint-muted mb-1 tracking-wide">Member Since</p>
-                    <p className="font-medium">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                  <div className="p-4 bg-white/[0.03] border border-border rounded-xl">
+                    <p className="text-xs text-white/40 mb-1 tracking-wide uppercase">Member Since</p>
+                    <p className="font-medium text-white">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
-              </div>
+              </GlassCard>
             </div>
           )}
         </div>
       </div>
 
       {/* Custom Toast */}
-      {toast && (
-        <div className={`fixed bottom-6 right-6 px-6 py-4 shadow-lg z-[200] animate-slide-up ${
-          toast.type === 'success' ? 'bg-white/20 border border-white/50 text-white' :
-          toast.type === 'error' ? 'bg-red-500/20 border border-red-500/50 text-red-400' :
-          'bg-osint-card border border-osint-border text-osint-secondary'
-        }`}>
-          <div className="flex items-center gap-3">
-            <i className={`bx ${
-              toast.type === 'success' ? 'bx-check-circle' :
-              toast.type === 'error' ? 'bx-x-circle' : 'bx-info-circle'
-            } text-xl`}></i>
-            <span>{toast.message}</span>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className={`fixed bottom-6 right-6 px-6 py-4 shadow-lg z-[200] ${
+              toast.type === 'success' ? 'bg-white/10 border border-white/20 text-white' :
+              toast.type === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-400' :
+              'bg-surface border border-border text-white/80'
+            } rounded-xl backdrop-blur-xl`}
+          >
+            <div className="flex items-center gap-3">
+              {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-400" />}
+              {toast.type === 'error' && <XCircle className="w-5 h-5 text-red-400" />}
+              {toast.type === 'info' && <InfoCircle className="w-5 h-5 text-blue-400" />}
+              <span className="text-sm font-medium">{toast.message}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Plan Expired Modal */}
-      {expiredModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[300]">
-          <div className="glass-card rounded-2xl p-8 max-w-md w-full mx-4 border border-osint-border animate-fade-in">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-                <i className='bx bx-time text-3xl text-red-400'></i>
+      <AnimatePresence>
+        {expiredModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[300]"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="glass-card rounded-2xl p-8 max-w-md w-full mx-4 border border-border"
+            >
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                  <Clock className="w-8 h-8 text-red-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Plan Expired</h3>
+                <p className="text-white/60">
+                  Your {plan} plan has expired. Your daily credits have been reset to 0.
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Plan Expired</h3>
-              <p className="text-osint-muted">
-                Your {plan} plan has expired. Your daily credits have been reset to 0.
-              </p>
-            </div>
-            <div className="space-y-3">
-              <button
-                onClick={() => {
-                  setExpiredModal(false)
-                  navigate('/purchase')
-                }}
-                className="w-full px-6 py-3 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all"
-              >
-                Renew Plan
-              </button>
-              <button
-                onClick={() => setExpiredModal(false)}
-                className="w-full px-6 py-3 border border-osint-border text-osint-secondary hover:bg-osint-bg/50 rounded-xl transition-all"
-              >
-                Continue to Dashboard
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="space-y-3">
+                <Button
+                  onClick={() => {
+                    setExpiredModal(false)
+                    navigate('/purchase')
+                  }}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Renew Plan
+                </Button>
+                <Button
+                  onClick={() => setExpiredModal(false)}
+                  variant="secondary"
+                  className="w-full"
+                >
+                  Continue to Dashboard
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
