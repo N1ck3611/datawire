@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard'
 import Purchase from './pages/Purchase'
 import Callback from './pages/Callback'
 import UserSettings from './pages/UserSettings'
+import UserProfile from './pages/UserProfile'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/callback" element={<Callback />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<UserSettings />} />
+          <Route path="/users/@:username" element={<UserProfile />} />
           <Route path="/purchase" element={<Purchase />} />
           <Route path="*" element={
             <>

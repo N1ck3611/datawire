@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
@@ -19,9 +20,17 @@ const UserSettings = () => {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [uploadSuccess, setUploadSuccess] = useState('')
+  const [accentColor, setAccentColor] = useState('#6366f1')
+  const [hexInput, setHexInput] = useState('#6366f1')
 
   useEffect(() => {
     fetchUserProfile()
+    // Load saved accent color
+    const savedColor = localStorage.getItem('accentColor')
+    if (savedColor) {
+      setAccentColor(savedColor)
+      setHexInput(savedColor)
+    }
   }, [])
 
   const fetchUserProfile = async () => {
@@ -221,6 +230,39 @@ const UserSettings = () => {
     }
   }
 
+  const handleColorChange = (color) => {
+    setAccentColor(color)
+    setHexInput(color)
+    localStorage.setItem('accentColor', color)
+    // Update CSS variable for accent color
+    document.documentElement.style.setProperty('--accent-color', color)
+  }
+
+  const handleHexChange = (e) => {
+    const hex = e.target.value
+    setHexInput(hex)
+    if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+      setAccentColor(hex)
+      localStorage.setItem('accentColor', hex)
+      document.documentElement.style.setProperty('--accent-color', hex)
+    }
+  }
+
+  const presetColors = [
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#ec4899', // Pink
+    '#f43f5e', // Rose
+    '#ef4444', // Red
+    '#f97316', // Orange
+    '#eab308', // Yellow
+    '#22c55e', // Green
+    '#14b8a6', // Teal
+    '#06b6d4', // Cyan
+    '#3b82f6', // Blue
+    '#64748b', // Slate
+  ]
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -237,8 +279,18 @@ const UserSettings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">User Settings</h1>
-          <p className="text-osint-muted mb-8">Customize your profile</p>
+          <div className="flex items-center gap-4 mb-8">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-white" />
+            </button>
+            <div>
+              <h1 className="text-4xl font-bold text-white">User Settings</h1>
+              <p className="text-osint-muted">Customize your profile</p>
+            </div>
+          </div>
 
           {/* Profile Picture Section */}
           <GlassCard className="mb-6 p-6">
@@ -263,7 +315,7 @@ const UserSettings = () => {
               
               <div className="flex-1">
                 <p className="text-white mb-2">
-                  Current: {user?.username || 'No username set'}
+                  Current: @{user?.username || 'No username set'}
                 </p>
                 <p className="text-osint-muted text-sm">
                   Upload a new profile picture. Supports JPG, PNG, GIF, and WebP formats.
@@ -386,6 +438,78 @@ const UserSettings = () => {
                   {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
                 </span>
               </div>
+            </div>
+          </GlassCard>
+
+          {/* Accent Color Section */}
+          <GlassCard className="mt-6 p-6">
+            <h2 className="text-xl font-semibold text-white mb-4">Accent Color</h2>
+            
+            <div className="space-y-6">
+              {/* Color Preview */}
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-16 h-16 rounded-xl border-2 border-white/20 shadow-lg"
+                  style={{ backgroundColor: accentColor }}
+                />
+                <div>
+                  <p className="text-white font-medium">Current Accent</p>
+                  <p className="text-osint-muted text-sm">{accentColor}</p>
+                </div>
+              </div>
+
+              {/* Preset Colors */}
+              <div>
+                <label className="block text-sm text-osint-muted mb-3">Preset Colors</label>
+                <div className="grid grid-cols-6 gap-3">
+                  {presetColors.map((color) => (
+                    <motion.button
+                      key={color}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleColorChange(color)}
+                      className={`w-12 h-12 rounded-lg border-2 transition-all ${
+                        accentColor === color 
+                          ? 'border-white shadow-lg scale-110' 
+                          : 'border-white/20 hover:border-white/50'
+                      }`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Color Picker */}
+              <div>
+                <label className="block text-sm text-osint-muted mb-3">Custom Color</label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="color"
+                    value={accentColor}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="w-16 h-12 rounded-lg cursor-pointer border-2 border-white/20 bg-transparent"
+                  />
+                  <div className="flex-1">
+                    <Input
+                      type="text"
+                      value={hexInput}
+                      onChange={handleHexChange}
+                      placeholder="#000000"
+                      className="w-full uppercase"
+                      maxLength={7}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset Button */}
+              <Button
+                onClick={() => handleColorChange('#6366f1')}
+                variant="outline"
+                className="w-full"
+              >
+                Reset to Default
+              </Button>
             </div>
           </GlassCard>
         </motion.div>

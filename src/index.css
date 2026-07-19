@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --accent-color: #6366f1;
+  }
+  
   body {
     @apply bg-background text-white font-sans antialiased;
   }

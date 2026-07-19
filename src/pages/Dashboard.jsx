@@ -1741,7 +1741,7 @@ Lookup made by https://datawire.cc
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium truncate text-sm">{user?.global_name || user?.username}</p>
+              <p className="font-medium truncate text-sm">@{user?.username || user?.global_name}</p>
               {plan ? (
                 <p className="text-xs text-white/40 font-mono capitalize">{plan} Plan</p>
               ) : (
