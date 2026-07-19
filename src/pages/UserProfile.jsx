@@ -30,9 +30,24 @@ const UserProfile = () => {
       // Start muted for browser autoplay compliance
       videoRef.current.volume = 1.0
       videoRef.current.muted = true
-      setIsMuted(true)
+      
+      // Initialize mute state based on user's Firebase setting
+      const userMuteSetting = user.muteVideoAudio === true
+      setIsMuted(userMuteSetting)
+      
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
-      console.log('Video initialized for autoplay, removeAudio:', shouldRemoveAudio)
+      
+      // If user wants audio enabled (muteVideoAudio is false), try to unmute after autoplay starts
+      if (!userMuteSetting && !shouldRemoveAudio) {
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.muted = false
+            console.log('Auto-unmuted video based on user setting')
+          }
+        }, 100)
+      }
+      
+      console.log('Video initialized for autoplay, user mute setting:', userMuteSetting, 'removeAudio:', shouldRemoveAudio)
     }
     
     // Handle audio background (MP3)
@@ -52,6 +67,11 @@ const UserProfile = () => {
       // Try to play muted first (allowed by browsers)
       audio.play().then(() => {
         console.log('Audio playing muted for autoplay')
+        // If user wants audio enabled, unmute after autoplay
+        if (user.muteVideoAudio !== true) {
+          audio.muted = false
+          console.log('Auto-unmuted audio based on user setting')
+        }
       }).catch(e => {
         console.log('Audio autoplay failed:', e)
       })
@@ -60,7 +80,7 @@ const UserProfile = () => {
       window.backgroundAudio = audio
       
       // Set initial mute state based on user preference
-      const shouldStartMuted = user.muteVideoAudio !== false
+      const shouldStartMuted = user.muteVideoAudio === true
       setIsMuted(shouldStartMuted)
     }
     
@@ -166,7 +186,7 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true} // Always start muted for autoplay, controlled via videoRef.current.muted
+              muted={true} // Always start muted for autoplay compliance
               playsInline
               controls={false}
               onLoadedData={() => {
