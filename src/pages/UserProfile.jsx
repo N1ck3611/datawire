@@ -23,34 +23,11 @@ const UserProfile = () => {
   }, [username])
 
   useEffect(() => {
-    if (videoRef.current && user?.backgroundType === 'video') {
-      // Check if user wants to remove audio from video
-      const shouldRemoveAudio = user.removeVideoAudio === true
-      
-      // Start muted for browser autoplay compliance
-      videoRef.current.volume = 1.0
-      videoRef.current.muted = true
-      
-      // Initialize mute state based on user's Firebase setting
-      const userMuteSetting = user.muteVideoAudio === true
-      console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
-      console.log('Computed userMuteSetting:', userMuteSetting)
-      setIsMuted(userMuteSetting)
-      
-      videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
-      
-      // If user wants audio enabled (muteVideoAudio is false), try to unmute after autoplay starts
-      if (!userMuteSetting && !shouldRemoveAudio) {
-        setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.muted = false
-            console.log('Auto-unmuted video based on user setting - videoRef.current.muted:', videoRef.current.muted)
-          }
-        }, 100)
-      }
-      
-      console.log('Video initialized for autoplay, user mute setting:', userMuteSetting, 'removeAudio:', shouldRemoveAudio)
-    }
+    // Initialize mute state based on user's Firebase setting
+    const userMuteSetting = user.muteVideoAudio === true
+    console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
+    console.log('Computed userMuteSetting:', userMuteSetting)
+    setIsMuted(userMuteSetting)
     
     // Handle audio background (MP3)
     if (user?.backgroundType === 'audio' && user?.background) {
@@ -63,27 +40,14 @@ const UserProfile = () => {
       const audio = new Audio(user.background)
       audio.loop = true
       audio.volume = 1.0
-      audio.muted = true // Start muted for autoplay compliance
+      audio.muted = userMuteSetting
       audio.preload = 'auto'
       
-      // Try to play muted first (allowed by browsers)
-      audio.play().then(() => {
-        console.log('Audio playing muted for autoplay')
-        // If user wants audio enabled, unmute after autoplay
-        if (user.muteVideoAudio !== true) {
-          audio.muted = false
-          console.log('Auto-unmuted audio based on user setting')
-        }
-      }).catch(e => {
-        console.log('Audio autoplay failed:', e)
-      })
+      // Try to play
+      audio.play().catch(e => console.log('Audio autoplay failed:', e))
       
       // Store audio reference for mute toggle
       window.backgroundAudio = audio
-      
-      // Set initial mute state based on user preference
-      const shouldStartMuted = user.muteVideoAudio === true
-      setIsMuted(shouldStartMuted)
     }
     
     return () => {
@@ -188,17 +152,9 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true} // Always start muted for autoplay compliance
+              muted={user.removeVideoAudio || isMuted}
               playsInline
               controls={false}
-              onLoadedData={() => {
-                if (videoRef.current) {
-                  console.log('Video loaded data, duration:', videoRef.current.duration)
-                  // Don't reset muted state here - let the toggle button control it
-                  videoRef.current.volume = 1.0
-                  videoRef.current.play().catch(e => console.log('Play failed:', e))
-                }
-              }}
               onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)}
               onError={(e) => {
                 console.log('Video error:', e)
@@ -221,41 +177,26 @@ const UserProfile = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                const newMutedState = !isMuted
-                setIsMuted(newMutedState)
                 
-                // Handle video mute
-                if (user.backgroundType === 'video' && videoRef.current) {
-                  // If user wants to remove audio, always keep muted
-                  if (user.removeVideoAudio === true) {
-                    videoRef.current.muted = true
-                    setIsMuted(true)
-                    console.log('Audio removed from video - always muted')
-                  } else {
-                    videoRef.current.muted = newMutedState
-                    videoRef.current.volume = 1.0
-                    if (!newMutedState) {
-                      // User gesture - unmute should work
-                      videoRef.current.play().catch(err => console.log('Play with audio error:', err))
-                    }
-                    console.log('Video mute toggled - videoRef.current.muted:', videoRef.current.muted, 'isMuted state:', newMutedState)
-                  }
+                // If user wants to remove audio, don't allow unmute
+                if (user.removeVideoAudio === true) {
+                  console.log('Audio removed from video - cannot unmute')
+                  return
                 }
                 
-                // Handle audio mute
+                // Toggle mute state - React will update the video element
+                setIsMuted(prev => !prev)
+                
+                // Handle audio mute (needs manual control since it's not a React component)
                 if (user.backgroundType === 'audio' && window.backgroundAudio) {
-                  window.backgroundAudio.muted = newMutedState
+                  window.backgroundAudio.muted = !isMuted
                   window.backgroundAudio.volume = 1.0
-                  if (!newMutedState) {
-                    // User gesture - unmute should work
-                    window.backgroundAudio.play().then(() => {
-                      console.log('Audio playing unmuted')
-                    }).catch(err => console.log('Audio play error:', err))
-                  } else {
-                    console.log('Audio muted')
+                  if (!isMuted) {
+                    window.backgroundAudio.play().catch(err => console.log('Audio play error:', err))
                   }
-                  console.log('Audio mute toggled - window.backgroundAudio.muted:', window.backgroundAudio.muted, 'isMuted state:', newMutedState)
                 }
+                
+                console.log('Mute toggled - new isMuted state:', !isMuted)
               }}
               className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Click to toggle sound"
