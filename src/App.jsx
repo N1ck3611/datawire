@@ -28,6 +28,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<UserSettings />} />
           <Route path="/users/@:username" element={<UserProfile />} />
+          <Route path="/users/:username" element={<UserProfile />} />
           <Route path="/purchase" element={<Purchase />} />
           <Route path="*" element={
             <>

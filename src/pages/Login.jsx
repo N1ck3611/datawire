@@ -9,9 +9,11 @@ const Login = () => {
   const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [authMethod, setAuthMethod] = useState('discord') // 'discord' or 'email'
+  const [authMethod, setAuthMethod] = useState('discord') // 'discord', 'email', or 'username'
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [isSignup, setIsSignup] = useState(false)
   const [step, setStep] = useState('input') // 'input' or 'verify'
   const [message, setMessage] = useState('')
@@ -159,6 +161,38 @@ const Login = () => {
     }
   }
 
+  const handleUsernameAuth = async (e) => {
+    e.preventDefault()
+    setError('')
+    setVerifying(true)
+
+    try {
+      const endpoint = isSignup 
+        ? '/api/auth/username/signup' 
+        : '/api/auth/username/login'
+      
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        localStorage.setItem('auth_token', data.token)
+        const returnUrl = searchParams.get('return') || '/dashboard'
+        navigate(returnUrl)
+      } else {
+        setError(data.error || 'Authentication failed')
+        setVerifying(false)
+      }
+    } catch (error) {
+      setError('Network error. Please try again.')
+      setVerifying(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-osint-bg">
@@ -265,6 +299,16 @@ const Login = () => {
             }`}
           >
             Email
+          </button>
+          <button
+            onClick={() => { setAuthMethod('username'); setStep('input'); setError(''); setMessage(''); }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+              authMethod === 'username' 
+                ? 'bg-white text-black' 
+                : 'bg-white/10 text-osint-muted hover:bg-white/20'
+            }`}
+          >
+            Username
           </button>
         </motion.div>
 
@@ -450,6 +494,96 @@ const Login = () => {
                 </div>
               </form>
             )}
+          </>
+        )}
+
+        {/* Username Auth */}
+        {authMethod === 'username' && (
+          <>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-osint-muted mb-6"
+            >
+              {isSignup ? 'Create an account with username and password' : 'Sign in with your username and password'}
+            </motion.p>
+
+            <form onSubmit={handleUsernameAuth} className="space-y-4">
+              <div className="text-left">
+                <label className="block text-sm text-osint-muted mb-2">Username</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="username"
+                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/20 focus:outline-none focus:border-white/40 focus:bg-black/50 transition-all backdrop-blur-sm"
+                  required
+                />
+                <p className="text-xs text-osint-muted mt-2">
+                  3-20 characters, letters, numbers, underscores, and hyphens only
+                </p>
+              </div>
+
+              <div className="text-left">
+                <label className="block text-sm text-osint-muted mb-2">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/20 focus:outline-none focus:border-white/40 focus:bg-black/50 transition-all backdrop-blur-sm"
+                  required
+                />
+                <p className="text-xs text-osint-muted mt-2">
+                  Minimum 8 characters
+                </p>
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={verifying}
+                className="w-full px-6 py-4 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {verifying ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
+                    ></motion.div>
+                      {isSignup ? 'Creating Account...' : 'Signing In...'}
+                  </>
+                ) : (
+                  <>
+                    <i className='bx bx-user text-2xl'></i>
+                    {isSignup ? 'Create Account' : 'Sign In'}
+                  </>
+                )}
+              </motion.button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setIsSignup(!isSignup)}
+                  className="text-sm text-osint-muted hover:text-white transition-colors"
+                >
+                  {isSignup ? 'Already have an account? Login' : "Don't have an account? Sign up"}
+                </button>
+              </div>
+            </form>
           </>
         )}
 

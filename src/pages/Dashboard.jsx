@@ -796,6 +796,12 @@ const Dashboard = () => {
       return
     }
 
+    // Check if user has plan or sufficient balance
+    if (!plan && parseFloat(balance) < parseFloat(SEARCH_COST)) {
+      showToast('Please load credits or buy a plan', 'error')
+      return
+    }
+
     try {
       setSearch(true)
       const token = localStorage.getItem('auth_token')
