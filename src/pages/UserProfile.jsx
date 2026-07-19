@@ -30,16 +30,33 @@ const UserProfile = () => {
       console.log('Video initialized as muted for autoplay')
     }
     
-    // Handle audio background
+    // Handle audio background (MP3)
     if (user?.backgroundType === 'audio' && user?.background) {
+      // Clean up existing audio if any
+      if (window.backgroundAudio) {
+        window.backgroundAudio.pause()
+        window.backgroundAudio = null
+      }
+      
       const audio = new Audio(user.background)
       audio.loop = true
       audio.volume = 1.0
-      audio.muted = user.muteVideoAudio || false
-      audio.play().catch(e => console.log('Audio autoplay failed:', e))
+      audio.muted = true // Start muted for autoplay compliance
+      audio.preload = 'auto'
+      
+      // Try to play muted first (allowed by browsers)
+      audio.play().then(() => {
+        console.log('Audio playing muted for autoplay')
+      }).catch(e => {
+        console.log('Audio autoplay failed:', e)
+      })
       
       // Store audio reference for mute toggle
       window.backgroundAudio = audio
+      
+      // Set initial mute state based on user preference
+      const shouldStartMuted = user.muteVideoAudio !== false
+      setIsMuted(shouldStartMuted)
     }
     
     return () => {
@@ -147,13 +164,8 @@ const UserProfile = () => {
               }}
             />
           ) : user.backgroundType === 'audio' ? (
-            <audio
-              src={user.background}
-              autoPlay
-              loop
-              muted={user.muteVideoAudio || false}
-              className="hidden"
-            />
+            // Audio is handled programmatically in useEffect
+            <div className="hidden" />
           ) : (
             <img
               src={user.background}
@@ -185,7 +197,12 @@ const UserProfile = () => {
                   window.backgroundAudio.muted = newMutedState
                   window.backgroundAudio.volume = 1.0
                   if (!newMutedState) {
-                    window.backgroundAudio.play().catch(err => console.log('Audio play error:', err))
+                    // User gesture - unmute should work
+                    window.backgroundAudio.play().then(() => {
+                      console.log('Audio playing unmuted')
+                    }).catch(err => console.log('Audio play error:', err))
+                  } else {
+                    console.log('Audio muted')
                   }
                 }
                 
