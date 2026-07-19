@@ -24,6 +24,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     // Initialize mute state based on user's Firebase setting
+    if (!user) return
+    
     const userMuteSetting = user.muteVideoAudio === true
     console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
     console.log('Computed userMuteSetting:', userMuteSetting)
