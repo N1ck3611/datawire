@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Shield, Calendar } from 'lucide-react'
+import { ArrowLeft, Shield, Calendar, Eye } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 
@@ -14,10 +14,12 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(true)
+  const [viewCount, setViewCount] = useState(0)
   const videoRef = useRef(null)
 
   useEffect(() => {
     fetchUserProfile()
+    recordView()
   }, [username])
 
   useEffect(() => {
@@ -27,6 +29,7 @@ const UserProfile = () => {
       
       // Start muted for browser autoplay compliance
       videoRef.current.volume = 1.0
+      videoRef.current.muted = true
       setIsMuted(true)
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
       console.log('Video initialized for autoplay, removeAudio:', shouldRemoveAudio)
@@ -70,6 +73,19 @@ const UserProfile = () => {
     }
   }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio])
 
+  const recordView = async () => {
+    try {
+      await fetch(`${API_BASE}/api/user/public/${username}/view`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    } catch (error) {
+      console.error('Failed to record view:', error)
+    }
+  }
+
   const fetchUserProfile = async () => {
     try {
       const response = await fetch(`${API_BASE}/api/user/public/${username}`)
@@ -77,6 +93,7 @@ const UserProfile = () => {
       
       if (data.success) {
         setUser(data.user)
+        setViewCount(data.user.viewCount || 0)
         
         // Refresh Discord data if user has Discord linked
         if (data.user.discordId) {
@@ -93,6 +110,7 @@ const UserProfile = () => {
             const refreshData = await refreshResponse.json()
             if (refreshData.success) {
               setUser(refreshData.user)
+              setViewCount(refreshData.user.viewCount || 0)
             }
           } catch (refreshError) {
             console.error('Failed to refresh Discord data:', refreshError)
@@ -254,6 +272,15 @@ const UserProfile = () => {
       {!user?.background && (
         <div className="fixed inset-0 -z-10 bg-black" />
       )}
+      
+      {/* View Counter */}
+      <div className="fixed bottom-4 left-4 z-50 bg-black/50 hover:bg-black/70 text-white px-4 py-2 rounded-full backdrop-blur-sm transition-all">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4" />
+          <span className="text-sm font-semibold">{viewCount.toLocaleString()}</span>
+        </div>
+      </div>
+      
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
