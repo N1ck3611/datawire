@@ -125,11 +125,7 @@ const Login = () => {
   const handleCodeChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6)
     setCode(value)
-    
-    // Auto-check when 6 digits are entered
-    if (value.length === 6 && !verifying) {
-      handleCodeVerify()
-    }
+    setError('') // Clear error when typing
   }
 
   const handleResendCode = async () => {

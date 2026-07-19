@@ -44,9 +44,21 @@ const UserSettings = () => {
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem('auth_token')
+      if (!token) {
+        navigate('/login')
+        return
+      }
+      
       const response = await fetch(`${API_BASE}/api/user/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
+      
+      if (response.status === 401) {
+        localStorage.removeItem('auth_token')
+        navigate('/login')
+        return
+      }
+      
       const data = await response.json()
       
       if (data.success) {
@@ -62,11 +74,10 @@ const UserSettings = () => {
           setBackgroundPreview(data.user.background)
         }
       } else {
-        navigate('/login')
+        console.error('Profile fetch failed:', data.error)
       }
     } catch (error) {
       console.error('Failed to fetch user profile:', error)
-      navigate('/login')
     } finally {
       setLoading(false)
     }

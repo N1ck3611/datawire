@@ -742,7 +742,8 @@ const Dashboard = () => {
         fetch(`${API_BASE}/api/user/transactions`, { headers })
       ])
 
-      if (profileRes.status === 401 || balanceRes.status === 401) {
+      // Only sign out on explicit 401 from profile endpoint
+      if (profileRes.status === 401) {
         localStorage.removeItem('auth_token')
         navigate('/login?return=/dashboard')
         return
@@ -766,7 +767,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Failed to fetch user data:', error)
       showToast('Failed to load user data', 'error')
-      navigate('/login?return=/dashboard')
+      // Don't auto-navigate on network errors, just show toast
     } finally {
       setLoading(false)
     }
@@ -1689,59 +1690,20 @@ Lookup made by https://datawire.cc
         {/* User Section */}
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-4">
-            {(() => {
-              // Try custom avatar first (from ImgBB upload)
-              if (user?.avatar && !user.avatar.startsWith('https://cdn.discordapp.com')) {
-                return (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.username}
-                    className="w-10 h-10 rounded-xl border border-white/20"
-                    onError={(e) => {
-                      console.log('Custom avatar load failed, trying Discord')
-                      e.target.style.display = 'none'
-                      const discordAvatar = e.target.parentElement.querySelector('.discord-avatar')
-                      if (discordAvatar) discordAvatar.style.display = 'block'
-                    }}
-                  />
-                )
-              }
-              // Try to get Discord avatar
-              if (user?.avatar && user?.id) {
-                return (
-                  <img 
-                    src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`}
-                    alt={user.username}
-                    className="w-10 h-10 rounded-xl border border-white/20 discord-avatar"
-                    onError={(e) => {
-                      console.log('Discord avatar load failed, trying fallback')
-                      e.target.style.display = 'none'
-                      const fallback = e.target.parentElement.querySelector('.fallback-avatar')
-                      if (fallback) fallback.style.display = 'flex'
-                    }}
-                  />
-                )
-              }
-              // Try default avatar based on discriminator
-              if (user?.discriminator && user.discriminator !== '0') {
-                return (
-                  <img 
-                    src={`https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`}
-                    alt={user.username}
-                    className="w-10 h-10 rounded-xl border border-white/20"
-                    onError={(e) => {
-                      console.log('Default avatar load failed')
-                      e.target.style.display = 'none'
-                      const fallback = e.target.parentElement.querySelector('.fallback-avatar')
-                      if (fallback) fallback.style.display = 'flex'
-                    }}
-                  />
-                )
-              }
-              // Show fallback
-              return null
-            })()}
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 fallback-avatar hidden">
+            {user?.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.username}
+                className="w-10 h-10 rounded-xl border border-white/20"
+                onError={(e) => {
+                  console.log('Avatar load failed, showing fallback')
+                  e.target.style.display = 'none'
+                  const fallback = e.target.parentElement.querySelector('.fallback-avatar')
+                  if (fallback) fallback.style.display = 'flex'
+                }}
+              />
+            ) : null}
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 fallback-avatar" style={{ display: user?.avatar ? 'none' : 'flex' }}>
               <span className="font-bold text-white text-sm">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </span>
