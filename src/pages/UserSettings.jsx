@@ -737,6 +737,32 @@ const UserSettings = () => {
                   {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
                 </span>
               </div>
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-osint-muted">Balance</span>
+                <span className="text-white font-semibold">${user?.balanceUsd || '0.00'}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-osint-muted">Total Searches</span>
+                <span className="text-white">{user?.totalSearches || 0}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-white/10">
+                <span className="text-osint-muted">Plan</span>
+                <span className="text-white capitalize">{user?.plan || 'No Plan'}</span>
+              </div>
+              {user?.plan && user.planExpiresAt && user.plan !== 'lifetime' && (
+                <div className="flex justify-between items-center py-2 border-b border-white/10">
+                  <span className="text-osint-muted">Plan Expires</span>
+                  <span className="text-white">
+                    {new Date(user.planExpiresAt).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+              {user?.dailyCredits !== undefined && (
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-osint-muted">Daily Credits</span>
+                  <span className="text-white">{user.dailyCredits}</span>
+                </div>
+              )}
             </div>
           </GlassCard>
 
