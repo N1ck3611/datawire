@@ -13,7 +13,9 @@ const UserProfile = () => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isMuted, setIsMuted] = useState(true)
   const videoRef = useRef(null)
+  const audioRef = useRef(null)
 
   useEffect(() => {
     fetchUserProfile()
@@ -24,6 +26,7 @@ const UserProfile = () => {
       // Always start muted for browser autoplay compliance
       videoRef.current.muted = true
       videoRef.current.volume = 1.0
+      setIsMuted(true)
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
     }
   }, [user?.background])
@@ -100,29 +103,42 @@ const UserProfile = () => {
       {user?.background && (
         <div className="fixed inset-0 -z-10">
           {user.backgroundType === 'video' ? (
-            <video
-              ref={videoRef}
-              src={user.background}
-              className="w-full h-full object-cover"
-              autoPlay
-              loop
-              muted={true}
-              playsInline
-              controls={false}
-              onLoadedData={() => {
-                if (videoRef.current) {
-                  console.log('Video loaded data, duration:', videoRef.current.duration)
-                  videoRef.current.muted = true
-                  videoRef.current.volume = 1.0
-                  videoRef.current.play().catch(e => console.log('Play failed:', e))
-                }
-              }}
-              onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted)}
-              onError={(e) => {
-                console.log('Video error:', e)
-                console.log('Video src:', user.background)
-              }}
-            />
+            <>
+              <video
+                ref={videoRef}
+                src={user.background}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted={true}
+                playsInline
+                controls={false}
+                onLoadedData={() => {
+                  if (videoRef.current) {
+                    console.log('Video loaded data, duration:', videoRef.current.duration)
+                    videoRef.current.muted = true
+                    videoRef.current.volume = 1.0
+                    videoRef.current.play().catch(e => console.log('Play failed:', e))
+                  }
+                }}
+                onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted)}
+                onError={(e) => {
+                  console.log('Video error:', e)
+                  console.log('Video src:', user.background)
+                }}
+              />
+              <audio
+                ref={audioRef}
+                src={user.background}
+                autoPlay={false}
+                loop
+                muted={isMuted}
+                className="hidden"
+                onLoadedData={() => {
+                  console.log('Audio loaded')
+                }}
+              />
+            </>
           ) : user.backgroundType === 'audio' ? (
             <audio
               src={user.background}
@@ -144,30 +160,31 @@ const UserProfile = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation()
+                const newMutedState = !isMuted
+                setIsMuted(newMutedState)
+                
+                // Control video
                 if (videoRef.current) {
-                  const wasMuted = videoRef.current.muted
-                  videoRef.current.muted = !wasMuted
-                  if (!videoRef.current.muted) {
-                    videoRef.current.volume = 1.0
-                    // Try to play with audio - this requires user interaction
-                    videoRef.current.play().then(() => {
-                      console.log('Playing with audio')
-                    }).catch(err => {
-                      console.log('Audio play error:', err)
-                      // If play fails, keep it muted
-                      videoRef.current.muted = true
-                    })
-                  } else {
-                    // Ensure it keeps playing when muted
-                    videoRef.current.play().catch(err => console.log('Play error when muting:', err))
-                  }
-                  console.log('Mute toggled:', videoRef.current.muted)
+                  videoRef.current.muted = true // Keep video always muted for autoplay
+                  videoRef.current.volume = 1.0
                 }
+                
+                // Control audio separately
+                if (audioRef.current) {
+                  audioRef.current.muted = newMutedState
+                  if (!newMutedState) {
+                    audioRef.current.play().catch(err => console.log('Audio play error:', err))
+                  } else {
+                    audioRef.current.pause()
+                  }
+                }
+                
+                console.log('Mute toggled:', newMutedState)
               }}
               className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Click to toggle sound"
             >
-              {videoRef.current?.muted ? (
+              {isMuted ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="1" y1="1" x2="23" y2="23"></line>
                   <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
