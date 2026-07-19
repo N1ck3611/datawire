@@ -790,7 +790,15 @@ const UserSettings = () => {
               <div className="flex items-center gap-6 mb-6">
                 <div className="relative w-full h-32 rounded-lg overflow-hidden border-2 border-white/20 bg-black/50 flex items-center justify-center">
                   {backgroundPreview ? (
-                    backgroundPreview.startsWith('data:video') || backgroundPreview.startsWith('data:audio') || backgroundPreview.includes('quicktime') ? (
+                    backgroundPreview.startsWith('data:video') || 
+                    backgroundPreview.startsWith('data:audio') || 
+                    backgroundPreview.includes('video') || 
+                    backgroundPreview.includes('audio') ||
+                    backgroundPreview.includes('quicktime') ||
+                    backgroundPreview.includes('mp4') ||
+                    backgroundPreview.includes('mov') ||
+                    backgroundPreview.includes('webm') ||
+                    backgroundPreview.includes('mp3') ? (
                       <video
                         src={backgroundPreview}
                         className="w-full h-full object-cover"

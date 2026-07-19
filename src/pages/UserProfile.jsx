@@ -29,7 +29,27 @@ const UserProfile = () => {
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
       console.log('Video initialized as muted for autoplay')
     }
-  }, [user?.background])
+    
+    // Handle audio background
+    if (user?.backgroundType === 'audio' && user?.background) {
+      const audio = new Audio(user.background)
+      audio.loop = true
+      audio.volume = 1.0
+      audio.muted = user.muteVideoAudio || false
+      audio.play().catch(e => console.log('Audio autoplay failed:', e))
+      
+      // Store audio reference for mute toggle
+      window.backgroundAudio = audio
+    }
+    
+    return () => {
+      // Cleanup audio on unmount
+      if (window.backgroundAudio) {
+        window.backgroundAudio.pause()
+        window.backgroundAudio = null
+      }
+    }
+  }, [user?.background, user?.backgroundType, user?.muteVideoAudio])
 
   const fetchUserProfile = async () => {
     try {
@@ -143,14 +163,15 @@ const UserProfile = () => {
             />
           )}
           {/* Sound toggle indicator */}
-          {user.backgroundType === 'video' && (
+          {(user.backgroundType === 'video' || user.backgroundType === 'audio') && (
             <button
               onClick={(e) => {
                 e.stopPropagation()
                 const newMutedState = !isMuted
                 setIsMuted(newMutedState)
                 
-                if (videoRef.current) {
+                // Handle video mute
+                if (user.backgroundType === 'video' && videoRef.current) {
                   videoRef.current.muted = newMutedState
                   videoRef.current.volume = 1.0
                   if (!newMutedState) {
@@ -159,7 +180,16 @@ const UserProfile = () => {
                   }
                 }
                 
-                console.log('Mute toggled:', newMutedState, 'Video muted:', videoRef.current?.muted)
+                // Handle audio mute
+                if (user.backgroundType === 'audio' && window.backgroundAudio) {
+                  window.backgroundAudio.muted = newMutedState
+                  window.backgroundAudio.volume = 1.0
+                  if (!newMutedState) {
+                    window.backgroundAudio.play().catch(err => console.log('Audio play error:', err))
+                  }
+                }
+                
+                console.log('Mute toggled:', newMutedState)
               }}
               className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Click to toggle sound"
