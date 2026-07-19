@@ -25,28 +25,8 @@ const UserProfile = () => {
       videoRef.current.muted = true
       videoRef.current.volume = 1.0
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
-      
-      // Only unmute if user has audio enabled AND has interacted with page
-      if (!user.muteVideoAudio) {
-        const handleUserInteraction = () => {
-          if (videoRef.current) {
-            videoRef.current.muted = false
-            videoRef.current.volume = 1.0
-          }
-          document.removeEventListener('click', handleUserInteraction)
-          document.removeEventListener('keydown', handleUserInteraction)
-        }
-        
-        document.addEventListener('click', handleUserInteraction)
-        document.addEventListener('keydown', handleUserInteraction)
-        
-        return () => {
-          document.removeEventListener('click', handleUserInteraction)
-          document.removeEventListener('keydown', handleUserInteraction)
-        }
-      }
     }
-  }, [user?.background, user?.muteVideoAudio])
+  }, [user?.background])
 
   const fetchUserProfile = async () => {
     try {
@@ -129,7 +109,7 @@ const UserProfile = () => {
               muted={true}
               playsInline
               controls={false}
-              onCanPlay={() => {
+              onLoadedData={() => {
                 if (videoRef.current) {
                   videoRef.current.play().catch(e => console.log('Play failed:', e))
                 }
@@ -155,15 +135,18 @@ const UserProfile = () => {
           {/* Sound toggle indicator */}
           {user.backgroundType === 'video' && (
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 if (videoRef.current) {
                   videoRef.current.muted = !videoRef.current.muted
                   if (!videoRef.current.muted) {
                     videoRef.current.volume = 1.0
+                    videoRef.current.play().catch(err => console.log('Audio play error:', err))
                   }
                 }
               }}
-              className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+              className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
+              title="Click to toggle sound"
             >
               {videoRef.current?.muted !== false ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -414,13 +397,13 @@ const UserProfile = () => {
             <div className="flex gap-2">
               <input
                 type="text"
-                value={`${window.location.origin}/users/@${user?.username}`}
+                value={`${window.location.origin}/users/${user?.username}`}
                 readOnly
                 className="flex-1 px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white text-sm"
               />
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/users/@${user?.username}`)
+                  navigator.clipboard.writeText(`${window.location.origin}/users/${user?.username}`)
                 }}
               >
                 Copy
