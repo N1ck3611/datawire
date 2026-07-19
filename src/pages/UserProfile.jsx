@@ -63,7 +63,34 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen py-12 px-4 relative">
+      {/* Custom Background */}
+      {user?.background && (
+        <div className="fixed inset-0 -z-10">
+          {user.backgroundType === 'video' ? (
+            <video
+              src={user.background}
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          ) : (
+            <img
+              src={user.background}
+              alt="Background"
+              className="w-full h-full object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+      )}
+      
+      {/* Default black background */}
+      {!user?.background && (
+        <div className="fixed inset-0 -z-10 bg-black" />
+      )}
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -112,6 +139,11 @@ const UserProfile = () => {
               <h2 className="text-3xl font-bold text-white mb-2">@{user?.username}</h2>
               {user?.global_name && user.global_name !== user.username && (
                 <p className="text-osint-muted text-lg">{user.global_name}</p>
+              )}
+              {user?.bio && (
+                <p className="text-osint-muted text-center mt-4 max-w-md">
+                  {user.bio}
+                </p>
               )}
             </div>
 

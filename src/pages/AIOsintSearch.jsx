@@ -103,20 +103,39 @@ const AIOsintSearch = () => {
       })
 
       if (!response.ok) {
-        throw new Error('Search failed')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Search failed')
       }
 
       const data = await response.json()
       setInvestigationId(data.investigationId)
 
-      // Start polling for progress
+      // Start polling for progress with retry logic
+      let pollCount = 0
+      const maxPolls = 300 // 5 minutes max
+      
       pollIntervalRef.current = setInterval(async () => {
+        pollCount++
+        
+        if (pollCount > maxPolls) {
+          clearInterval(pollIntervalRef.current)
+          setIsSearching(false)
+          setCurrentStage('Investigation timed out')
+          return
+        }
+        
         try {
           const progressResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-progress?id=${data.investigationId}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           })
+          
+          if (!progressResponse.ok) {
+            console.error('Progress response not ok:', progressResponse.status)
+            return
+          }
+          
           const progressData = await progressResponse.json()
 
           if (progressData.success) {
@@ -128,29 +147,42 @@ const AIOsintSearch = () => {
 
             if (progressData.completed) {
               clearInterval(pollIntervalRef.current)
-              setIsSearching(false)
               
-              // Fetch final report
-              const reportResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-report?id=${data.investigationId}`, {
-                headers: {
-                  'Authorization': `Bearer ${token}`
+              // Small delay before fetching report to prevent flashing
+              setTimeout(async () => {
+                try {
+                  const reportResponse = await fetch(`https://datawirecc-api.mynameisntnick0.workers.dev/api/ai-osint-report?id=${data.investigationId}`, {
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  })
+                  const reportData = await reportResponse.json()
+                  
+                  if (reportData.success) {
+                    setReport(reportData.report)
+                    setIsSearching(false)
+                  } else {
+                    setIsSearching(false)
+                    setCurrentStage('Failed to load report')
+                  }
+                } catch (error) {
+                  console.error('Report fetch error:', error)
+                  setIsSearching(false)
+                  setCurrentStage('Failed to load report')
                 }
-              })
-              const reportData = await reportResponse.json()
-              
-              if (reportData.success) {
-                setReport(reportData.report)
-              }
+              }, 500)
             }
           }
         } catch (error) {
           console.error('Progress polling error:', error)
+          // Don't stop polling on network errors, just log and continue
         }
       }, 1000)
 
     } catch (error) {
       console.error('Search error:', error)
       setIsSearching(false)
+      setCurrentStage(error.message || 'Search failed')
     }
   }
 
@@ -261,6 +293,7 @@ const AIOsintSearch = () => {
             </div>
             <div className="flex justify-between text-xs text-osint-muted mt-1">
               <span>Tasks: {completedTasks}/{totalTasks}</span>
+              <span>Est. Time: {Math.max(0, Math.ceil((totalTasks - completedTasks) * 2))}s</span>
             </div>
           </div>
 
@@ -303,6 +336,22 @@ const AIOsintSearch = () => {
                 ))}
               </AnimatePresence>
             </div>
+          </div>
+
+          {/* Cancel Button */}
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                if (pollIntervalRef.current) {
+                  clearInterval(pollIntervalRef.current)
+                }
+                setIsSearching(false)
+                setCurrentStage('Investigation cancelled')
+              }}
+              className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 text-sm rounded transition-colors"
+            >
+              Cancel Investigation
+            </button>
           </div>
         </div>
       )}
@@ -537,6 +586,31 @@ const AIOsintSearch = () => {
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Metadata */}
+            {report.metadata && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-2">Investigation Metadata</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-osint-muted">Data Points:</span>
+                    <span className="text-white ml-2">{report.metadata.totalDataPoints}</span>
+                  </div>
+                  <div>
+                    <span className="text-osint-muted">Sources:</span>
+                    <span className="text-white ml-2">{report.metadata.totalSources}</span>
+                  </div>
+                  <div>
+                    <span className="text-osint-muted">Leads:</span>
+                    <span className="text-white ml-2">{report.metadata.totalLeads}</span>
+                  </div>
+                  <div>
+                    <span className="text-osint-muted">Confidence:</span>
+                    <span className="text-white ml-2">{report.metadata.confidenceScore}%</span>
+                  </div>
                 </div>
               </div>
             )}
