@@ -9,6 +9,15 @@ const Login = () => {
   const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authMethod, setAuthMethod] = useState('discord') // 'discord' or 'email'
+  const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
+  const [isSignup, setIsSignup] = useState(false)
+  const [step, setStep] = useState('input') // 'input' or 'verify'
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const [sendingCode, setSendingCode] = useState(false)
+  const [verifying, setVerifying] = useState(false)
 
   useEffect(() => {
     checkAuthStatus()
@@ -40,11 +49,104 @@ const Login = () => {
     setLoading(false)
   }
 
-  const handleLogin = () => {
+  const handleDiscordLogin = () => {
     const returnUrl = searchParams.get('return') || '/dashboard'
     const workerCallbackUrl = 'https://datawirecc-api.mynameisntnick0.workers.dev/callback'
     const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=1523193275001999400&response_type=code&redirect_uri=${encodeURIComponent(workerCallbackUrl)}&scope=email+identify&state=${encodeURIComponent(returnUrl)}`
     window.location.href = discordAuthUrl
+  }
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setMessage('')
+    setSendingCode(true)
+
+    try {
+      const endpoint = isSignup 
+        ? '/api/auth/email/signup' 
+        : '/api/auth/email/login'
+      
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage(data.message)
+        setStep('verify')
+      } else {
+        setError(data.error || 'Failed to send code')
+      }
+    } catch (error) {
+      setError('Network error. Please try again.')
+    } finally {
+      setSendingCode(false)
+    }
+  }
+
+  const handleCodeVerify = async (e) => {
+    e.preventDefault()
+    setError('')
+    setVerifying(true)
+
+    try {
+      const endpoint = isSignup 
+        ? '/api/auth/email/signup/verify' 
+        : '/api/auth/email/login/verify'
+      
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        localStorage.setItem('auth_token', data.token)
+        const returnUrl = searchParams.get('return') || '/dashboard'
+        navigate(returnUrl)
+      } else {
+        setError(data.error || 'Invalid code')
+      }
+    } catch (error) {
+      setError('Network error. Please try again.')
+    } finally {
+      setVerifying(false)
+    }
+  }
+
+  const handleResendCode = async () => {
+    setError('')
+    setSendingCode(true)
+
+    try {
+      const endpoint = isSignup 
+        ? '/api/auth/email/signup' 
+        : '/api/auth/email/login'
+      
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage('New code sent to your email')
+      } else {
+        setError(data.error || 'Failed to resend code')
+      }
+    } catch (error) {
+      setError('Network error. Please try again.')
+    } finally {
+      setSendingCode(false)
+    }
   }
 
   if (loading) {
@@ -126,23 +228,220 @@ const Login = () => {
           transition={{ delay: 0.2 }}
           className="text-2xl font-bold text-osint-secondary mb-2"
         >Welcome to Datawire.cc</motion.h1>
-        <motion.p
+        
+        {/* Auth Method Toggle */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-osint-muted mb-8"
-        >Sign in with Discord to access your dashboard and purchase credits</motion.p>
-        
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleLogin}
-          className="w-full px-6 py-4 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-white/30"
+          className="flex gap-2 mb-6"
         >
-          <i className='bx bxl-discord text-2xl'></i>
-          Sign in with Discord
-        </motion.button>
+          <button
+            onClick={() => { setAuthMethod('discord'); setStep('input'); setError(''); setMessage(''); }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+              authMethod === 'discord' 
+                ? 'bg-white text-black' 
+                : 'bg-white/10 text-osint-muted hover:bg-white/20'
+            }`}
+          >
+            Discord
+          </button>
+          <button
+            onClick={() => { setAuthMethod('email'); setStep('input'); setError(''); setMessage(''); }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
+              authMethod === 'email' 
+                ? 'bg-white text-black' 
+                : 'bg-white/10 text-osint-muted hover:bg-white/20'
+            }`}
+          >
+            Email
+          </button>
+        </motion.div>
 
+        {/* Discord Auth */}
+        {authMethod === 'discord' && (
+          <>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-osint-muted mb-8"
+            >Sign in with Discord to access your dashboard and purchase credits</motion.p>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleDiscordLogin}
+              className="w-full px-6 py-4 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-white/30"
+            >
+              <i className='bx bxl-discord text-2xl'></i>
+              Sign in with Discord
+            </motion.button>
+          </>
+        )}
+
+        {/* Email Auth */}
+        {authMethod === 'email' && (
+          <>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-osint-muted mb-6"
+            >
+              {isSignup ? 'Create an account with your email' : 'Sign in with your email'}
+            </motion.p>
+
+            {/* Step 1: Email Input */}
+            {step === 'input' && (
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div className="text-left">
+                  <label className="block text-sm text-osint-muted mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-all"
+                    required
+                  />
+                  <p className="text-xs text-osint-muted mt-2">
+                    Only family email domains allowed (Gmail, Outlook, Yahoo, etc.)
+                  </p>
+                </div>
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={sendingCode}
+                  className="w-full px-6 py-4 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {sendingCode ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
+                      ></motion.div>
+                      Sending Code...
+                    </>
+                  ) : (
+                    <>
+                      <i className='bx bx-envelope text-2xl'></i>
+                      {isSignup ? 'Send Verification Code' : 'Send Login Code'}
+                    </>
+                  )}
+                </motion.button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsSignup(!isSignup)}
+                    className="text-sm text-osint-muted hover:text-white transition-colors"
+                  >
+                    {isSignup ? 'Already have an account? Login' : "Don't have an account? Sign up"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Step 2: Code Verification */}
+            {step === 'verify' && (
+              <form onSubmit={handleCodeVerify} className="space-y-4">
+                <div className="text-left">
+                  <label className="block text-sm text-osint-muted mb-2">Verification Code</label>
+                  <input
+                    type="text"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="123456"
+                    maxLength={6}
+                    className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-all text-center text-2xl tracking-widest"
+                    required
+                  />
+                  <p className="text-xs text-osint-muted mt-2">
+                    Enter the 6-digit code sent to {email}
+                  </p>
+                </div>
+
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm"
+                  >
+                    {message}
+                  </motion.div>
+                )}
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={verifying}
+                  className="w-full px-6 py-4 bg-white hover:bg-gray-200 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {verifying ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
+                      ></motion.div>
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <i className='bx bx-check text-2xl'></i>
+                      Verify Code
+                    </>
+                  )}
+                </motion.button>
+
+                <div className="flex justify-between items-center text-center">
+                  <button
+                    type="button"
+                    onClick={() => setStep('input')}
+                    className="text-sm text-osint-muted hover:text-white transition-colors"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    disabled={sendingCode}
+                    className="text-sm text-osint-muted hover:text-white transition-colors disabled:opacity-50"
+                  >
+                    {sendingCode ? 'Sending...' : 'Resend Code'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </>
+        )}
+
+        {/* Features Section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -158,7 +457,7 @@ const Login = () => {
               className="flex items-center gap-3 text-sm text-osint-muted"
             >
               <i className='bx bx-check-circle text-white'></i>
-              <span>Secure Discord authentication</span>
+              <span>Secure authentication</span>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: -10 }}
