@@ -17,7 +17,7 @@ const Callback = () => {
   const handleCallback = async () => {
     const code = searchParams.get('code')
     const error = searchParams.get('error')
-    const state = searchParams.get('state') // This contains the return URL
+    const state = searchParams.get('state') // This contains the return URL or 'link' for Discord linking
 
     if (error) {
       setStatus('error')
@@ -34,21 +34,34 @@ const Callback = () => {
     }
 
     try {
+      const isLinkOperation = state === 'link'
+      const token = localStorage.getItem('auth_token')
+      
       const response = await fetch(`${API_BASE}/api/auth/callback`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && isLinkOperation ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ code, link: isLinkOperation })
       })
 
       const data = await response.json()
 
       if (data.success) {
-        // Store token in localStorage
-        localStorage.setItem('auth_token', data.token)
-        setStatus('success')
-        setMessage('Authentication successful!')
-        const returnUrl = state ? decodeURIComponent(state) : '/dashboard'
-        setTimeout(() => navigate(returnUrl), 1000)
+        if (isLinkOperation) {
+          // Discord linking successful
+          setStatus('success')
+          setMessage('Discord account linked successfully!')
+          setTimeout(() => navigate('/settings'), 1000)
+        } else {
+          // Normal Discord login
+          localStorage.setItem('auth_token', data.token)
+          setStatus('success')
+          setMessage('Authentication successful!')
+          const returnUrl = '/dashboard'
+          setTimeout(() => navigate(returnUrl), 1000)
+        }
       } else {
         throw new Error(data.error || 'Authentication failed')
       }

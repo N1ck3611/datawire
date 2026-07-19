@@ -114,7 +114,7 @@ const UserProfile = () => {
           {/* Profile Card */}
           <GlassCard className="p-8">
             {/* Avatar and Username */}
-            <div className="flex flex-col items-center mb-8">
+            <div className="flex flex-col items-center mb-6">
               <div className="relative mb-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 bg-black/50 flex items-center justify-center">
                   {user?.avatar ? (
@@ -140,9 +140,23 @@ const UserProfile = () => {
               {user?.global_name && user.global_name !== user.username && (
                 <p className="text-osint-muted text-lg">{user.global_name}</p>
               )}
+              
+              {/* Member Since - smaller, centered, above bio */}
+              <p className="text-osint-muted text-xs text-center mt-3">
+                Member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+              </p>
+              
+              {/* Bio */}
               {user?.bio && (
                 <p className="text-osint-muted text-center mt-4 max-w-md">
                   {user.bio}
+                </p>
+              )}
+
+              {/* Status */}
+              {user?.status && (
+                <p className="text-white/70 text-center mt-3 text-sm italic">
+                  "{user.status}"
                 </p>
               )}
             </div>
@@ -172,29 +186,23 @@ const UserProfile = () => {
             <div className="grid grid-cols-2 gap-4 mb-8">
               <GlassCard className="p-4 text-center">
                 <Calendar className="w-6 h-6 text-white/50 mx-auto mb-2" />
-                <p className="text-osint-muted text-sm mb-1">Member Since</p>
+                <p className="text-osint-muted text-sm mb-1">Daily Credits</p>
                 <p className="text-white font-semibold">
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                  {user.dailyCredits || 0}
                 </p>
               </GlassCard>
               
               {user?.plan && (
                 <GlassCard className="p-4 text-center">
                   <Shield className="w-6 h-6 text-white/50 mx-auto mb-2" />
-                  <p className="text-osint-muted text-sm mb-1">Daily Credits</p>
+                  <p className="text-osint-muted text-sm mb-1">Balance</p>
                   <p className="text-white font-semibold">
-                    {user.dailyCredits || 0}
+                    ${user.balanceUsd || '0.00'}
                   </p>
                 </GlassCard>
               )}
             </div>
 
-            {/* Auth Type Badge */}
-            <div className="text-center">
-              <span className="inline-block px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm capitalize">
-                {user?.authType === 'email' ? 'Email Account' : 'Discord Account'}
-              </span>
-            </div>
           </GlassCard>
 
           {/* Share Link */}
