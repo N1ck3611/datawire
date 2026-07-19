@@ -1555,7 +1555,7 @@ Lookup made by https://datawire.cc
     { id: 'mapping', icon: Link2, label: 'Lead Mapping' },
     { id: 'history', icon: History, label: 'Search History' },
     { id: 'transactions', icon: Receipt, label: 'Transactions' },
-    { id: 'settings', icon: Settings, label: 'Settings' }
+    { id: 'settings', icon: Settings, label: 'Settings', external: true, path: '/settings' }
   ]
 
   return (
@@ -1600,8 +1600,12 @@ Lookup made by https://datawire.cc
                 whileHover={{ scale: 1.02, x: 4 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => {
-                  setActiveTab(item.id)
-                  if (item.id === 'search') setSearchMode('main')
+                  if (item.external) {
+                    navigate(item.path)
+                  } else {
+                    setActiveTab(item.id)
+                    if (item.id === 'search') setSearchMode('main')
+                  }
                   setSidebarOpen(false)
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 relative overflow-hidden rounded-lg ${
@@ -1680,15 +1684,31 @@ Lookup made by https://datawire.cc
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-4">
             {(() => {
+              // Try custom avatar first (from ImgBB upload)
+              if (user?.avatar && !user.avatar.startsWith('https://cdn.discordapp.com')) {
+                return (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.username}
+                    className="w-10 h-10 rounded-xl border border-white/20"
+                    onError={(e) => {
+                      console.log('Custom avatar load failed, trying Discord')
+                      e.target.style.display = 'none'
+                      const discordAvatar = e.target.parentElement.querySelector('.discord-avatar')
+                      if (discordAvatar) discordAvatar.style.display = 'block'
+                    }}
+                  />
+                )
+              }
               // Try to get Discord avatar
               if (user?.avatar && user?.id) {
                 return (
                   <img 
                     src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`}
                     alt={user.username}
-                    className="w-10 h-10 rounded-xl border border-white/20"
+                    className="w-10 h-10 rounded-xl border border-white/20 discord-avatar"
                     onError={(e) => {
-                      console.log('Avatar load failed, trying fallback')
+                      console.log('Discord avatar load failed, trying fallback')
                       e.target.style.display = 'none'
                       const fallback = e.target.parentElement.querySelector('.fallback-avatar')
                       if (fallback) fallback.style.display = 'flex'
