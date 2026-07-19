@@ -15,7 +15,6 @@ const UserProfile = () => {
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(true)
   const videoRef = useRef(null)
-  const audioRef = useRef(null)
 
   useEffect(() => {
     fetchUserProfile()
@@ -28,6 +27,7 @@ const UserProfile = () => {
       videoRef.current.volume = 1.0
       setIsMuted(true)
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
+      console.log('Video initialized as muted for autoplay')
     }
   }, [user?.background])
 
@@ -103,42 +103,29 @@ const UserProfile = () => {
       {user?.background && (
         <div className="fixed inset-0 -z-10">
           {user.backgroundType === 'video' ? (
-            <>
-              <video
-                ref={videoRef}
-                src={user.background}
-                className="w-full h-full object-cover"
-                autoPlay
-                loop
-                muted={true}
-                playsInline
-                controls={false}
-                onLoadedData={() => {
-                  if (videoRef.current) {
-                    console.log('Video loaded data, duration:', videoRef.current.duration)
-                    videoRef.current.muted = true
-                    videoRef.current.volume = 1.0
-                    videoRef.current.play().catch(e => console.log('Play failed:', e))
-                  }
-                }}
-                onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted)}
-                onError={(e) => {
-                  console.log('Video error:', e)
-                  console.log('Video src:', user.background)
-                }}
-              />
-              <audio
-                ref={audioRef}
-                src={user.background}
-                autoPlay={false}
-                loop
-                muted={isMuted}
-                className="hidden"
-                onLoadedData={() => {
-                  console.log('Audio loaded')
-                }}
-              />
-            </>
+            <video
+              ref={videoRef}
+              src={user.background}
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              controls={false}
+              onLoadedData={() => {
+                if (videoRef.current) {
+                  console.log('Video loaded data, duration:', videoRef.current.duration)
+                  videoRef.current.muted = isMuted
+                  videoRef.current.volume = 1.0
+                  videoRef.current.play().catch(e => console.log('Play failed:', e))
+                }
+              }}
+              onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted)}
+              onError={(e) => {
+                console.log('Video error:', e)
+                console.log('Video src:', user.background)
+              }}
+            />
           ) : user.backgroundType === 'audio' ? (
             <audio
               src={user.background}
@@ -163,23 +150,16 @@ const UserProfile = () => {
                 const newMutedState = !isMuted
                 setIsMuted(newMutedState)
                 
-                // Control video
                 if (videoRef.current) {
-                  videoRef.current.muted = true // Keep video always muted for autoplay
+                  videoRef.current.muted = newMutedState
                   videoRef.current.volume = 1.0
-                }
-                
-                // Control audio separately
-                if (audioRef.current) {
-                  audioRef.current.muted = newMutedState
                   if (!newMutedState) {
-                    audioRef.current.play().catch(err => console.log('Audio play error:', err))
-                  } else {
-                    audioRef.current.pause()
+                    // User gesture - unmute should work
+                    videoRef.current.play().catch(err => console.log('Play with audio error:', err))
                   }
                 }
                 
-                console.log('Mute toggled:', newMutedState)
+                console.log('Mute toggled:', newMutedState, 'Video muted:', videoRef.current?.muted)
               }}
               className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Click to toggle sound"
