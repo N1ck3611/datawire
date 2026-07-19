@@ -24,6 +24,7 @@ const AIOsintSearch = () => {
   const [totalTasks, setTotalTasks] = useState(0)
   const [investigationId, setInvestigationId] = useState(null)
   const [report, setReport] = useState(null)
+  const [isFetchingReport, setIsFetchingReport] = useState(false)
   const pollIntervalRef = useRef(null)
 
   // Cleanup polling interval on unmount
@@ -147,6 +148,8 @@ const AIOsintSearch = () => {
 
             if (progressData.completed) {
               clearInterval(pollIntervalRef.current)
+              setIsFetchingReport(true)
+              setCurrentStage('Fetching final report...')
               
               // Small delay before fetching report to prevent flashing
               setTimeout(async () => {
@@ -161,16 +164,19 @@ const AIOsintSearch = () => {
                   if (reportData.success) {
                     setReport(reportData.report)
                     setIsSearching(false)
+                    setIsFetchingReport(false)
                   } else {
                     setIsSearching(false)
+                    setIsFetchingReport(false)
                     setCurrentStage('Failed to load report')
                   }
                 } catch (error) {
                   console.error('Report fetch error:', error)
                   setIsSearching(false)
+                  setIsFetchingReport(false)
                   setCurrentStage('Failed to load report')
                 }
-              }, 500)
+              }, 1000)
             }
           }
         } catch (error) {
@@ -270,7 +276,7 @@ const AIOsintSearch = () => {
       )}
 
       {/* Progress Panel */}
-      {isSearching && (
+      {(isSearching || isFetchingReport) && (
         <div className="glass-card p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-white animate-pulse-glow"></div>

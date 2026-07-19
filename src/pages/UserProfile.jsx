@@ -21,12 +21,13 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (videoRef.current && user?.backgroundType === 'video') {
-      // Start muted for autoplay (browser requirement)
-      videoRef.current.muted = true
+      // Respect user's mute setting for video audio
+      const shouldMute = user.muteVideoAudio !== false
+      videoRef.current.muted = shouldMute
       videoRef.current.volume = 1.0
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
     }
-  }, [user?.background])
+  }, [user?.background, user?.muteVideoAudio])
 
   const fetchUserProfile = async () => {
     try {
@@ -106,11 +107,13 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true}
+              muted={user.muteVideoAudio !== false}
               playsInline
               controls={false}
               onLoadedData={() => {
                 if (videoRef.current) {
+                  videoRef.current.muted = user.muteVideoAudio !== false
+                  videoRef.current.volume = 1.0
                   videoRef.current.play().catch(e => console.log('Play failed:', e))
                 }
               }}
