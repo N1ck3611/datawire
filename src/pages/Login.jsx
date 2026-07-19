@@ -126,6 +126,11 @@ const Login = () => {
     const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6)
     setCode(value)
     setError('') // Clear error when typing
+    
+    // Auto-check when 6 digits are entered
+    if (value.length === 6 && !verifying) {
+      handleCodeVerify()
+    }
   }
 
   const handleResendCode = async () => {
