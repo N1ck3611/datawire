@@ -89,7 +89,7 @@ const Login = () => {
   }
 
   const handleCodeVerify = async (e) => {
-    e.preventDefault()
+    if (e) e.preventDefault()
     setError('')
     setVerifying(true)
 
@@ -112,11 +112,21 @@ const Login = () => {
         navigate(returnUrl)
       } else {
         setError(data.error || 'Invalid code')
+        setVerifying(false)
       }
     } catch (error) {
       setError('Network error. Please try again.')
-    } finally {
       setVerifying(false)
+    }
+  }
+
+  const handleCodeChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6)
+    setCode(value)
+    
+    // Auto-check when 6 digits are entered
+    if (value.length === 6 && !verifying) {
+      handleCodeVerify()
     }
   }
 
@@ -302,7 +312,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-all"
+                    className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/20 focus:outline-none focus:border-white/40 focus:bg-black/50 transition-all backdrop-blur-sm"
                     required
                   />
                   <p className="text-xs text-osint-muted mt-2">
@@ -364,10 +374,12 @@ const Login = () => {
                   <input
                     type="text"
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={handleCodeChange}
                     placeholder="123456"
                     maxLength={6}
-                    className="w-full px-4 py-3 bg-black/50 border border-white/20 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-all text-center text-2xl tracking-widest"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white placeholder-white/20 focus:outline-none focus:border-white/40 focus:bg-black/50 transition-all text-center text-2xl tracking-widest backdrop-blur-sm"
                     required
                   />
                   <p className="text-xs text-osint-muted mt-2">
