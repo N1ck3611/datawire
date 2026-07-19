@@ -25,6 +25,28 @@ const UserProfile = () => {
       
       if (data.success) {
         setUser(data.user)
+        
+        // Refresh Discord data if user has Discord linked
+        if (data.user.discordId) {
+          try {
+            await fetch(`${API_BASE}/api/user/public/refresh-discord`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ username })
+            })
+            // Fetch updated profile data after refresh
+            const refreshResponse = await fetch(`${API_BASE}/api/user/public/${username}`)
+            const refreshData = await refreshResponse.json()
+            if (refreshData.success) {
+              setUser(refreshData.user)
+            }
+          } catch (refreshError) {
+            console.error('Failed to refresh Discord data:', refreshError)
+            // Don't fail the whole profile load if refresh fails
+          }
+        }
       } else {
         setError(data.error || 'User not found')
       }
