@@ -306,7 +306,7 @@ const Login = () => {
                     required
                   />
                   <p className="text-xs text-osint-muted mt-2">
-                    Only family email domains allowed (Gmail, Outlook, Yahoo, etc.)
+                    We'll verify that your email address exists
                   </p>
                 </div>
 
