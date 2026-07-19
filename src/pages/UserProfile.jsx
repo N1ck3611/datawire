@@ -25,12 +25,11 @@ const UserProfile = () => {
       // Check if user wants to remove audio from video
       const shouldRemoveAudio = user.removeVideoAudio === true
       
-      // Always start muted for browser autoplay compliance
-      videoRef.current.muted = true
+      // Start muted for browser autoplay compliance
       videoRef.current.volume = 1.0
       setIsMuted(true)
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
-      console.log('Video initialized as muted for autoplay, removeAudio:', shouldRemoveAudio)
+      console.log('Video initialized for autoplay, removeAudio:', shouldRemoveAudio)
     }
     
     // Handle audio background (MP3)
@@ -149,13 +148,13 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={isMuted}
+              muted={true} // Always start muted for autoplay, controlled via videoRef.current.muted
               playsInline
               controls={false}
               onLoadedData={() => {
                 if (videoRef.current) {
                   console.log('Video loaded data, duration:', videoRef.current.duration)
-                  videoRef.current.muted = isMuted
+                  // Don't reset muted state here - let the toggle button control it
                   videoRef.current.volume = 1.0
                   videoRef.current.play().catch(e => console.log('Play failed:', e))
                 }
