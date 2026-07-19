@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Shield, Calendar } from 'lucide-react'
@@ -13,10 +13,30 @@ const UserProfile = () => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const videoRef = useRef(null)
 
   useEffect(() => {
     fetchUserProfile()
   }, [username])
+
+  useEffect(() => {
+    if (videoRef.current && user?.backgroundType === 'video') {
+      // Start muted for autoplay (browser requirement)
+      videoRef.current.muted = true
+      videoRef.current.volume = 1.0
+      videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
+      
+      // After a short delay, unmute if user has audio enabled
+      if (!user.muteVideoAudio) {
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.muted = false
+            videoRef.current.volume = 1.0
+          }
+        }, 500)
+      }
+    }
+  }, [user?.background, user?.muteVideoAudio])
 
   const fetchUserProfile = async () => {
     try {
@@ -91,12 +111,21 @@ const UserProfile = () => {
         <div className="fixed inset-0 -z-10">
           {user.backgroundType === 'video' ? (
             <video
+              ref={videoRef}
               src={user.background}
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={user.muteVideoAudio || false}
+              muted={true}
               playsInline
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.muted = !videoRef.current.muted
+                  if (!videoRef.current.muted) {
+                    videoRef.current.volume = 1.0
+                  }
+                }
+              }}
             />
           ) : user.backgroundType === 'audio' ? (
             <audio
