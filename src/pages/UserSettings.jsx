@@ -346,10 +346,17 @@ const UserSettings = () => {
         return
       }
       
-      // Validate file size (max 50MB for videos/audio, 10MB for images)
-      const maxSize = (file.type.startsWith('video/') || file.type.startsWith('audio/')) ? 50 * 1024 * 1024 : 10 * 1024 * 1024
+      // Validate file size (max 50MB for videos/audio, 10MB for images, 20MB for GIFs)
+      let maxSize = 10 * 1024 * 1024
+      if (file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+        maxSize = 50 * 1024 * 1024
+      } else if (file.type === 'image/gif') {
+        maxSize = 20 * 1024 * 1024
+      }
+      
       if (file.size > maxSize) {
-        setBackgroundError(`File size must be less than ${(file.type.startsWith('video/') || file.type.startsWith('audio/')) ? '50MB' : '10MB'}`)
+        const maxSizeMB = (file.type.startsWith('video/') || file.type.startsWith('audio/')) ? '50MB' : (file.type === 'image/gif' ? '20MB' : '10MB')
+        setBackgroundError(`File size must be less than ${maxSizeMB}`)
         return
       }
       

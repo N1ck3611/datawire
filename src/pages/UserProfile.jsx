@@ -26,14 +26,24 @@ const UserProfile = () => {
       videoRef.current.volume = 1.0
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
       
-      // After a short delay, unmute if user has audio enabled
+      // Only unmute if user has audio enabled AND has interacted with page
       if (!user.muteVideoAudio) {
-        setTimeout(() => {
+        const handleUserInteraction = () => {
           if (videoRef.current) {
             videoRef.current.muted = false
             videoRef.current.volume = 1.0
           }
-        }, 500)
+          document.removeEventListener('click', handleUserInteraction)
+          document.removeEventListener('keydown', handleUserInteraction)
+        }
+        
+        document.addEventListener('click', handleUserInteraction)
+        document.addEventListener('keydown', handleUserInteraction)
+        
+        return () => {
+          document.removeEventListener('click', handleUserInteraction)
+          document.removeEventListener('keydown', handleUserInteraction)
+        }
       }
     }
   }, [user?.background, user?.muteVideoAudio])
@@ -118,14 +128,13 @@ const UserProfile = () => {
               loop
               muted={true}
               playsInline
-              onClick={() => {
+              controls={false}
+              onCanPlay={() => {
                 if (videoRef.current) {
-                  videoRef.current.muted = !videoRef.current.muted
-                  if (!videoRef.current.muted) {
-                    videoRef.current.volume = 1.0
-                  }
+                  videoRef.current.play().catch(e => console.log('Play failed:', e))
                 }
               }}
+              onError={() => console.log('Video error')}
             />
           ) : user.backgroundType === 'audio' ? (
             <audio
@@ -140,7 +149,37 @@ const UserProfile = () => {
               src={user.background}
               alt="Background"
               className="w-full h-full object-cover"
+              loading="eager"
             />
+          )}
+          {/* Sound toggle indicator */}
+          {user.backgroundType === 'video' && (
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.muted = !videoRef.current.muted
+                  if (!videoRef.current.muted) {
+                    videoRef.current.volume = 1.0
+                  }
+                }
+              }}
+              className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+            >
+              {videoRef.current?.muted !== false ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                  <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                  <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              )}
+            </button>
           )}
           {/* Background Audio (separate from video) */}
           {user.backgroundAudio && (
