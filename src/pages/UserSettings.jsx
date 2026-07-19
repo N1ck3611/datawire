@@ -521,10 +521,13 @@ const UserSettings = () => {
 
   const handleMuteToggle = async () => {
     const newValue = !muteVideoAudio
+    console.log('[Mute Toggle] Current state:', muteVideoAudio, 'New value:', newValue)
     setMuteVideoAudio(newValue)
     
     try {
       const token = localStorage.getItem('auth_token')
+      console.log('[Mute Toggle] Sending request to backend with mute:', newValue)
+      
       const response = await fetch(`${API_BASE}/api/user/mute-video-audio`, {
         method: 'PUT',
         headers: {
@@ -535,12 +538,16 @@ const UserSettings = () => {
       })
       
       const data = await response.json()
+      console.log('[Mute Toggle] Backend response:', data)
       
       if (!data.success) {
+        console.log('[Mute Toggle] Backend returned failure, reverting state')
         setMuteVideoAudio(!newValue)
+      } else {
+        console.log('[Mute Toggle] Backend confirmed update, new muteVideoAudio:', data.muteVideoAudio)
       }
     } catch (error) {
-      console.error('Failed to update mute setting:', error)
+      console.error('[Mute Toggle] Failed to update mute setting:', error)
       setMuteVideoAudio(!newValue)
     }
   }
