@@ -33,6 +33,8 @@ const UserProfile = () => {
       
       // Initialize mute state based on user's Firebase setting
       const userMuteSetting = user.muteVideoAudio === true
+      console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
+      console.log('Computed userMuteSetting:', userMuteSetting)
       setIsMuted(userMuteSetting)
       
       videoRef.current.play().catch(e => console.log('Autoplay failed:', e))
@@ -42,7 +44,7 @@ const UserProfile = () => {
         setTimeout(() => {
           if (videoRef.current) {
             videoRef.current.muted = false
-            console.log('Auto-unmuted video based on user setting')
+            console.log('Auto-unmuted video based on user setting - videoRef.current.muted:', videoRef.current.muted)
           }
         }, 100)
       }
