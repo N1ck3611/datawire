@@ -36,6 +36,7 @@ const UserSettings = () => {
   const [backgroundAudioError, setBackgroundAudioError] = useState('')
   const [backgroundAudioSuccess, setBackgroundAudioSuccess] = useState('')
   const [muteVideoAudio, setMuteVideoAudio] = useState(false)
+  const [removeVideoAudio, setRemoveVideoAudio] = useState(false)
   const [status, setStatus] = useState('')
   const [statusError, setStatusError] = useState('')
   const [statusSuccess, setStatusSuccess] = useState('')
@@ -88,6 +89,9 @@ const UserSettings = () => {
         }
         if (data.user.muteVideoAudio !== undefined) {
           setMuteVideoAudio(data.user.muteVideoAudio)
+        }
+        if (data.user.removeVideoAudio !== undefined) {
+          setRemoveVideoAudio(data.user.removeVideoAudio)
         }
         if (data.user.status) {
           setStatus(data.user.status)
@@ -536,7 +540,34 @@ const UserSettings = () => {
         setMuteVideoAudio(!newValue)
       }
     } catch (error) {
+      console.error('Failed to update mute setting:', error)
       setMuteVideoAudio(!newValue)
+    }
+  }
+
+  const handleRemoveAudioToggle = async () => {
+    const newValue = !removeVideoAudio
+    setRemoveVideoAudio(newValue)
+    
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/remove-video-audio`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ remove: newValue })
+      })
+      
+      const data = await response.json()
+      
+      if (!data.success) {
+        setRemoveVideoAudio(!newValue)
+      }
+    } catch (error) {
+      console.error('Failed to update remove audio setting:', error)
+      setRemoveVideoAudio(!newValue)
     }
   }
 
@@ -872,11 +903,44 @@ const UserSettings = () => {
                   <div className="flex items-center gap-6 mb-6">
                     <div className="relative w-full h-16 rounded-lg overflow-hidden border-2 border-white/20 bg-black/50 flex items-center justify-center">
                       {backgroundAudioPreview ? (
-                        <audio
-                          src={backgroundAudioPreview}
-                          controls
-                          className="w-full"
-                        />
+                        <div className="w-full px-4 flex items-center gap-3">
+                          <button
+                            onClick={() => {
+                              const audio = document.getElementById('background-audio-preview')
+                              if (audio.paused) {
+                                audio.play()
+                              } else {
+                                audio.pause()
+                              }
+                            }}
+                            className="text-white hover:text-white/80 transition-colors"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                          </button>
+                          <audio
+                            id="background-audio-preview"
+                            src={backgroundAudioPreview}
+                            className="hidden"
+                            onPlay={() => {
+                              const playBtn = document.querySelector('[data-audio-play]')
+                              if (playBtn) {
+                                playBtn.innerHTML = '<polygon points="6 19 6 5 20 12 6 19"></polygon>'
+                              }
+                            }}
+                            onPause={() => {
+                              const playBtn = document.querySelector('[data-audio-play]')
+                              if (playBtn) {
+                                playBtn.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'
+                              }
+                            }}
+                          />
+                          <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+                            <div className="h-full bg-white/50 w-0" id="audio-progress"></div>
+                          </div>
+                          <span className="text-white/50 text-xs">Preview</span>
+                        </div>
                       ) : (
                         <span className="text-white/50">No background audio set</span>
                       )}
@@ -944,6 +1008,28 @@ const UserSettings = () => {
                     <div
                       className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
                         muteVideoAudio ? 'translate-x-7' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Remove Audio from Video Toggle */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Remove Audio from Video</h3>
+                    <p className="text-sm text-osint-muted">Permanently remove audio track from video backgrounds</p>
+                  </div>
+                  <button
+                    onClick={handleRemoveAudioToggle}
+                    className={`relative w-14 h-8 rounded-full transition-colors ${
+                      removeVideoAudio ? 'bg-red-500' : 'bg-green-500'
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
+                        removeVideoAudio ? 'translate-x-7' : 'translate-x-1'
                       }`}
                     />
                   </button>
