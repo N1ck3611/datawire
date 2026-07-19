@@ -30,6 +30,12 @@ const UserSettings = () => {
   const [uploadingBackground, setUploadingBackground] = useState(false)
   const [backgroundError, setBackgroundError] = useState('')
   const [backgroundSuccess, setBackgroundSuccess] = useState('')
+  const [backgroundAudioFile, setBackgroundAudioFile] = useState(null)
+  const [backgroundAudioPreview, setBackgroundAudioPreview] = useState(null)
+  const [uploadingBackgroundAudio, setUploadingBackgroundAudio] = useState(false)
+  const [backgroundAudioError, setBackgroundAudioError] = useState('')
+  const [backgroundAudioSuccess, setBackgroundAudioSuccess] = useState('')
+  const [muteVideoAudio, setMuteVideoAudio] = useState(false)
   const [status, setStatus] = useState('')
   const [statusError, setStatusError] = useState('')
   const [statusSuccess, setStatusSuccess] = useState('')
@@ -76,6 +82,12 @@ const UserSettings = () => {
         }
         if (data.user.background) {
           setBackgroundPreview(data.user.background)
+        }
+        if (data.user.backgroundAudio) {
+          setBackgroundAudioPreview(data.user.backgroundAudio)
+        }
+        if (data.user.muteVideoAudio !== undefined) {
+          setMuteVideoAudio(data.user.muteVideoAudio)
         }
         if (data.user.status) {
           setStatus(data.user.status)
@@ -327,17 +339,17 @@ const UserSettings = () => {
   const handleBackgroundChange = (e) => {
     const file = e.target.files[0]
     if (file) {
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/mov', 'video/webm']
+      // Validate file type (include video/quicktime for MOV files)
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/mov', 'video/quicktime', 'video/webm', 'audio/mpeg', 'audio/mp3']
       if (!validTypes.includes(file.type)) {
-        setBackgroundError('Please upload a valid image or video file (JPG, PNG, GIF, WebP, MP4, MOV, WebM)')
+        setBackgroundError('Please upload a valid image, video, or audio file (JPG, PNG, GIF, WebP, MP4, MOV, WebM, MP3)')
         return
       }
       
-      // Validate file size (max 50MB for videos, 10MB for images)
-      const maxSize = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 10 * 1024 * 1024
+      // Validate file size (max 50MB for videos/audio, 10MB for images)
+      const maxSize = (file.type.startsWith('video/') || file.type.startsWith('audio/')) ? 50 * 1024 * 1024 : 10 * 1024 * 1024
       if (file.size > maxSize) {
-        setBackgroundError(`File size must be less than ${file.type.startsWith('video/') ? '50MB' : '10MB'}`)
+        setBackgroundError(`File size must be less than ${(file.type.startsWith('video/') || file.type.startsWith('audio/')) ? '50MB' : '10MB'}`)
         return
       }
       
@@ -373,7 +385,13 @@ const UserSettings = () => {
         
         try {
           const token = localStorage.getItem('auth_token')
-          const fileType = backgroundFile.type.startsWith('video/') ? 'video' : 'image'
+          let fileType = 'image'
+          
+          if (backgroundFile.type.startsWith('video/')) {
+            fileType = 'video'
+          } else if (backgroundFile.type.startsWith('audio/')) {
+            fileType = 'audio'
+          }
           
           const response = await fetch(`${API_BASE}/api/user/background`, {
             method: 'POST',
@@ -391,7 +409,7 @@ const UserSettings = () => {
 
           if (data.success) {
             setBackgroundSuccess('Background updated successfully!')
-            setUser({ ...user, background: data.backgroundUrl })
+            setUser({ ...user, background: data.backgroundUrl, backgroundType: data.backgroundType })
             setBackgroundFile(null)
           } else {
             setBackgroundError(data.error || 'Failed to upload background')
@@ -406,6 +424,112 @@ const UserSettings = () => {
     } catch (error) {
       setBackgroundError('Failed to process file')
       setUploadingBackground(false)
+    }
+  }
+
+  const handleBackgroundAudioChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg']
+      if (!validTypes.includes(file.type)) {
+        setBackgroundAudioError('Please upload a valid audio file (MP3, WAV, OGG)')
+        return
+      }
+      
+      const maxSize = 50 * 1024 * 1024
+      if (file.size > maxSize) {
+        setBackgroundAudioError('File size must be less than 50MB')
+        return
+      }
+      
+      setBackgroundAudioFile(file)
+      setBackgroundAudioError('')
+      setBackgroundAudioSuccess('')
+      
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setBackgroundAudioPreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleBackgroundAudioUpload = async (e) => {
+    e.preventDefault()
+    
+    if (!backgroundAudioFile) {
+      setBackgroundAudioError('Please select a file to upload')
+      return
+    }
+    
+    setUploadingBackgroundAudio(true)
+    setBackgroundAudioError('')
+    setBackgroundAudioSuccess('')
+    
+    try {
+      const reader = new FileReader()
+      reader.onloadend = async () => {
+        const fileData = reader.result.split(',')[1]
+        
+        try {
+          const token = localStorage.getItem('auth_token')
+          
+          const response = await fetch(`${API_BASE}/api/user/background-audio`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              fileData,
+              fileType: backgroundAudioFile.type
+            })
+          })
+          
+          const data = await response.json()
+
+          if (data.success) {
+            setBackgroundAudioSuccess('Background audio updated successfully!')
+            setUser({ ...user, backgroundAudio: data.backgroundAudioUrl })
+            setBackgroundAudioFile(null)
+          } else {
+            setBackgroundAudioError(data.error || 'Failed to upload background audio')
+          }
+        } catch (error) {
+          setBackgroundAudioError('Network error. Please try again.')
+        } finally {
+          setUploadingBackgroundAudio(false)
+        }
+      }
+      reader.readAsDataURL(backgroundAudioFile)
+    } catch (error) {
+      setBackgroundAudioError('Failed to process file')
+      setUploadingBackgroundAudio(false)
+    }
+  }
+
+  const handleMuteToggle = async () => {
+    const newValue = !muteVideoAudio
+    setMuteVideoAudio(newValue)
+    
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/mute-video-audio`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ mute: newValue })
+      })
+      
+      const data = await response.json()
+      
+      if (!data.success) {
+        setMuteVideoAudio(!newValue)
+      }
+    } catch (error) {
+      setMuteVideoAudio(!newValue)
     }
   }
 
@@ -685,12 +809,12 @@ const UserSettings = () => {
                 <div>
                   <input
                     type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,video/mp4,video/mov,video/webm"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,video/mp4,video/mov,video/quicktime,video/webm,audio/mpeg,audio/mp3"
                     onChange={handleBackgroundChange}
                     className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer"
                   />
                   <p className="text-xs text-osint-muted mt-2">
-                    Supports JPG, PNG, GIF, WebP, MP4, MOV, WebM. Max 10MB for images, 50MB for videos.
+                    Supports JPG, PNG, GIF, WebP, MP4, MOV, WebM, MP3. Max 10MB for images, 50MB for videos/audio.
                   </p>
                 </div>
 
@@ -723,6 +847,92 @@ const UserSettings = () => {
                   {uploadingBackground ? 'Uploading...' : 'Upload Background'}
                 </Button>
               </form>
+
+              {/* Background Audio Section */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <h3 className="text-lg font-semibold text-white mb-4">Background Audio</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-6 mb-6">
+                    <div className="relative w-full h-16 rounded-lg overflow-hidden border-2 border-white/20 bg-black/50 flex items-center justify-center">
+                      {backgroundAudioPreview ? (
+                        <audio
+                          src={backgroundAudioPreview}
+                          controls
+                          className="w-full"
+                        />
+                      ) : (
+                        <span className="text-white/50">No background audio set</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <form onSubmit={handleBackgroundAudioUpload} className="space-y-4">
+                    <div>
+                      <input
+                        type="file"
+                        accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
+                        onChange={handleBackgroundAudioChange}
+                        className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer"
+                      />
+                      <p className="text-xs text-osint-muted mt-2">
+                        Supports MP3, WAV, OGG. Max 50MB.
+                      </p>
+                    </div>
+
+                    {backgroundAudioError && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                      >
+                        {backgroundAudioError}
+                      </motion.div>
+                    )}
+
+                    {backgroundAudioSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm"
+                      >
+                        {backgroundAudioSuccess}
+                      </motion.div>
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={!backgroundAudioFile || uploadingBackgroundAudio}
+                      loading={uploadingBackgroundAudio}
+                      className="w-full"
+                    >
+                      {uploadingBackgroundAudio ? 'Uploading...' : 'Upload Background Audio'}
+                    </Button>
+                  </form>
+                </div>
+              </div>
+
+              {/* Mute Toggle */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Mute Video Audio</h3>
+                    <p className="text-sm text-osint-muted">Mute audio from video backgrounds</p>
+                  </div>
+                  <button
+                    onClick={handleMuteToggle}
+                    className={`relative w-14 h-8 rounded-full transition-colors ${
+                      muteVideoAudio ? 'bg-red-500' : 'bg-green-500'
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
+                        muteVideoAudio ? 'translate-x-7' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
             </div>
           </GlassCard>
 

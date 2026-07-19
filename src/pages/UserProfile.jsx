@@ -73,14 +73,32 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted
+              muted={user.muteVideoAudio || false}
               playsInline
+            />
+          ) : user.backgroundType === 'audio' ? (
+            <audio
+              src={user.background}
+              autoPlay
+              loop
+              muted={user.muteVideoAudio || false}
+              className="hidden"
             />
           ) : (
             <img
               src={user.background}
               alt="Background"
               className="w-full h-full object-cover"
+            />
+          )}
+          {/* Background Audio (separate from video) */}
+          {user.backgroundAudio && (
+            <audio
+              src={user.backgroundAudio}
+              autoPlay
+              loop
+              muted={user.muteVideoAudio || false}
+              className="hidden"
             />
           )}
           <div className="absolute inset-0 bg-black/60" />
@@ -169,7 +187,7 @@ const UserProfile = () => {
                     <div className="w-12 h-12 rounded-full bg-[#5865F2]/20 flex items-center justify-center overflow-hidden">
                       {user.discordAvatar ? (
                         <img 
-                          src={`https://cdn.discordapp.com/avatars/${user.discordId}/${user.discordAvatar}.${user.discordAvatar.startsWith('a_') ? 'gif' : 'png'}?size=256`} 
+                          src={user.discordAvatar} 
                           alt="Discord" 
                           className="w-full h-full object-cover" 
                         />
@@ -208,23 +226,24 @@ const UserProfile = () => {
                 </div>
 
                 {/* Discord Badges */}
-                {user.discordBadges > 0 && (
-                  <div className="flex gap-1.5 mt-2">
-                    {user.discordPremium === 2 && (
-                      <div className="px-2 py-0.5 bg-gradient-to-r from-[#9b59b6] to-[#8e44ad] rounded text-white text-[10px] font-medium">
-                        Nitro
+                {user.discordBadgesList && user.discordBadgesList.length > 0 && (
+                  <div className="flex gap-1.5 mt-2 flex-wrap">
+                    {user.discordBadgesList.map((badge, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center gap-1 px-2 py-0.5 bg-white/10 rounded text-white text-[10px] font-medium"
+                        title={badge.name}
+                      >
+                        {badge.icon && (
+                          <img 
+                            src={badge.icon} 
+                            alt={badge.name}
+                            className="w-4 h-4"
+                          />
+                        )}
+                        {badge.name}
                       </div>
-                    )}
-                    {user.discordPremium === 1 && (
-                      <div className="px-2 py-0.5 bg-[#5865F2]/30 rounded text-[#5865F2] text-[10px] font-medium">
-                        Nitro Classic
-                      </div>
-                    )}
-                    {user.discordPremium === 3 && (
-                      <div className="px-2 py-0.5 bg-gradient-to-r from-[#f1c40f] to-[#f39c12] rounded text-white text-[10px] font-medium">
-                        Nitro Basic
-                      </div>
-                    )}
+                    ))}
                   </div>
                 )}
 
