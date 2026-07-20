@@ -265,6 +265,11 @@ const UserProfile = () => {
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
                 console.log('User muteVideoAudio:', user.muteVideoAudio)
+                
+                // Try to play the video
+                if (videoRef.current) {
+                  videoRef.current.play().catch(e => console.log('Video play error:', e))
+                }
               }}
               onPlay={() => {
                 console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
