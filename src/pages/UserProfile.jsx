@@ -18,6 +18,7 @@ const UserProfile = () => {
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [showEnableAudio, setShowEnableAudio] = useState(false)
   const videoRef = useRef(null)
+  const hasTriedUnmuteRef = useRef(false)
 
   useEffect(() => {
     fetchUserProfile()
@@ -140,11 +141,13 @@ const UserProfile = () => {
   useEffect(() => {
     if (videoRef.current && user?.backgroundType === 'video') {
       const handleFirstPlay = () => {
+        console.log('Video first play event triggered')
         // If user wants audio enabled (muteVideoAudio is false), unmute after first play
         if (user.muteVideoAudio !== true && user.removeVideoAudio !== true) {
+          console.log('Attempting to unmute video after first play')
           videoRef.current.muted = false
           setIsMuted(false)
-          console.log('Auto-unmuted video after first play based on user setting')
+          console.log('Video unmuted, current muted state:', videoRef.current.muted)
         }
         videoRef.current.removeEventListener('play', handleFirstPlay)
       }
@@ -252,19 +255,13 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true}
+              muted={isMuted}
               playsInline
               controls={true}
               onLoadedData={() => {
                 console.log('Video loaded data, ready to play')
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
-                // Try to unmute if user wants audio
-                if (user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
-                  videoRef.current.muted = false
-                  setIsMuted(false)
-                  console.log('Auto-unmuted video after load')
-                }
               }}
               onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)}
               onError={(e) => {
