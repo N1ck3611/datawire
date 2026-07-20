@@ -19,6 +19,7 @@ const UserProfile = () => {
   const [showEnableAudio, setShowEnableAudio] = useState(false)
   const videoRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
+  const unmuteAttemptsRef = useRef(0)
 
   useEffect(() => {
     fetchUserProfile()
@@ -32,16 +33,32 @@ const UserProfile = () => {
     const userMuteSetting = user.muteVideoAudio === true
     console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
     console.log('Computed userMuteSetting:', userMuteSetting)
+    console.log('removeVideoAudio:', user.removeVideoAudio)
     
-    // Start muted for browser autoplay, then unmute if user wants audio
-    setIsMuted(true)
+    // Set isMuted based on user setting
+    setIsMuted(userMuteSetting)
     
-    // If user wants audio enabled, unmute after a short delay
+    // If user wants audio enabled, directly manipulate video element
     if (!userMuteSetting && user?.removeVideoAudio !== true) {
-      setTimeout(() => {
-        setIsMuted(false)
-        console.log('Auto-unmuted after delay for user preference')
-      }, 500)
+      console.log('User wants audio enabled, will unmute video element')
+      
+      // Try multiple times to unmute
+      const tryUnmute = () => {
+        if (videoRef.current) {
+          console.log('Attempting to unmute video, attempt:', unmuteAttemptsRef.current + 1)
+          unmuteAttemptsRef.current++
+          videoRef.current.muted = false
+          videoRef.current.volume = 1.0
+          console.log('Video muted after attempt:', videoRef.current.muted)
+        }
+      }
+      
+      // Try immediately and at intervals
+      tryUnmute()
+      setTimeout(tryUnmute, 100)
+      setTimeout(tryUnmute, 300)
+      setTimeout(tryUnmute, 500)
+      setTimeout(tryUnmute, 1000)
     }
     
     // Handle background audio (MP3) - plays in addition to video/image background
@@ -241,14 +258,14 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={isMuted}
+              muted={true}
               playsInline
               controls={false}
               onLoadedData={() => {
                 console.log('Video loaded data, ready to play')
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
-                console.log('Initial isMuted state:', isMuted)
+                console.log('User muteVideoAudio:', user.muteVideoAudio, 'removeVideoAudio:', user.removeVideoAudio)
               }}
               onPlay={() => {
                 console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
