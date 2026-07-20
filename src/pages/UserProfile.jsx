@@ -85,25 +85,23 @@ const UserProfile = () => {
     const enableAudio = () => {
       console.log('User interaction detected, attempting to enable audio')
       
+      // Enable background audio
       if (window.backgroundAudio) {
         console.log('Background audio exists, paused:', window.backgroundAudio.paused, 'muted:', window.backgroundAudio.muted)
-        if (window.backgroundAudio.paused) {
-          window.backgroundAudio.muted = false
-          window.backgroundAudio.volume = 1.0
-          window.backgroundAudio.play().then(() => {
-            console.log('Background audio enabled on user interaction, playing:', !window.backgroundAudio.paused)
-          }).catch(e => console.log('Failed to play audio on interaction:', e))
-        } else {
-          console.log('Background audio already playing')
-        }
+        window.backgroundAudio.muted = false
+        window.backgroundAudio.volume = 1.0
+        window.backgroundAudio.play().then(() => {
+          console.log('Background audio enabled on user interaction, playing:', !window.backgroundAudio.paused)
+        }).catch(e => console.log('Failed to play audio on interaction:', e))
       } else {
         console.log('No background audio element found')
       }
       
-      if (videoRef.current && videoRef.current.muted && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+      // Enable video audio if user wants it
+      if (videoRef.current && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+        console.log('Enabling video audio on user interaction')
         videoRef.current.muted = false
         setIsMuted(false)
-        console.log('Video audio enabled on user interaction')
       }
     }
     
@@ -231,13 +229,15 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={user.removeVideoAudio || isMuted}
+              muted={true}
               playsInline
               controls={false}
+              onLoadedData={() => console.log('Video loaded data, ready to play')}
               onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)}
               onError={(e) => {
                 console.log('Video error:', e)
                 console.log('Video src:', user.background)
+                console.log('Video readyState:', videoRef.current?.readyState)
               }}
             />
           ) : user.backgroundType === 'audio' ? (
