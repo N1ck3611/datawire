@@ -1009,7 +1009,7 @@ const UserSettings = () => {
                   <button
                     onClick={handleMuteToggle}
                     className={`relative w-14 h-8 rounded-full transition-colors ${
-                      muteVideoAudio ? 'bg-red-500' : 'bg-green-500'
+                      muteVideoAudio ? 'bg-green-500' : 'bg-red-500'
                     }`}
                   >
                     <div
