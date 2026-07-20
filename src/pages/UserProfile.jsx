@@ -229,7 +229,7 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true}
+              muted={false}
               playsInline
               controls={false}
               onLoadedData={() => console.log('Video loaded data, ready to play')}
