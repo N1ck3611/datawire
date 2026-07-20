@@ -15,6 +15,8 @@ const UserProfile = () => {
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(true)
   const [viewCount, setViewCount] = useState(0)
+  const [audioEnabled, setAudioEnabled] = useState(false)
+  const [showEnableAudio, setShowEnableAudio] = useState(false)
   const videoRef = useRef(null)
 
   useEffect(() => {
@@ -62,8 +64,8 @@ const UserProfile = () => {
       }).catch(e => {
         console.log('Background audio autoplay failed:', e)
         console.log('Audio will play on first user interaction')
-        // Set a flag to show enable audio button
-        window.audioNeedsUserInteraction = true
+        // Show enable audio button
+        setShowEnableAudio(true)
       })
       
       console.log('Background audio element created')
@@ -92,6 +94,8 @@ const UserProfile = () => {
         window.backgroundAudio.volume = 1.0
         window.backgroundAudio.play().then(() => {
           console.log('Background audio enabled on user interaction, playing:', !window.backgroundAudio.paused)
+          setAudioEnabled(true)
+          setShowEnableAudio(false)
         }).catch(e => console.log('Failed to play audio on interaction:', e))
       } else {
         console.log('No background audio element found')
@@ -112,6 +116,25 @@ const UserProfile = () => {
       document.removeEventListener('click', enableAudio)
     }
   }, [user?.muteVideoAudio, user?.removeVideoAudio])
+
+  const handleEnableAudio = () => {
+    console.log('Enable audio button clicked')
+    if (window.backgroundAudio) {
+      window.backgroundAudio.muted = false
+      window.backgroundAudio.volume = 1.0
+      window.backgroundAudio.play().then(() => {
+        console.log('Background audio playing after button click')
+        setAudioEnabled(true)
+        setShowEnableAudio(false)
+      }).catch(e => console.log('Failed to play audio:', e))
+    }
+    
+    if (videoRef.current && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+      videoRef.current.muted = false
+      setIsMuted(false)
+      console.log('Video audio enabled after button click')
+    }
+  }
 
   // Handle video autoplay unmute after initial play
   useEffect(() => {
@@ -229,16 +252,28 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={false}
+              muted={true}
               playsInline
-              controls={false}
-              onLoadedData={() => console.log('Video loaded data, ready to play')}
+              controls={true}
+              onLoadedData={() => {
+                console.log('Video loaded data, ready to play')
+                console.log('Video src:', user.background)
+                console.log('Video readyState:', videoRef.current?.readyState)
+                // Try to unmute if user wants audio
+                if (user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+                  videoRef.current.muted = false
+                  setIsMuted(false)
+                  console.log('Auto-unmuted video after load')
+                }
+              }}
               onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)}
               onError={(e) => {
                 console.log('Video error:', e)
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
               }}
+              onCanPlay={() => console.log('Video can play')}
+              onWaiting={() => console.log('Video waiting')}
             />
           ) : user.backgroundType === 'audio' ? (
             // Audio is handled programmatically in useEffect
@@ -250,6 +285,19 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               loading="eager"
             />
+          )}
+          {/* Enable Audio Button (shows when autoplay is blocked) */}
+          {showEnableAudio && (
+            <button
+              onClick={handleEnableAudio}
+              className="fixed top-4 right-4 z-50 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full backdrop-blur-sm transition-all cursor-pointer flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+              <span>Enable Audio</span>
+            </button>
           )}
           {/* Sound toggle indicator */}
           {(user.backgroundType === 'video' || user?.backgroundAudio) && (
