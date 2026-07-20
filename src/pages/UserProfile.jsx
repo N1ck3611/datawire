@@ -35,19 +35,28 @@ const UserProfile = () => {
       const ogTitle = document.querySelector('meta[property="og:title"]')
       const ogDescription = document.querySelector('meta[property="og:description"]')
       const ogImage = document.querySelector('meta[property="og:image"]')
+      const ogUrl = document.querySelector('meta[property="og:url"]')
+      const ogSiteName = document.querySelector('meta[property="og:site_name"]')
       const twitterTitle = document.querySelector('meta[property="twitter:title"]')
       const twitterDescription = document.querySelector('meta[property="twitter:description"]')
       const twitterImage = document.querySelector('meta[property="twitter:image"]')
+      const twitterUrl = document.querySelector('meta[property="twitter:url"]')
+      const metaDescription = document.querySelector('meta[name="description"]')
 
       // Format: bio | status (if both exist)
       const embedText = [user.bio, user.status].filter(Boolean).join(' | ')
+      const profileUrl = `https://datawire.cc/u/${user.username}`
 
       if (ogTitle) ogTitle.setAttribute('content', `@${user.username}`)
       if (ogDescription) ogDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
       if (ogImage) ogImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+      if (ogUrl) ogUrl.setAttribute('content', profileUrl)
+      if (ogSiteName) ogSiteName.setAttribute('content', 'Datawire.cc')
       if (twitterTitle) twitterTitle.setAttribute('content', `@${user.username}`)
       if (twitterDescription) twitterDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
       if (twitterImage) twitterImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+      if (twitterUrl) twitterUrl.setAttribute('content', profileUrl)
+      if (metaDescription) metaDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
 
       // Cleanup function to reset meta tags when leaving profile
       return () => {
@@ -55,9 +64,13 @@ const UserProfile = () => {
         if (ogTitle) ogTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
         if (ogDescription) ogDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
         if (ogImage) ogImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+        if (ogUrl) ogUrl.setAttribute('content', 'https://datawire.cc/')
+        if (ogSiteName) ogSiteName.setAttribute('content', 'Datawire.cc')
         if (twitterTitle) twitterTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
         if (twitterDescription) twitterDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
         if (twitterImage) twitterImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+        if (twitterUrl) twitterUrl.setAttribute('content', 'https://datawire.cc/')
+        if (metaDescription) metaDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
       }
     }
   }, [user])
@@ -79,19 +92,10 @@ const UserProfile = () => {
       const playVideo = () => {
         if (videoRef.current) {
           console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
-          // Keep muted to allow autoplay
+          // Keep muted to allow autoplay - don't try to unmute automatically
           videoRef.current.muted = true
           videoRef.current.play().then(() => {
             console.log('Video playing successfully (muted for autoplay)')
-            // After video starts, try to unmute if user wants audio
-            if (!userMuteSetting) {
-              setTimeout(() => {
-                if (videoRef.current) {
-                  videoRef.current.muted = false
-                  console.log('Video unmuted after autoplay')
-                }
-              }, 100)
-            }
           }).catch(e => {
             console.log('Video play failed:', e)
           })
@@ -324,15 +328,6 @@ const UserProfile = () => {
                     videoRef.current.muted = true
                     videoRef.current.play().then(() => {
                       console.log('Video playing successfully after load (muted)')
-                      // Try to unmute after playing if user wants audio
-                      if (!user.muteVideoAudio) {
-                        setTimeout(() => {
-                          if (videoRef.current) {
-                            videoRef.current.muted = false
-                            console.log('Video unmuted after successful autoplay')
-                          }
-                        }, 200)
-                      }
                     }).catch(e => console.log('Video play error:', e))
                   }
                 }
