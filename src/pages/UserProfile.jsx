@@ -33,6 +33,9 @@ const UserProfile = () => {
     
     // Handle background audio (MP3) - plays in addition to video/image background
     if (user?.backgroundAudio) {
+      console.log('Setting up background audio:', user.backgroundAudio)
+      console.log('User mute setting:', userMuteSetting)
+      
       // Clean up existing audio if any
       if (window.backgroundAudio) {
         window.backgroundAudio.pause()
@@ -45,12 +48,27 @@ const UserProfile = () => {
       audio.muted = userMuteSetting
       audio.preload = 'auto'
       
-      // Try to play
-      audio.play().catch(e => console.log('Background audio autoplay failed:', e))
-      
       // Store audio reference for mute toggle
       window.backgroundAudio = audio
-      console.log('Background audio initialized:', user.backgroundAudio)
+      
+      // Force unmute if user wants audio enabled
+      if (!userMuteSetting) {
+        audio.muted = false
+      }
+      
+      // Try to play - browsers may block autoplay
+      audio.play().then(() => {
+        console.log('Background audio playing successfully, muted:', audio.muted, 'volume:', audio.volume)
+      }).catch(e => {
+        console.log('Background audio autoplay failed:', e)
+        console.log('Audio will play on first user interaction')
+        // Set a flag to show enable audio button
+        window.audioNeedsUserInteraction = true
+      })
+      
+      console.log('Background audio element created')
+    } else {
+      console.log('No background audio found for user')
     }
     
     return () => {
@@ -61,6 +79,41 @@ const UserProfile = () => {
       }
     }
   }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio, user?.backgroundAudio])
+
+  // Enable audio on first user interaction (browsers block autoplay)
+  useEffect(() => {
+    const enableAudio = () => {
+      console.log('User interaction detected, attempting to enable audio')
+      
+      if (window.backgroundAudio) {
+        console.log('Background audio exists, paused:', window.backgroundAudio.paused, 'muted:', window.backgroundAudio.muted)
+        if (window.backgroundAudio.paused) {
+          window.backgroundAudio.muted = false
+          window.backgroundAudio.volume = 1.0
+          window.backgroundAudio.play().then(() => {
+            console.log('Background audio enabled on user interaction, playing:', !window.backgroundAudio.paused)
+          }).catch(e => console.log('Failed to play audio on interaction:', e))
+        } else {
+          console.log('Background audio already playing')
+        }
+      } else {
+        console.log('No background audio element found')
+      }
+      
+      if (videoRef.current && videoRef.current.muted && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+        videoRef.current.muted = false
+        setIsMuted(false)
+        console.log('Video audio enabled on user interaction')
+      }
+    }
+    
+    // Add click listener to document
+    document.addEventListener('click', enableAudio, { once: true })
+    
+    return () => {
+      document.removeEventListener('click', enableAudio)
+    }
+  }, [user?.muteVideoAudio, user?.removeVideoAudio])
 
   // Handle video autoplay unmute after initial play
   useEffect(() => {
@@ -211,18 +264,20 @@ const UserProfile = () => {
                 }
                 
                 // Toggle mute state - React will handle the rest
-                setIsMuted(prev => !prev)
+                const newMutedState = !isMuted
+                setIsMuted(newMutedState)
                 
-                // Handle audio mute (needs manual control since it's not a React component)
-                if (user.backgroundType === 'audio' && window.backgroundAudio) {
-                  window.backgroundAudio.muted = !isMuted
+                // Handle background audio mute (needs manual control since it's not a React component)
+                if (window.backgroundAudio) {
+                  window.backgroundAudio.muted = newMutedState
                   window.backgroundAudio.volume = 1.0
-                  if (!isMuted) {
-                    window.backgroundAudio.play().catch(err => console.log('Audio play error:', err))
+                  if (!newMutedState) {
+                    window.backgroundAudio.play().catch(err => console.log('Background audio play error:', err))
                   }
+                  console.log('Background audio muted:', newMutedState)
                 }
                 
-                console.log('Mute toggled - new isMuted state:', !isMuted)
+                console.log('Mute toggled - new isMuted state:', newMutedState)
               }}
               className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Click to toggle sound"
