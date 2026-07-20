@@ -27,6 +27,42 @@ const UserProfile = () => {
   }, [username])
 
   useEffect(() => {
+    if (user) {
+      // Update document title
+      document.title = `@${user.username} - Datawire.cc`
+
+      // Update Open Graph meta tags
+      const ogTitle = document.querySelector('meta[property="og:title"]')
+      const ogDescription = document.querySelector('meta[property="og:description"]')
+      const ogImage = document.querySelector('meta[property="og:image"]')
+      const twitterTitle = document.querySelector('meta[property="twitter:title"]')
+      const twitterDescription = document.querySelector('meta[property="twitter:description"]')
+      const twitterImage = document.querySelector('meta[property="twitter:image"]')
+
+      // Format: bio | status (if both exist)
+      const embedText = [user.bio, user.status].filter(Boolean).join(' | ')
+
+      if (ogTitle) ogTitle.setAttribute('content', `@${user.username}`)
+      if (ogDescription) ogDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
+      if (ogImage) ogImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+      if (twitterTitle) twitterTitle.setAttribute('content', `@${user.username}`)
+      if (twitterDescription) twitterDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
+      if (twitterImage) twitterImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+
+      // Cleanup function to reset meta tags when leaving profile
+      return () => {
+        document.title = 'Datawire.cc - OSINT Intelligence Platform'
+        if (ogTitle) ogTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
+        if (ogDescription) ogDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
+        if (ogImage) ogImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+        if (twitterTitle) twitterTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
+        if (twitterDescription) twitterDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
+        if (twitterImage) twitterImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
+      }
+    }
+  }, [user])
+
+  useEffect(() => {
     // Initialize mute state based on user's Firebase setting
     if (!user) return
     
@@ -37,14 +73,25 @@ const UserProfile = () => {
     // Set isMuted based on user setting
     setIsMuted(userMuteSetting)
     
-    // Try to play video when user data loads
+    // Try to play video when user data loads (keep muted for autoplay)
     if (user?.backgroundType === 'video') {
       console.log('Video background detected, attempting to play')
       const playVideo = () => {
         if (videoRef.current) {
           console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
+          // Keep muted to allow autoplay
+          videoRef.current.muted = true
           videoRef.current.play().then(() => {
-            console.log('Video playing successfully')
+            console.log('Video playing successfully (muted for autoplay)')
+            // After video starts, try to unmute if user wants audio
+            if (!userMuteSetting) {
+              setTimeout(() => {
+                if (videoRef.current) {
+                  videoRef.current.muted = false
+                  console.log('Video unmuted after autoplay')
+                }
+              }, 100)
+            }
           }).catch(e => {
             console.log('Video play failed:', e)
           })
@@ -58,30 +105,6 @@ const UserProfile = () => {
       setTimeout(playVideo, 100)
       setTimeout(playVideo, 500)
       setTimeout(playVideo, 1000)
-      setTimeout(playVideo, 2000)
-    }
-    
-    // If user wants audio enabled, directly manipulate video element
-    if (!userMuteSetting) {
-      console.log('User wants audio enabled, will unmute video element')
-      
-      // Try multiple times to unmute
-      const tryUnmute = () => {
-        if (videoRef.current) {
-          console.log('Attempting to unmute video, attempt:', unmuteAttemptsRef.current + 1)
-          unmuteAttemptsRef.current++
-          videoRef.current.muted = false
-          videoRef.current.volume = 1.0
-          console.log('Video muted after attempt:', videoRef.current.muted)
-        }
-      }
-      
-      // Try immediately and at intervals
-      tryUnmute()
-      setTimeout(tryUnmute, 100)
-      setTimeout(tryUnmute, 300)
-      setTimeout(tryUnmute, 500)
-      setTimeout(tryUnmute, 1000)
     }
     
     // Handle background audio (MP3) - plays in addition to video/image background
@@ -290,11 +313,26 @@ const UserProfile = () => {
                 console.log('Video readyState:', videoRef.current?.readyState)
                 console.log('User muteVideoAudio:', user.muteVideoAudio)
                 
-                // Try to play the video multiple times
+                // Ensure video is muted for autoplay compliance
+                if (videoRef.current) {
+                  videoRef.current.muted = true
+                }
+                
+                // Try to play the video multiple times (muted for autoplay)
                 const attemptPlay = () => {
                   if (videoRef.current) {
+                    videoRef.current.muted = true
                     videoRef.current.play().then(() => {
-                      console.log('Video playing successfully after load')
+                      console.log('Video playing successfully after load (muted)')
+                      // Try to unmute after playing if user wants audio
+                      if (!user.muteVideoAudio) {
+                        setTimeout(() => {
+                          if (videoRef.current) {
+                            videoRef.current.muted = false
+                            console.log('Video unmuted after successful autoplay')
+                          }
+                        }, 200)
+                      }
                     }).catch(e => console.log('Video play error:', e))
                   }
                 }
