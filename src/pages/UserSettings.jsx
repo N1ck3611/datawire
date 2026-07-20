@@ -519,6 +519,33 @@ const UserSettings = () => {
     }
   }
 
+  const handleRemoveBackgroundAudio = async () => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/background-audio`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setBackgroundAudioSuccess('Background audio removed successfully!')
+        setUser({ ...user, backgroundAudio: null })
+        setBackgroundAudioPreview(null)
+        setBackgroundAudioFile(null)
+      } else {
+        setBackgroundAudioError(data.error || 'Failed to remove background audio')
+      }
+    } catch (error) {
+      console.error('Failed to remove background audio:', error)
+      setBackgroundAudioError('Network error. Please try again.')
+    }
+  }
+
   const handleMuteToggle = async () => {
     const newValue = !muteVideoAudio
     console.log('[Mute Toggle] Current state:', muteVideoAudio, 'New value:', newValue)
@@ -943,13 +970,20 @@ const UserSettings = () => {
                               }
                             }}
                           />
-                          <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
-                            <div className="h-full bg-white/50 w-0" id="audio-progress"></div>
-                          </div>
-                          <span className="text-white/50 text-xs">Preview</span>
+                          <span className="text-white text-sm truncate flex-1">Audio file selected</span>
+                          <button
+                            onClick={handleRemoveBackgroundAudio}
+                            className="text-red-400 hover:text-red-300 transition-colors"
+                            title="Remove background audio"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
                         </div>
                       ) : (
-                        <span className="text-white/50">No background audio set</span>
+                        <span className="text-osint-muted text-sm">No audio selected</span>
                       )}
                     </div>
                   </div>

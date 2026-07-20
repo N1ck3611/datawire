@@ -31,25 +31,26 @@ const UserProfile = () => {
     console.log('Computed userMuteSetting:', userMuteSetting)
     setIsMuted(userMuteSetting)
     
-    // Handle audio background (MP3)
-    if (user?.backgroundType === 'audio' && user?.background) {
+    // Handle background audio (MP3) - plays in addition to video/image background
+    if (user?.backgroundAudio) {
       // Clean up existing audio if any
       if (window.backgroundAudio) {
         window.backgroundAudio.pause()
         window.backgroundAudio = null
       }
       
-      const audio = new Audio(user.background)
+      const audio = new Audio(user.backgroundAudio)
       audio.loop = true
       audio.volume = 1.0
       audio.muted = userMuteSetting
       audio.preload = 'auto'
       
       // Try to play
-      audio.play().catch(e => console.log('Audio autoplay failed:', e))
+      audio.play().catch(e => console.log('Background audio autoplay failed:', e))
       
       // Store audio reference for mute toggle
       window.backgroundAudio = audio
+      console.log('Background audio initialized:', user.backgroundAudio)
     }
     
     return () => {
@@ -59,7 +60,30 @@ const UserProfile = () => {
         window.backgroundAudio = null
       }
     }
-  }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio])
+  }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio, user?.backgroundAudio])
+
+  // Handle video autoplay unmute after initial play
+  useEffect(() => {
+    if (videoRef.current && user?.backgroundType === 'video') {
+      const handleFirstPlay = () => {
+        // If user wants audio enabled (muteVideoAudio is false), unmute after first play
+        if (user.muteVideoAudio !== true && user.removeVideoAudio !== true) {
+          videoRef.current.muted = false
+          setIsMuted(false)
+          console.log('Auto-unmuted video after first play based on user setting')
+        }
+        videoRef.current.removeEventListener('play', handleFirstPlay)
+      }
+      
+      videoRef.current.addEventListener('play', handleFirstPlay)
+      
+      return () => {
+        if (videoRef.current) {
+          videoRef.current.removeEventListener('play', handleFirstPlay)
+        }
+      }
+    }
+  }, [user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio])
 
   const recordView = async () => {
     try {
@@ -175,7 +199,7 @@ const UserProfile = () => {
             />
           )}
           {/* Sound toggle indicator */}
-          {(user.backgroundType === 'video' || user.backgroundType === 'audio') && (
+          {(user.backgroundType === 'video' || user?.backgroundAudio) && (
             <button
               onClick={(e) => {
                 e.stopPropagation()
