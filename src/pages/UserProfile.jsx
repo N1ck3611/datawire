@@ -33,13 +33,12 @@ const UserProfile = () => {
     const userMuteSetting = user.muteVideoAudio === true
     console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
     console.log('Computed userMuteSetting:', userMuteSetting)
-    console.log('removeVideoAudio:', user.removeVideoAudio)
     
     // Set isMuted based on user setting
     setIsMuted(userMuteSetting)
     
     // If user wants audio enabled, directly manipulate video element
-    if (!userMuteSetting && user?.removeVideoAudio !== true) {
+    if (!userMuteSetting) {
       console.log('User wants audio enabled, will unmute video element')
       
       // Try multiple times to unmute
@@ -108,7 +107,7 @@ const UserProfile = () => {
         window.backgroundAudio = null
       }
     }
-  }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio, user?.backgroundAudio])
+  }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.backgroundAudio])
 
   // Enable audio on first user interaction (browsers block autoplay)
   useEffect(() => {
@@ -130,7 +129,7 @@ const UserProfile = () => {
       }
       
       // Enable video audio if user wants it
-      if (videoRef.current && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+      if (videoRef.current && user?.muteVideoAudio !== true) {
         console.log('Enabling video audio on user interaction')
         videoRef.current.muted = false
         setIsMuted(false)
@@ -143,7 +142,7 @@ const UserProfile = () => {
     return () => {
       document.removeEventListener('click', enableAudio)
     }
-  }, [user?.muteVideoAudio, user?.removeVideoAudio])
+  }, [user?.muteVideoAudio])
 
   const handleEnableAudio = () => {
     console.log('Enable audio button clicked')
@@ -157,7 +156,7 @@ const UserProfile = () => {
       }).catch(e => console.log('Failed to play audio:', e))
     }
     
-    if (videoRef.current && user?.muteVideoAudio !== true && user?.removeVideoAudio !== true) {
+    if (videoRef.current && user?.muteVideoAudio !== true) {
       videoRef.current.muted = false
       setIsMuted(false)
       console.log('Video audio enabled after button click')
@@ -265,7 +264,7 @@ const UserProfile = () => {
                 console.log('Video loaded data, ready to play')
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
-                console.log('User muteVideoAudio:', user.muteVideoAudio, 'removeVideoAudio:', user.removeVideoAudio)
+                console.log('User muteVideoAudio:', user.muteVideoAudio)
               }}
               onPlay={() => {
                 console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
@@ -305,12 +304,6 @@ const UserProfile = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                
-                // If user wants to remove audio, don't allow unmute
-                if (user.removeVideoAudio === true) {
-                  console.log('Audio removed from video - cannot unmute')
-                  return
-                }
                 
                 // Toggle mute state - React will handle the rest
                 const newMutedState = !isMuted

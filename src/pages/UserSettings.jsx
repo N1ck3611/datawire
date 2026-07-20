@@ -36,7 +36,6 @@ const UserSettings = () => {
   const [backgroundAudioError, setBackgroundAudioError] = useState('')
   const [backgroundAudioSuccess, setBackgroundAudioSuccess] = useState('')
   const [muteVideoAudio, setMuteVideoAudio] = useState(false)
-  const [removeVideoAudio, setRemoveVideoAudio] = useState(false)
   const [status, setStatus] = useState('')
   const [statusError, setStatusError] = useState('')
   const [statusSuccess, setStatusSuccess] = useState('')
@@ -89,9 +88,6 @@ const UserSettings = () => {
         }
         if (data.user.muteVideoAudio !== undefined) {
           setMuteVideoAudio(data.user.muteVideoAudio)
-        }
-        if (data.user.removeVideoAudio !== undefined) {
-          setRemoveVideoAudio(data.user.removeVideoAudio)
         }
         if (data.user.status) {
           setStatus(data.user.status)
@@ -579,29 +575,23 @@ const UserSettings = () => {
     }
   }
 
-  const handleRemoveAudioToggle = async () => {
-    const newValue = !removeVideoAudio
-    setRemoveVideoAudio(newValue)
-    
+  const handleClearRemoveAudio = async () => {
     try {
       const token = localStorage.getItem('auth_token')
-      const response = await fetch(`${API_BASE}/api/user/remove-video-audio`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE}/api/user/clear-remove-audio`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ remove: newValue })
+        }
       })
       
       const data = await response.json()
-      
-      if (!data.success) {
-        setRemoveVideoAudio(!newValue)
-      }
+      console.log('Clear remove audio response:', data)
+      alert(data.message || 'Cleared removeVideoAudio field')
     } catch (error) {
-      console.error('Failed to update remove audio setting:', error)
-      setRemoveVideoAudio(!newValue)
+      console.error('Failed to clear remove audio:', error)
+      alert('Failed to clear removeVideoAudio field')
     }
   }
 
@@ -1055,26 +1045,15 @@ const UserSettings = () => {
                 </div>
               </div>
 
-              {/* Remove Audio from Video Toggle */}
-              <div className="mt-6 pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">Remove Audio from Video</h3>
-                    <p className="text-sm text-osint-muted">Permanently remove audio track from video backgrounds</p>
-                  </div>
-                  <button
-                    onClick={handleRemoveAudioToggle}
-                    className={`relative w-14 h-8 rounded-full transition-colors ${
-                      removeVideoAudio ? 'bg-red-500' : 'bg-green-500'
-                    }`}
-                  >
-                    <div
-                      className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                        removeVideoAudio ? 'translate-x-7' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
-                </div>
+              {/* Clear removeVideoAudio (temporary cleanup) */}
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <button
+                  onClick={handleClearRemoveAudio}
+                  className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm transition-colors"
+                >
+                  Clear removeVideoAudio Field (Fix Audio)
+                </button>
+                <p className="text-xs text-osint-muted mt-2">Click this if your video audio is not playing despite mute being off</p>
               </div>
             </div>
           </GlassCard>
