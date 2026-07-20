@@ -37,6 +37,30 @@ const UserProfile = () => {
     // Set isMuted based on user setting
     setIsMuted(userMuteSetting)
     
+    // Try to play video when user data loads
+    if (user?.backgroundType === 'video') {
+      console.log('Video background detected, attempting to play')
+      const playVideo = () => {
+        if (videoRef.current) {
+          console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
+          videoRef.current.play().then(() => {
+            console.log('Video playing successfully')
+          }).catch(e => {
+            console.log('Video play failed:', e)
+          })
+        } else {
+          console.log('Video ref not available yet')
+        }
+      }
+      
+      // Try immediately and with delays
+      playVideo()
+      setTimeout(playVideo, 100)
+      setTimeout(playVideo, 500)
+      setTimeout(playVideo, 1000)
+      setTimeout(playVideo, 2000)
+    }
+    
     // If user wants audio enabled, directly manipulate video element
     if (!userMuteSetting) {
       console.log('User wants audio enabled, will unmute video element')
@@ -266,10 +290,18 @@ const UserProfile = () => {
                 console.log('Video readyState:', videoRef.current?.readyState)
                 console.log('User muteVideoAudio:', user.muteVideoAudio)
                 
-                // Try to play the video
-                if (videoRef.current) {
-                  videoRef.current.play().catch(e => console.log('Video play error:', e))
+                // Try to play the video multiple times
+                const attemptPlay = () => {
+                  if (videoRef.current) {
+                    videoRef.current.play().then(() => {
+                      console.log('Video playing successfully after load')
+                    }).catch(e => console.log('Video play error:', e))
+                  }
                 }
+                
+                attemptPlay()
+                setTimeout(attemptPlay, 100)
+                setTimeout(attemptPlay, 500)
               }}
               onPlay={() => {
                 console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
