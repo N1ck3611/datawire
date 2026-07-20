@@ -61,15 +61,6 @@ const UserProfile = () => {
     }
   }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio])
 
-  // Sync video muted state with React state
-  useEffect(() => {
-    if (videoRef.current && user?.backgroundType === 'video') {
-      const shouldBeMuted = user.removeVideoAudio || isMuted
-      videoRef.current.muted = shouldBeMuted
-      console.log('Syncing video muted state:', shouldBeMuted, 'isMuted:', isMuted, 'removeVideoAudio:', user.removeVideoAudio)
-    }
-  }, [isMuted, user?.removeVideoAudio, user?.backgroundType])
-
   const recordView = async () => {
     try {
       await fetch(`${API_BASE}/api/user/public/${username}/view`, {
@@ -195,7 +186,7 @@ const UserProfile = () => {
                   return
                 }
                 
-                // Toggle mute state - React will update the video element
+                // Toggle mute state - React will handle the rest
                 setIsMuted(prev => !prev)
                 
                 // Handle audio mute (needs manual control since it's not a React component)
