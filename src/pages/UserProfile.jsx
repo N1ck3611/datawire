@@ -19,6 +19,7 @@ const UserProfile = () => {
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [showEnableAudio, setShowEnableAudio] = useState(false)
   const videoRef = useRef(null)
+  const audioRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
   const unmuteAttemptsRef = useRef(0)
 
@@ -47,8 +48,10 @@ const UserProfile = () => {
           console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
           // Try with audio first
           videoRef.current.muted = false
+          videoRef.current.volume = 1.0
           videoRef.current.play().then(() => {
             console.log('Video playing successfully with audio')
+            setIsMuted(false)
           }).catch(e => {
             console.log('Autoplay with audio blocked, trying muted:', e)
             // Fallback to muted
@@ -67,6 +70,30 @@ const UserProfile = () => {
       setTimeout(playVideo, 100)
       setTimeout(playVideo, 500)
       setTimeout(playVideo, 1000)
+      setTimeout(playVideo, 2000)
+    }
+
+    // Try to play background audio when user data loads
+    if (user?.backgroundAudio && audioRef.current) {
+      console.log('Background audio detected, attempting to play')
+      const playAudio = () => {
+        if (audioRef.current) {
+          audioRef.current.muted = false
+          audioRef.current.volume = 1.0
+          audioRef.current.play().then(() => {
+            console.log('Background audio playing with sound')
+            setIsMuted(false)
+          }).catch(e => {
+            console.log('Background audio autoplay blocked, trying muted:', e)
+            audioRef.current.muted = true
+            audioRef.current.play().catch(err => console.log('Background audio muted play error:', err))
+          })
+        }
+      }
+      playAudio()
+      setTimeout(playAudio, 100)
+      setTimeout(playAudio, 500)
+      setTimeout(playAudio, 1000)
     }
     
     // Handle background audio (MP3) - plays in addition to video/image background
@@ -257,15 +284,16 @@ const UserProfile = () => {
   return (
     <div className="min-h-screen py-12 px-4 relative">
       <Helmet>
-        <title>@{user?.username || 'User'} - DataWire</title>
+        <title>@{user?.username || 'User'} | DataWire.cc</title>
+        <meta name="theme-color" content="#000000" />
         <meta name="description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
-        <meta property="og:title" content={`@${user?.username || 'User'}`} />
+        <meta property="og:title" content={`@${user?.username || 'User'} | DataWire.cc`} />
         <meta property="og:description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
         <meta property="og:image" content={user?.avatar || 'https://datawire.cc/default-avatar.png'} />
         <meta property="og:url" content={`${window.location.origin}/users/${user?.username}`} />
         <meta property="og:type" content="profile" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`@${user?.username || 'User'}`} />
+        <meta name="twitter:title" content={`@${user?.username || 'User'} | DataWire.cc`} />
         <meta name="twitter:description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
         <meta name="twitter:image" content={user?.avatar || 'https://datawire.cc/default-avatar.png'} />
       </Helmet>
@@ -388,11 +416,27 @@ const UserProfile = () => {
           {/* Background Audio (separate from video) */}
           {user.backgroundAudio && (
             <audio
+              ref={audioRef}
               src={user.backgroundAudio}
               autoPlay
               loop
-              muted={user.muteVideoAudio || false}
+              muted={false}
               className="hidden"
+              onLoadedData={() => {
+                console.log('Background audio loaded')
+                if (audioRef.current) {
+                  audioRef.current.muted = false
+                  audioRef.current.play().then(() => {
+                    console.log('Background audio playing with sound')
+                  }).catch(e => {
+                    console.log('Background audio autoplay blocked, trying muted:', e)
+                    if (audioRef.current) {
+                      audioRef.current.muted = true
+                      audioRef.current.play().catch(err => console.log('Background audio muted play error:', err))
+                    }
+                  })
+                }
+              }}
             />
           )}
           <div className="absolute inset-0 bg-black/60" />
