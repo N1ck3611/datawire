@@ -32,7 +32,17 @@ const UserProfile = () => {
     const userMuteSetting = user.muteVideoAudio === true
     console.log('FIREBASE muteVideoAudio value:', user.muteVideoAudio, 'Type:', typeof user.muteVideoAudio)
     console.log('Computed userMuteSetting:', userMuteSetting)
-    setIsMuted(userMuteSetting)
+    
+    // Start muted for browser autoplay, then unmute if user wants audio
+    setIsMuted(true)
+    
+    // If user wants audio enabled, unmute after a short delay
+    if (!userMuteSetting && user?.removeVideoAudio !== true) {
+      setTimeout(() => {
+        setIsMuted(false)
+        console.log('Auto-unmuted after delay for user preference')
+      }, 500)
+    }
     
     // Handle background audio (MP3) - plays in addition to video/image background
     if (user?.backgroundAudio) {
@@ -137,30 +147,6 @@ const UserProfile = () => {
     }
   }
 
-  // Handle video autoplay unmute after initial play
-  useEffect(() => {
-    if (videoRef.current && user?.backgroundType === 'video') {
-      const handleFirstPlay = () => {
-        console.log('Video first play event triggered')
-        // If user wants audio enabled (muteVideoAudio is false), unmute after first play
-        if (user.muteVideoAudio !== true && user.removeVideoAudio !== true) {
-          console.log('Attempting to unmute video after first play')
-          videoRef.current.muted = false
-          setIsMuted(false)
-          console.log('Video unmuted, current muted state:', videoRef.current.muted)
-        }
-        videoRef.current.removeEventListener('play', handleFirstPlay)
-      }
-      
-      videoRef.current.addEventListener('play', handleFirstPlay)
-      
-      return () => {
-        if (videoRef.current) {
-          videoRef.current.removeEventListener('play', handleFirstPlay)
-        }
-      }
-    }
-  }, [user?.backgroundType, user?.muteVideoAudio, user?.removeVideoAudio])
 
   const recordView = async () => {
     try {
@@ -257,20 +243,21 @@ const UserProfile = () => {
               loop
               muted={isMuted}
               playsInline
-              controls={true}
+              controls={false}
               onLoadedData={() => {
                 console.log('Video loaded data, ready to play')
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
+                console.log('Initial isMuted state:', isMuted)
               }}
-              onPlay={() => console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)}
+              onPlay={() => {
+                console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
+              }}
               onError={(e) => {
                 console.log('Video error:', e)
                 console.log('Video src:', user.background)
                 console.log('Video readyState:', videoRef.current?.readyState)
               }}
-              onCanPlay={() => console.log('Video can play')}
-              onWaiting={() => console.log('Video waiting')}
             />
           ) : user.backgroundType === 'audio' ? (
             // Audio is handled programmatically in useEffect
