@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Shield, Calendar, Eye } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
@@ -26,54 +27,6 @@ const UserProfile = () => {
     recordView()
   }, [username])
 
-  useEffect(() => {
-    if (user) {
-      // Update document title
-      document.title = `@${user.username} - Datawire.cc`
-
-      // Update Open Graph meta tags
-      const ogTitle = document.querySelector('meta[property="og:title"]')
-      const ogDescription = document.querySelector('meta[property="og:description"]')
-      const ogImage = document.querySelector('meta[property="og:image"]')
-      const ogUrl = document.querySelector('meta[property="og:url"]')
-      const ogSiteName = document.querySelector('meta[property="og:site_name"]')
-      const twitterTitle = document.querySelector('meta[property="twitter:title"]')
-      const twitterDescription = document.querySelector('meta[property="twitter:description"]')
-      const twitterImage = document.querySelector('meta[property="twitter:image"]')
-      const twitterUrl = document.querySelector('meta[property="twitter:url"]')
-      const metaDescription = document.querySelector('meta[name="description"]')
-
-      // Format: bio | status (if both exist)
-      const embedText = [user.bio, user.status].filter(Boolean).join(' | ')
-      const profileUrl = `https://datawire.cc/u/${user.username}`
-
-      if (ogTitle) ogTitle.setAttribute('content', `@${user.username}`)
-      if (ogDescription) ogDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
-      if (ogImage) ogImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
-      if (ogUrl) ogUrl.setAttribute('content', profileUrl)
-      if (ogSiteName) ogSiteName.setAttribute('content', 'Datawire.cc')
-      if (twitterTitle) twitterTitle.setAttribute('content', `@${user.username}`)
-      if (twitterDescription) twitterDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
-      if (twitterImage) twitterImage.setAttribute('content', user.avatar || 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
-      if (twitterUrl) twitterUrl.setAttribute('content', profileUrl)
-      if (metaDescription) metaDescription.setAttribute('content', embedText || 'View profile on Datawire.cc')
-
-      // Cleanup function to reset meta tags when leaving profile
-      return () => {
-        document.title = 'Datawire.cc - OSINT Intelligence Platform'
-        if (ogTitle) ogTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
-        if (ogDescription) ogDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
-        if (ogImage) ogImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
-        if (ogUrl) ogUrl.setAttribute('content', 'https://datawire.cc/')
-        if (ogSiteName) ogSiteName.setAttribute('content', 'Datawire.cc')
-        if (twitterTitle) twitterTitle.setAttribute('content', 'Datawire.cc - OSINT Intelligence Platform')
-        if (twitterDescription) twitterDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
-        if (twitterImage) twitterImage.setAttribute('content', 'https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png')
-        if (twitterUrl) twitterUrl.setAttribute('content', 'https://datawire.cc/')
-        if (metaDescription) metaDescription.setAttribute('content', 'Premium OSINT intelligence platform for Discord. Access 40+ integrated APIs through powerful slash commands.')
-      }
-    }
-  }, [user])
 
   useEffect(() => {
     // Initialize mute state based on user's Firebase setting
@@ -86,18 +39,23 @@ const UserProfile = () => {
     // Set isMuted based on user setting
     setIsMuted(userMuteSetting)
     
-    // Try to play video when user data loads (keep muted for autoplay)
+    // Try to play video when user data loads (with audio first)
     if (user?.backgroundType === 'video') {
       console.log('Video background detected, attempting to play')
       const playVideo = () => {
         if (videoRef.current) {
           console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
-          // Keep muted to allow autoplay - don't try to unmute automatically
-          videoRef.current.muted = true
+          // Try with audio first
+          videoRef.current.muted = false
           videoRef.current.play().then(() => {
-            console.log('Video playing successfully (muted for autoplay)')
+            console.log('Video playing successfully with audio')
           }).catch(e => {
-            console.log('Video play failed:', e)
+            console.log('Autoplay with audio blocked, trying muted:', e)
+            // Fallback to muted
+            videoRef.current.muted = true
+            videoRef.current.play().then(() => {
+              console.log('Video playing muted (fallback)')
+            }).catch(err => console.log('Video play error even muted:', err))
           })
         } else {
           console.log('Video ref not available yet')
@@ -298,6 +256,19 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 relative">
+      <Helmet>
+        <title>@{user?.username || 'User'} - DataWire</title>
+        <meta name="description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
+        <meta property="og:title" content={`@${user?.username || 'User'}`} />
+        <meta property="og:description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
+        <meta property="og:image" content={user?.avatar || 'https://datawire.cc/default-avatar.png'} />
+        <meta property="og:url" content={`${window.location.origin}/users/${user?.username}`} />
+        <meta property="og:type" content="profile" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`@${user?.username || 'User'}`} />
+        <meta name="twitter:description" content={`${user?.bio || ''}${user?.bio && user?.status ? ' | ' : ''}${user?.status || ''}`} />
+        <meta name="twitter:image" content={user?.avatar || 'https://datawire.cc/default-avatar.png'} />
+      </Helmet>
       {/* Custom Background */}
       {user?.background && (
         <div className="fixed inset-0 -z-10">
@@ -308,7 +279,7 @@ const UserProfile = () => {
               className="w-full h-full object-cover"
               autoPlay
               loop
-              muted={true}
+              muted={false}
               playsInline
               controls={false}
               onLoadedData={() => {
@@ -317,24 +288,28 @@ const UserProfile = () => {
                 console.log('Video readyState:', videoRef.current?.readyState)
                 console.log('User muteVideoAudio:', user.muteVideoAudio)
                 
-                // Ensure video is muted for autoplay compliance
-                if (videoRef.current) {
-                  videoRef.current.muted = true
-                }
-                
-                // Try to play the video multiple times (muted for autoplay)
-                const attemptPlay = () => {
+                // Try to play with audio first
+                const attemptPlayWithAudio = () => {
                   if (videoRef.current) {
-                    videoRef.current.muted = true
+                    videoRef.current.muted = false
                     videoRef.current.play().then(() => {
-                      console.log('Video playing successfully after load (muted)')
-                    }).catch(e => console.log('Video play error:', e))
+                      console.log('Video playing successfully with audio')
+                    }).catch(e => {
+                      console.log('Autoplay with audio blocked, trying muted:', e)
+                      // Fallback to muted autoplay
+                      if (videoRef.current) {
+                        videoRef.current.muted = true
+                        videoRef.current.play().then(() => {
+                          console.log('Video playing muted (fallback)')
+                        }).catch(err => console.log('Video play error even muted:', err))
+                      }
+                    })
                   }
                 }
                 
-                attemptPlay()
-                setTimeout(attemptPlay, 100)
-                setTimeout(attemptPlay, 500)
+                attemptPlayWithAudio()
+                setTimeout(attemptPlayWithAudio, 100)
+                setTimeout(attemptPlayWithAudio, 500)
               }}
               onPlay={() => {
                 console.log('Video playing, muted:', videoRef.current?.muted, 'isMuted state:', isMuted)
