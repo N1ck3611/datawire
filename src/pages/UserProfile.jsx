@@ -16,7 +16,9 @@ const UserProfile = () => {
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(() => {
     // Client-side only mute state, not tied to user settings
-    return localStorage.getItem('profileMuted') === 'true'
+    // Default to muted for autoplay compliance
+    const stored = localStorage.getItem('profileMuted')
+    return stored === null ? true : stored === 'true'
   })
   const [viewCount, setViewCount] = useState(0)
   const [audioEnabled, setAudioEnabled] = useState(false)
@@ -34,6 +36,8 @@ const UserProfile = () => {
   useEffect(() => {
     if (!user) return
     
+    console.log('[Playback] User loaded, backgroundType:', user.backgroundType, 'backgroundAudio:', !!user.backgroundAudio)
+    
     // Handle background audio
     if (user?.backgroundAudio) {
       if (window.backgroundAudio) {
@@ -45,12 +49,17 @@ const UserProfile = () => {
       audio.loop = true
       audio.volume = 1.0
       audio.preload = 'auto'
-      audio.muted = isMuted
+      audio.muted = true // Always start muted for autoplay
       window.backgroundAudio = audio
+      
+      console.log('[Playback] Audio created, src:', user.backgroundAudio)
       
       const playAudio = () => {
         if (window.backgroundAudio) {
-          window.backgroundAudio.play().catch(e => console.log('Audio play error:', e))
+          console.log('[Playback] Attempting to play audio, muted:', window.backgroundAudio.muted)
+          window.backgroundAudio.play()
+            .then(() => console.log('[Playback] Audio playing successfully'))
+            .catch(e => console.log('[Playback] Audio play error:', e))
         }
       }
       
@@ -59,49 +68,56 @@ const UserProfile = () => {
       setTimeout(playAudio, 500)
     }
     
+    // Handle video playback
+    if (user?.backgroundType === 'video' && videoRef.current) {
+      console.log('[Playback] Video element found, src:', user.background)
+      
+      const playVideo = () => {
+        if (videoRef.current) {
+          console.log('[Playback] Attempting to play video, muted:', videoRef.current.muted, 'readyState:', videoRef.current.readyState)
+          videoRef.current.muted = true // Always start muted for autoplay
+          videoRef.current.volume = 1.0
+          videoRef.current.play()
+            .then(() => console.log('[Playback] Video playing successfully'))
+            .catch(e => console.log('[Playback] Video play error:', e))
+        }
+      }
+      
+      // Wait for video to be ready
+      const checkVideoReady = setInterval(() => {
+        if (videoRef.current && videoRef.current.readyState >= 2) {
+          console.log('[Playback] Video ready, readyState:', videoRef.current.readyState)
+          clearInterval(checkVideoReady)
+          playVideo()
+        }
+      }, 100)
+      
+      // Also try immediately
+      setTimeout(playVideo, 100)
+      setTimeout(playVideo, 500)
+      setTimeout(playVideo, 1000)
+      
+      return () => clearInterval(checkVideoReady)
+    }
+    
     return () => {
       if (window.backgroundAudio) {
         window.backgroundAudio.pause()
         window.backgroundAudio = null
       }
     }
-  }, [user?.backgroundAudio])
-
-  // Handle video playback
-  useEffect(() => {
-    if (!user || user?.backgroundType !== 'video') return
-    
-    const playVideo = () => {
-      if (videoRef.current) {
-        videoRef.current.muted = isMuted
-        videoRef.current.volume = 1.0
-        videoRef.current.play().catch(e => console.log('Video play error:', e))
-      }
-    }
-    
-    // Wait for video to be ready
-    const checkVideoReady = setInterval(() => {
-      if (videoRef.current && videoRef.current.readyState >= 2) {
-        clearInterval(checkVideoReady)
-        playVideo()
-      }
-    }, 100)
-    
-    // Also try immediately
-    setTimeout(playVideo, 100)
-    setTimeout(playVideo, 500)
-    setTimeout(playVideo, 1000)
-    
-    return () => clearInterval(checkVideoReady)
-  }, [user?.background, user?.backgroundType])
+  }, [user?.background, user?.backgroundType, user?.backgroundAudio])
 
   // Handle mute state changes
   useEffect(() => {
+    console.log('[Playback] Mute state changed to:', isMuted)
     if (videoRef.current) {
       videoRef.current.muted = isMuted
+      console.log('[Playback] Video muted set to:', isMuted)
     }
     if (window.backgroundAudio) {
       window.backgroundAudio.muted = isMuted
+      console.log('[Playback] Audio muted set to:', isMuted)
     }
   }, [isMuted])
 
