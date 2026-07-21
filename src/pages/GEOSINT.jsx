@@ -47,12 +47,18 @@ const GEOSINT = () => {
         reader.readAsDataURL(image)
       })
 
+      const token = localStorage.getItem('auth_token')
+      if (!token) {
+        throw new Error('Please login to use GEOSINT')
+      }
+
       const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
 
       const response = await fetch(`${API_BASE}/api/geosint/analyze`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ imageData: base64Image })
       })
