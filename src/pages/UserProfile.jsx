@@ -15,8 +15,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(() => {
-    // Client-side only mute state, not tied to user settings
-    // Default to muted for autoplay compliance
+    // Check user's muteVideoAudio setting first, then fall back to localStorage
     const stored = localStorage.getItem('profileMuted')
     return stored === null ? true : stored === 'true'
   })
@@ -38,19 +37,22 @@ const UserProfile = () => {
   useEffect(() => {
     if (hasEntered) return
     
-    const text = "ENTER"
+    setTypingText('')
+    const text = user?.enterText || "ENTER"
     let index = 0
-    const interval = setInterval(() => {
-      if (index < text.length) {
-        setTypingText(text.slice(0, index + 1))
-        index++
-      } else {
-        clearInterval(interval)
-      }
-    }, 100)
     
-    return () => clearInterval(interval)
-  }, [hasEntered])
+    const typeNextChar = () => {
+      if (index < text.length) {
+        setTypingText(prev => prev + text[index])
+        index++
+        setTimeout(typeNextChar, 100)
+      }
+    }
+    
+    // Start typing after a short delay
+    const timer = setTimeout(typeNextChar, 500)
+    return () => clearTimeout(timer)
+  }, [hasEntered, user?.enterText])
 
   // Handle ENTER key press
   useEffect(() => {
@@ -195,6 +197,12 @@ const UserProfile = () => {
       if (data.success) {
         setUser(data.user)
         setViewCount(data.user.viewCount || 0)
+        
+        // Set mute state based on user's muteVideoAudio setting
+        if (data.user.muteVideoAudio !== undefined) {
+          setIsMuted(data.user.muteVideoAudio)
+          localStorage.setItem('profileMuted', data.user.muteVideoAudio)
+        }
         
         // Refresh Discord data if user has Discord linked
         if (data.user.discordId) {

@@ -40,6 +40,9 @@ const UserSettings = () => {
   const [statusError, setStatusError] = useState('')
   const [statusSuccess, setStatusSuccess] = useState('')
   const [linkingDiscord, setLinkingDiscord] = useState(false)
+  const [enterText, setEnterText] = useState('ENTER')
+  const [enterTextError, setEnterTextError] = useState('')
+  const [enterTextSuccess, setEnterTextSuccess] = useState('')
 
   useEffect(() => {
     fetchUserProfile()
@@ -91,6 +94,9 @@ const UserSettings = () => {
         }
         if (data.user.status) {
           setStatus(data.user.status)
+        }
+        if (data.user.enterText) {
+          setEnterText(data.user.enterText)
         }
       } else {
         console.error('Profile fetch failed:', data.error)
@@ -612,6 +618,45 @@ const UserSettings = () => {
     window.location.href = discordAuthUrl
   }
 
+  const handleEnterTextUpdate = async (e) => {
+    e.preventDefault()
+    setEnterTextError('')
+    setEnterTextSuccess('')
+
+    if (enterText.length === 0) {
+      setEnterTextError('Enter text cannot be empty')
+      return
+    }
+
+    if (enterText.length > 10) {
+      setEnterTextError('Enter text must be 10 characters or less')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/enter-text`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ enterText })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setEnterTextSuccess('Enter text updated successfully!')
+        setUser({ ...user, enterText })
+      } else {
+        setEnterTextError(data.error || 'Failed to update enter text')
+      }
+    } catch (error) {
+      setEnterTextError('Network error. Please try again.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -621,7 +666,7 @@ const UserSettings = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
+    <div className="min-h-screen py-12 px-4 bg-black">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -636,7 +681,7 @@ const UserSettings = () => {
               <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             <div>
-              <h1 className="text-4xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">User Settings</h1>
+              <h1 className="text-4xl font-bold text-white">User Settings</h1>
               <p className="text-osint-muted">Customize your profile</p>
             </div>
           </div>
@@ -644,7 +689,7 @@ const UserSettings = () => {
           {/* Profile Picture Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -721,7 +766,7 @@ const UserSettings = () => {
           {/* Username Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -783,7 +828,7 @@ const UserSettings = () => {
           {/* Bio Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
@@ -838,7 +883,7 @@ const UserSettings = () => {
           {/* Background Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                 <polyline points="21 15 16 10 5 21"></polyline>
@@ -929,58 +974,83 @@ const UserSettings = () => {
                 <h3 className="text-lg font-semibold text-white mb-4">Background Audio</h3>
                 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-6 mb-6">
-                    <div className="relative w-full h-16 rounded-lg overflow-hidden border-2 border-white/20 bg-black/50 flex items-center justify-center">
-                      {backgroundAudioPreview ? (
-                        <div className="w-full px-4 flex items-center gap-3">
-                          <button
-                            onClick={() => {
-                              const audio = document.getElementById('background-audio-preview')
-                              if (audio.paused) {
-                                audio.play()
-                              } else {
-                                audio.pause()
-                              }
-                            }}
-                            className="text-white hover:text-white/80 transition-colors"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                            </svg>
-                          </button>
-                          <audio
-                            id="background-audio-preview"
-                            src={backgroundAudioPreview}
-                            className="hidden"
-                            onPlay={() => {
-                              const playBtn = document.querySelector('[data-audio-play]')
-                              if (playBtn) {
-                                playBtn.innerHTML = '<polygon points="6 19 6 5 20 12 6 19"></polygon>'
-                              }
-                            }}
-                            onPause={() => {
-                              const playBtn = document.querySelector('[data-audio-play]')
-                              if (playBtn) {
-                                playBtn.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'
-                              }
-                            }}
-                          />
-                          <span className="text-white text-sm truncate flex-1">Audio file selected</span>
-                          <button
-                            onClick={handleRemoveBackgroundAudio}
-                            className="text-red-400 hover:text-red-300 transition-colors"
-                            title="Remove background audio"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="18" y1="6" x2="6" y2="18"></line>
-                              <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                          </button>
+                  <div className="relative w-full h-20 rounded-xl overflow-hidden border-2 border-white/20 bg-black/50 flex items-center justify-center">
+                    {backgroundAudioPreview ? (
+                      <div className="w-full px-4 flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            const audio = document.getElementById('background-audio-preview')
+                            if (audio.paused) {
+                              audio.play()
+                            } else {
+                              audio.pause()
+                            }
+                          }}
+                          className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                          </svg>
+                        </button>
+                        <audio
+                          id="background-audio-preview"
+                          src={backgroundAudioPreview}
+                          className="hidden"
+                          onPlay={() => {
+                            const playBtn = document.querySelector('[data-audio-play]')
+                            if (playBtn) {
+                              playBtn.innerHTML = '<polygon points="6 19 6 5 20 12 6 19"></polygon>'
+                            }
+                          }}
+                          onPause={() => {
+                            const playBtn = document.querySelector('[data-audio-play]')
+                            if (playBtn) {
+                              playBtn.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'
+                            }
+                          }}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="flex gap-1 items-end h-4">
+                              {[...Array(5)].map((_, i) => (
+                                <motion.div
+                                  key={i}
+                                  animate={{
+                                    height: [4, 16, 4],
+                                  }}
+                                  transition={{
+                                    duration: 0.8,
+                                    repeat: Infinity,
+                                    delay: i * 0.1,
+                                  }}
+                                  className="w-1 bg-white/60 rounded-full"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-white text-xs">Audio file selected</span>
                         </div>
-                      ) : (
-                        <span className="text-osint-muted text-sm">No audio selected</span>
-                      )}
-                    </div>
+                        <button
+                          onClick={handleRemoveBackgroundAudio}
+                          className="w-8 h-8 bg-red-500/20 hover:bg-red-500/30 rounded-full flex items-center justify-center transition-colors"
+                          title="Remove background audio"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/30">
+                          <path d="M9 18V5l12-2v13"></path>
+                          <circle cx="6" cy="18" r="3"></circle>
+                          <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                        <span className="text-white/30 text-sm">No audio selected</span>
+                      </div>
+                    )}
                   </div>
                   
                   <form onSubmit={handleBackgroundAudioUpload} className="space-y-4">
@@ -1038,11 +1108,11 @@ const UserSettings = () => {
                   <button
                     onClick={handleMuteToggle}
                     className={`relative w-14 h-8 rounded-full transition-colors ${
-                      muteVideoAudio ? 'bg-green-500' : 'bg-red-500'
+                      muteVideoAudio ? 'bg-white' : 'bg-white/20'
                     }`}
                   >
                     <div
-                      className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
+                      className={`absolute top-1 w-6 h-6 bg-black rounded-full transition-transform ${
                         muteVideoAudio ? 'translate-x-7' : 'translate-x-1'
                       }`}
                     />
@@ -1056,7 +1126,7 @@ const UserSettings = () => {
           {/* Account Info */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -1196,6 +1266,61 @@ const UserSettings = () => {
                 className="w-full"
               >
                 Update Status
+              </Button>
+            </form>
+          </GlassCard>
+
+          {/* Enter Text Section */}
+          <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
+            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg>
+              Enter Text
+            </h2>
+            
+            <form onSubmit={handleEnterTextUpdate} className="space-y-4">
+              <div>
+                <Input
+                  type="text"
+                  value={enterText}
+                  onChange={(e) => setEnterText(e.target.value)}
+                  placeholder="ENTER"
+                  className="w-full uppercase"
+                  maxLength={10}
+                />
+                <p className="text-xs text-osint-muted mt-2">
+                  {enterText.length}/10 characters (shown on profile page)
+                </p>
+              </div>
+
+              {enterTextError && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                >
+                  {enterTextError}
+                </motion.div>
+              )}
+
+              {enterTextSuccess && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm"
+                >
+                  {enterTextSuccess}
+                </motion.div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={enterText === user?.enterText}
+                className="w-full"
+              >
+                Update Enter Text
               </Button>
             </form>
           </GlassCard>
