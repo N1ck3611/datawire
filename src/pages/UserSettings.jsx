@@ -45,6 +45,7 @@ const UserSettings = () => {
   const [enterTextError, setEnterTextError] = useState('')
   const [enterTextSuccess, setEnterTextSuccess] = useState('')
   const [embedColor, setEmbedColor] = useState('#6366f1')
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false)
 
   useEffect(() => {
     fetchUserProfile()
@@ -97,13 +98,19 @@ const UserSettings = () => {
         if (data.user.status) {
           setStatus(data.user.status)
         }
-        if (data.user.enterText && data.user.enterText.trim()) {
-          setEnterText(data.user.enterText)
+        if (data.user.enterText && typeof data.user.enterText === 'string' && data.user.enterText.trim()) {
+          setEnterText(data.user.enterText.trim())
         } else {
           setEnterText('ENTER')
         }
         if (data.user.embedColor) {
           setEmbedColor(data.user.embedColor)
+        }
+        if (data.user.accentColor) {
+          setAccentColor(data.user.accentColor)
+          setHexInput(data.user.accentColor)
+          localStorage.setItem('accentColor', data.user.accentColor)
+          document.documentElement.style.setProperty('--accent-color', data.user.accentColor)
         }
       } else {
         console.error('Profile fetch failed:', data.error)
@@ -666,7 +673,9 @@ const UserSettings = () => {
 
   const handleEmbedColorUpdate = async (color) => {
     setEmbedColor(color)
-    
+  }
+
+  const handleSaveEmbedColor = async (color) => {
     try {
       const token = localStorage.getItem('auth_token')
       const response = await fetch(`${API_BASE}/api/user/embed-color`, {
@@ -685,6 +694,35 @@ const UserSettings = () => {
       }
     } catch (error) {
       console.error('Failed to update embed color:', error)
+    }
+  }
+
+  const handleAccentColorUpdate = async (color) => {
+    setAccentColor(color)
+    setHexInput(color)
+    localStorage.setItem('accentColor', color)
+    document.documentElement.style.setProperty('--accent-color', color)
+  }
+
+  const handleSaveAccentColor = async (color) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/accent-color`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ accentColor: color })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setUser({ ...user, accentColor: color })
+      }
+    } catch (error) {
+      console.error('Failed to update accent color:', error)
     }
   }
 
@@ -1013,46 +1051,47 @@ const UserSettings = () => {
                             const audio = document.getElementById('background-audio-preview')
                             if (audio.paused) {
                               audio.play()
+                              setIsAudioPlaying(true)
                             } else {
                               audio.pause()
+                              setIsAudioPlaying(false)
                             }
                           }}
                           className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                          </svg>
+                          {isAudioPlaying ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                              <rect x="6" y="4" width="4" height="16"></rect>
+                              <rect x="14" y="4" width="4" height="16"></rect>
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                          )}
                         </button>
                         <audio
                           id="background-audio-preview"
                           src={backgroundAudioPreview}
                           className="hidden"
-                          onPlay={() => {
-                            const playBtn = document.querySelector('[data-audio-play]')
-                            if (playBtn) {
-                              playBtn.innerHTML = '<polygon points="6 19 6 5 20 12 6 19"></polygon>'
-                            }
-                          }}
-                          onPause={() => {
-                            const playBtn = document.querySelector('[data-audio-play]')
-                            if (playBtn) {
-                              playBtn.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'
-                            }
-                          }}
+                          onPlay={() => setIsAudioPlaying(true)}
+                          onPause={() => setIsAudioPlaying(false)}
                         />
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-1 mb-1">
                             <div className="flex gap-1 items-end h-4">
-                              {[...Array(5)].map((_, i) => (
+                              {[...Array(12)].map((_, i) => (
                                 <motion.div
                                   key={i}
-                                  animate={{
-                                    height: [4, 16, 4],
+                                  animate={isAudioPlaying ? {
+                                    height: [4, 20, 4],
+                                  } : {
+                                    height: 4,
                                   }}
                                   transition={{
-                                    duration: 0.8,
-                                    repeat: Infinity,
-                                    delay: i * 0.1,
+                                    duration: 0.6,
+                                    repeat: isAudioPlaying ? Infinity : 0,
+                                    delay: i * 0.05,
                                   }}
                                   className="w-1 bg-white/60 rounded-full"
                                 />
@@ -1359,7 +1398,7 @@ const UserSettings = () => {
           {/* Accent Color Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-color)' }}>
                 <circle cx="13.5" cy="6.5" r=".5"></circle>
                 <circle cx="17.5" cy="10.5" r=".5"></circle>
                 <circle cx="8.5" cy="7.5" r=".5"></circle>
@@ -1371,13 +1410,17 @@ const UserSettings = () => {
             
             <ColorSlider 
               value={accentColor} 
-              onChange={handleColorChange}
+              onChange={handleAccentColorUpdate}
+              onSave={handleSaveAccentColor}
               label="Dashboard Accent Color"
             />
 
             {/* Reset Button */}
             <Button
-              onClick={() => handleColorChange('#6366f1')}
+              onClick={() => {
+                handleAccentColorUpdate('#6366f1')
+                handleSaveAccentColor('#6366f1')
+              }}
               variant="outline"
               className="w-full mt-4"
             >
@@ -1398,6 +1441,7 @@ const UserSettings = () => {
             <ColorSlider 
               value={embedColor} 
               onChange={handleEmbedColorUpdate}
+              onSave={handleSaveEmbedColor}
               label="Discord Embed Color"
             />
 

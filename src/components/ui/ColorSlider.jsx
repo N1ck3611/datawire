@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
-const ColorSlider = ({ value, onChange, label }) => {
+const ColorSlider = ({ value, onChange, label, onSave }) => {
   const [hue, setHue] = useState(0)
   const [saturation, setSaturation] = useState(100)
   const [lightness, setLightness] = useState(50)
+  const [isDragging, setIsDragging] = useState(false)
+  const canvasRef = useRef(null)
+  const sliderRef = useRef(null)
 
   useEffect(() => {
     if (value) {
@@ -60,25 +63,23 @@ const ColorSlider = ({ value, onChange, label }) => {
     return `#${r}${g}${b}`
   }
 
-  const handleHueChange = (e) => {
-    const newHue = parseInt(e.target.value)
-    setHue(newHue)
-    const hex = hslToHex(newHue, saturation, lightness)
-    onChange(hex)
-  }
-
-  const handleSaturationChange = (e) => {
-    const newSaturation = parseInt(e.target.value)
+  const handleColorPickerClick = (e) => {
+    const rect = sliderRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    const newSaturation = Math.round((x / rect.width) * 100)
+    const newLightness = Math.round(100 - (y / rect.height) * 100)
+    
     setSaturation(newSaturation)
-    const hex = hslToHex(hue, newSaturation, lightness)
+    setLightness(newLightness)
+    const hex = hslToHex(hue, newSaturation, newLightness)
     onChange(hex)
   }
 
-  const handleLightnessChange = (e) => {
-    const newLightness = parseInt(e.target.value)
-    setLightness(newLightness)
-    const hex = hslToHex(hue, saturation, newLightness)
-    onChange(hex)
+  const handleColorPickerDrag = (e) => {
+    if (!isDragging) return
+    handleColorPickerClick(e)
   }
 
   const currentColor = hslToHex(hue, saturation, lightness)
@@ -93,30 +94,62 @@ const ColorSlider = ({ value, onChange, label }) => {
           className="w-16 h-16 rounded-xl border-2 border-white/20 shadow-lg"
           style={{ backgroundColor: currentColor }}
         />
-        <div>
+        <div className="flex-1">
           <p className="text-white font-medium">Current Color</p>
           <p className="text-white/60 text-sm font-mono">{currentColor.toUpperCase()}</p>
+        </div>
+        {onSave && (
+          <button
+            onClick={() => onSave(currentColor)}
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white text-sm transition-colors"
+          >
+            Save
+          </button>
+        )}
+      </div>
+
+      {/* Color Picker Area (Saturation/Lightness) */}
+      <div className="space-y-2">
+        <div 
+          ref={sliderRef}
+          className="relative h-40 rounded-lg overflow-hidden cursor-crosshair border border-white/20"
+          style={{
+            background: `linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, transparent), hsl(${hue}, 100%, 50%)`
+          }}
+          onMouseDown={(e) => {
+            setIsDragging(true)
+            handleColorPickerClick(e)
+          }}
+          onMouseMove={handleColorPickerDrag}
+          onMouseUp={() => setIsDragging(false)}
+          onMouseLeave={() => setIsDragging(false)}
+        >
+          {/* Color selector circle */}
+          <div
+            className="absolute w-4 h-4 rounded-full border-2 border-white shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
+            style={{
+              left: `${saturation}%`,
+              top: `${100 - lightness}%`,
+              backgroundColor: currentColor
+            }}
+          />
         </div>
       </div>
 
       {/* Hue Slider */}
       <div className="space-y-2">
-        <div className="flex justify-between text-xs text-white/60">
-          <span>Hue</span>
-          <span>{hue}°</span>
-        </div>
-        <div className="relative h-6 rounded-lg overflow-hidden">
+        <div className="relative h-6 rounded-lg overflow-hidden border border-white/20">
           <div 
             className="absolute inset-0 rounded-lg"
             style={{
               background: `linear-gradient(to right, 
-                hsl(0, 100%, 50%), 
-                hsl(60, 100%, 50%), 
-                hsl(120, 100%, 50%), 
-                hsl(180, 100%, 50%), 
-                hsl(240, 100%, 50%), 
-                hsl(300, 100%, 50%), 
-                hsl(360, 100%, 50%))`
+                #ff0000 0%, 
+                #ffff00 17%, 
+                #00ff00 33%, 
+                #00ffff 50%, 
+                #0000ff 67%, 
+                #ff00ff 83%, 
+                #ff0000 100%)`
             }}
           />
           <input
@@ -124,79 +157,17 @@ const ColorSlider = ({ value, onChange, label }) => {
             min="0"
             max="360"
             value={hue}
-            onChange={handleHueChange}
+            onChange={(e) => {
+              const newHue = parseInt(e.target.value)
+              setHue(newHue)
+              const hex = hslToHex(newHue, saturation, lightness)
+              onChange(hex)
+            }}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
-          <motion.div
-            className="absolute top-0 bottom-0 w-1 bg-white rounded shadow-lg pointer-events-none"
+          <div
+            className="absolute top-0 bottom-0 w-1 bg-white rounded shadow-lg pointer-events-none transform -translate-x-1/2"
             style={{ left: `${(hue / 360) * 100}%` }}
-            animate={{ left: `${(hue / 360) * 100}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        </div>
-      </div>
-
-      {/* Saturation Slider */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs text-white/60">
-          <span>Saturation</span>
-          <span>{saturation}%</span>
-        </div>
-        <div className="relative h-6 rounded-lg overflow-hidden">
-          <div 
-            className="absolute inset-0 rounded-lg"
-            style={{
-              background: `linear-gradient(to right, 
-                hsl(${hue}, 0%, ${lightness}%), 
-                hsl(${hue}, 100%, ${lightness}%))`
-            }}
-          />
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={saturation}
-            onChange={handleSaturationChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-          <motion.div
-            className="absolute top-0 bottom-0 w-1 bg-white rounded shadow-lg pointer-events-none"
-            style={{ left: `${(saturation / 100) * 100}%` }}
-            animate={{ left: `${(saturation / 100) * 100}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        </div>
-      </div>
-
-      {/* Lightness Slider */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs text-white/60">
-          <span>Lightness</span>
-          <span>{lightness}%</span>
-        </div>
-        <div className="relative h-6 rounded-lg overflow-hidden">
-          <div 
-            className="absolute inset-0 rounded-lg"
-            style={{
-              background: `linear-gradient(to right, 
-                hsl(${hue}, ${saturation}%, 0%), 
-                hsl(${hue}, ${saturation}%, 50%), 
-                hsl(${hue}, ${saturation}%, 100%))`
-            }}
-          />
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={lightness}
-            onChange={handleLightnessChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-          <motion.div
-            className="absolute top-0 bottom-0 w-1 bg-white rounded shadow-lg pointer-events-none"
-            style={{ left: `${(lightness / 100) * 100}%` }}
-            animate={{ left: `${(lightness / 100) * 100}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           />
         </div>
       </div>

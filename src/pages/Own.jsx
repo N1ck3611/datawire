@@ -51,7 +51,7 @@ const Team = () => {
 
   return (
     <>
-      {showIntro && <BootIntro onComplete={(shouldAutoPlay) => { setShowIntro(false); setAutoPlayMusic(shouldAutoPlay); }} />}
+      {showIntro && <BootIntro onComplete={(shouldAutoPlay) => { setShowIntro(false); setAutoPlayMusic(shouldAutoPlay); }} enterText="ENTER" />}
       {!showIntro && (
         <div className="h-screen relative overflow-hidden">
           <SnowBackground />

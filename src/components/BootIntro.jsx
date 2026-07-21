@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const BootIntro = ({ onComplete }) => {
+const BootIntro = ({ onComplete, enterText }) => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0)
   const [showEnter, setShowEnter] = useState(false)
+  const displayText = (enterText && typeof enterText === 'string' && enterText.trim()) ? enterText.trim() : 'ENTER'
 
   const bootLines = [
     'Initializing Datawire.cc OS v2.0...',
@@ -73,7 +74,7 @@ const BootIntro = ({ onComplete }) => {
                 className="text-6xl font-bold text-white hover:text-gray-300 transition-colors cursor-pointer"
                 style={{ textShadow: '0 0 20px rgba(255, 255, 255, 0.3)' }}
               >
-                ENTER
+                {displayText}
               </motion.button>
               <motion.div
                 initial={{ opacity: 0 }}

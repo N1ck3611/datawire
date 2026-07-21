@@ -38,7 +38,7 @@ const UserProfile = () => {
     if (hasEntered) return
     
     setTypingText('')
-    const text = (user?.enterText && user.enterText.trim()) ? user.enterText : "ENTER"
+    const text = (user?.enterText && typeof user.enterText === 'string' && user.enterText.trim()) ? user.enterText.trim() : "ENTER"
     let index = 0
     
     const typeNextChar = () => {
