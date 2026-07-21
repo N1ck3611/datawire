@@ -34,22 +34,6 @@ const UserProfile = () => {
   useEffect(() => {
     if (!user) return
     
-    // Try to play video when user data loads
-    if (user?.backgroundType === 'video' && videoRef.current) {
-      const playVideo = () => {
-        if (videoRef.current) {
-          videoRef.current.muted = isMuted
-          videoRef.current.volume = 1.0
-          videoRef.current.play().catch(e => console.log('Video play error:', e))
-        }
-      }
-      
-      playVideo()
-      setTimeout(playVideo, 100)
-      setTimeout(playVideo, 500)
-      setTimeout(playVideo, 1000)
-    }
-
     // Handle background audio
     if (user?.backgroundAudio) {
       if (window.backgroundAudio) {
@@ -61,11 +45,18 @@ const UserProfile = () => {
       audio.loop = true
       audio.volume = 1.0
       audio.preload = 'auto'
+      audio.muted = isMuted
       window.backgroundAudio = audio
       
-      // Start muted for autoplay compliance
-      audio.muted = isMuted
-      audio.play().catch(e => console.log('Audio play error:', e))
+      const playAudio = () => {
+        if (window.backgroundAudio) {
+          window.backgroundAudio.play().catch(e => console.log('Audio play error:', e))
+        }
+      }
+      
+      playAudio()
+      setTimeout(playAudio, 100)
+      setTimeout(playAudio, 500)
     }
     
     return () => {
@@ -74,9 +65,37 @@ const UserProfile = () => {
         window.backgroundAudio = null
       }
     }
-  }, [user?.background, user?.backgroundType, user?.backgroundAudio])
+  }, [user?.backgroundAudio])
 
-  // Separate effect to handle mute state changes
+  // Handle video playback
+  useEffect(() => {
+    if (!user || user?.backgroundType !== 'video') return
+    
+    const playVideo = () => {
+      if (videoRef.current) {
+        videoRef.current.muted = isMuted
+        videoRef.current.volume = 1.0
+        videoRef.current.play().catch(e => console.log('Video play error:', e))
+      }
+    }
+    
+    // Wait for video to be ready
+    const checkVideoReady = setInterval(() => {
+      if (videoRef.current && videoRef.current.readyState >= 2) {
+        clearInterval(checkVideoReady)
+        playVideo()
+      }
+    }, 100)
+    
+    // Also try immediately
+    setTimeout(playVideo, 100)
+    setTimeout(playVideo, 500)
+    setTimeout(playVideo, 1000)
+    
+    return () => clearInterval(checkVideoReady)
+  }, [user?.background, user?.backgroundType])
+
+  // Handle mute state changes
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = isMuted
@@ -234,43 +253,6 @@ const UserProfile = () => {
               loading="eager"
             />
           )}
-          {/* Client-side mute toggle */}
-          {(user.backgroundType === 'video' || user?.backgroundAudio) && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                const newMutedState = !isMuted
-                setIsMuted(newMutedState)
-                localStorage.setItem('profileMuted', newMutedState)
-                
-                if (videoRef.current) {
-                  videoRef.current.muted = newMutedState
-                }
-                if (window.backgroundAudio) {
-                  window.backgroundAudio.muted = newMutedState
-                }
-              }}
-              className="fixed bottom-4 right-4 z-[100] bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
-              title="Toggle sound"
-              style={{ pointerEvents: 'auto' }}
-            >
-              {isMuted ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                  <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-                  <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
-                  <line x1="12" y1="19" x2="12" y2="23"></line>
-                  <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-              )}
-            </button>
-          )}
           <div className="absolute inset-0 bg-black/60" />
         </div>
       )}
@@ -287,6 +269,41 @@ const UserProfile = () => {
           <span className="text-sm font-semibold">{viewCount.toLocaleString()}</span>
         </div>
       </div>
+
+      {/* Client-side mute toggle - outside background container */}
+      {(user.backgroundType === 'video' || user?.backgroundAudio) && (
+        <button
+          onClick={() => {
+            const newMutedState = !isMuted
+            setIsMuted(newMutedState)
+            localStorage.setItem('profileMuted', newMutedState)
+            
+            if (videoRef.current) {
+              videoRef.current.muted = newMutedState
+            }
+            if (window.backgroundAudio) {
+              window.backgroundAudio.muted = newMutedState
+            }
+          }}
+          className="fixed bottom-4 right-4 z-[9999] bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
+          title="Toggle sound"
+        >
+          {isMuted ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+              <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+              <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          )}
+        </button>
+      )}
       
       <div className="max-w-2xl mx-auto">
         <motion.div
