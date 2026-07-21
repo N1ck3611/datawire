@@ -15,9 +15,9 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isMuted, setIsMuted] = useState(() => {
-    // Check user's muteVideoAudio setting first, then fall back to localStorage
+    // Default to unmuted, but respect localStorage if set
     const stored = localStorage.getItem('profileMuted')
-    return stored === null ? true : stored === 'true'
+    return stored === null ? false : stored === 'true'
   })
   const [viewCount, setViewCount] = useState(0)
   const [audioEnabled, setAudioEnabled] = useState(false)
@@ -71,7 +71,10 @@ const UserProfile = () => {
   useEffect(() => {
     if (!user || !hasEntered) return
     
-    console.log('[Playback] User loaded, backgroundType:', user.backgroundType, 'backgroundAudio:', !!user.backgroundAudio)
+    console.log('[Playback] User loaded, backgroundType:', user.backgroundType, 'backgroundAudio:', !!user.backgroundAudio, 'muteVideoAudio:', user.muteVideoAudio)
+    
+    // Determine if video should be muted based on user's muteVideoAudio setting or if background audio exists
+    const shouldMuteVideo = user?.muteVideoAudio === true || !!user?.backgroundAudio
     
     // Handle background audio
     if (user?.backgroundAudio) {
@@ -87,7 +90,7 @@ const UserProfile = () => {
       audio.muted = isMuted
       window.backgroundAudio = audio
       
-      console.log('[Playback] Audio created, src:', user.backgroundAudio)
+      console.log('[Playback] Audio created, src:', user.backgroundAudio, 'muted:', audio.muted)
       
       const playAudio = () => {
         if (window.backgroundAudio) {
@@ -105,12 +108,12 @@ const UserProfile = () => {
     
     // Handle video playback
     if (user?.backgroundType === 'video' && videoRef.current) {
-      console.log('[Playback] Video element found, src:', user.background)
+      console.log('[Playback] Video element found, src:', user.background, 'shouldMuteVideo:', shouldMuteVideo)
       
       const playVideo = () => {
         if (videoRef.current) {
-          console.log('[Playback] Attempting to play video, muted:', videoRef.current.muted, 'readyState:', videoRef.current.readyState)
-          videoRef.current.muted = isMuted
+          console.log('[Playback] Attempting to play video, muted:', shouldMuteVideo, 'readyState:', videoRef.current.readyState)
+          videoRef.current.muted = shouldMuteVideo
           videoRef.current.volume = 1.0
           videoRef.current.play()
             .then(() => console.log('[Playback] Video playing successfully'))
@@ -141,20 +144,34 @@ const UserProfile = () => {
         window.backgroundAudio = null
       }
     }
-  }, [user?.background, user?.backgroundType, user?.backgroundAudio, hasEntered, isMuted])
+  }, [user?.background, user?.backgroundType, user?.backgroundAudio, user?.muteVideoAudio, hasEntered, isMuted])
 
   // Handle mute state changes
   useEffect(() => {
     console.log('[Playback] Mute state changed to:', isMuted)
-    if (videoRef.current) {
-      videoRef.current.muted = isMuted
-      console.log('[Playback] Video muted set to:', isMuted)
-    }
+    
+    // For background audio, always respect the client-side mute toggle
     if (window.backgroundAudio) {
       window.backgroundAudio.muted = isMuted
       console.log('[Playback] Audio muted set to:', isMuted)
     }
-  }, [isMuted])
+    
+    // For video, respect the user's muteVideoAudio setting if background audio exists
+    // Otherwise use the client-side mute toggle
+    const shouldMuteVideo = user?.muteVideoAudio === true || !!user?.backgroundAudio
+    
+    if (videoRef.current) {
+      // If background audio exists, keep video muted regardless of client toggle
+      // Otherwise, respect the client-side mute toggle
+      if (user?.backgroundAudio) {
+        videoRef.current.muted = true
+        console.log('[Playback] Video kept muted (background audio present)')
+      } else {
+        videoRef.current.muted = shouldMuteVideo ? true : isMuted
+        console.log('[Playback] Video muted set to:', videoRef.current.muted)
+      }
+    }
+  }, [isMuted, user?.muteVideoAudio, user?.backgroundAudio])
 
   const handleEnableAudio = () => {
     console.log('Enable audio button clicked')
@@ -198,8 +215,14 @@ const UserProfile = () => {
         setUser(data.user)
         setViewCount(data.user.viewCount || 0)
         
-        // Set mute state based on user's muteVideoAudio setting
-        if (data.user.muteVideoAudio !== undefined) {
+        // Set mute state based on user's muteVideoAudio setting (only if no background audio)
+        // If background audio exists, we want audio to play by default (unmuted)
+        if (data.user.backgroundAudio) {
+          // If background audio exists, default to unmuted so the audio plays
+          setIsMuted(false)
+          localStorage.setItem('profileMuted', 'false')
+        } else if (data.user.muteVideoAudio !== undefined) {
+          // If no background audio, respect the muteVideoAudio setting
           setIsMuted(data.user.muteVideoAudio)
           localStorage.setItem('profileMuted', data.user.muteVideoAudio)
         }
