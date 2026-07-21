@@ -13,6 +13,8 @@ export default {
         border: 'rgba(255, 255, 255, 0.08)',
         'border-hover': 'rgba(255, 255, 255, 0.15)',
         'border-focus': 'rgba(255, 255, 255, 0.2)',
+        'osint-secondary': 'var(--accent-color)',
+        'osint-muted': 'rgba(255, 255, 255, 0.5)',
       },
       fontFamily: {
         sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],

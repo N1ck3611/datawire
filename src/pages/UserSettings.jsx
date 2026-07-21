@@ -46,6 +46,8 @@ const UserSettings = () => {
   const [enterTextSuccess, setEnterTextSuccess] = useState('')
   const [embedColor, setEmbedColor] = useState('#6366f1')
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
+  const [accentColorSuccess, setAccentColorSuccess] = useState('')
+  const [embedColorSuccess, setEmbedColorSuccess] = useState('')
 
   useEffect(() => {
     fetchUserProfile()
@@ -647,6 +649,8 @@ const UserSettings = () => {
       return
     }
 
+    console.log('[UserSettings] Saving enterText:', enterText)
+
     try {
       const token = localStorage.getItem('auth_token')
       const response = await fetch(`${API_BASE}/api/user/enter-text`, {
@@ -660,6 +664,8 @@ const UserSettings = () => {
 
       const data = await response.json()
 
+      console.log('[UserSettings] Enter text save response:', data)
+
       if (data.success) {
         setEnterTextSuccess('Enter text updated successfully!')
         setUser({ ...user, enterText })
@@ -667,12 +673,14 @@ const UserSettings = () => {
         setEnterTextError(data.error || 'Failed to update enter text')
       }
     } catch (error) {
+      console.error('[UserSettings] Enter text save error:', error)
       setEnterTextError('Network error. Please try again.')
     }
   }
 
   const handleEmbedColorUpdate = async (color) => {
     setEmbedColor(color)
+    setEmbedColorSuccess('')
   }
 
   const handleSaveEmbedColor = async (color) => {
@@ -691,9 +699,16 @@ const UserSettings = () => {
 
       if (data.success) {
         setUser({ ...user, embedColor: color })
+        setEmbedColorSuccess('Embed color saved successfully!')
+        setTimeout(() => setEmbedColorSuccess(''), 3000)
+      } else {
+        setEmbedColorSuccess('Failed to save embed color')
+        setTimeout(() => setEmbedColorSuccess(''), 3000)
       }
     } catch (error) {
       console.error('Failed to update embed color:', error)
+      setEmbedColorSuccess('Network error. Please try again.')
+      setTimeout(() => setEmbedColorSuccess(''), 3000)
     }
   }
 
@@ -702,6 +717,7 @@ const UserSettings = () => {
     setHexInput(color)
     localStorage.setItem('accentColor', color)
     document.documentElement.style.setProperty('--accent-color', color)
+    setAccentColorSuccess('')
   }
 
   const handleSaveAccentColor = async (color) => {
@@ -720,9 +736,16 @@ const UserSettings = () => {
 
       if (data.success) {
         setUser({ ...user, accentColor: color })
+        setAccentColorSuccess('Accent color saved successfully!')
+        setTimeout(() => setAccentColorSuccess(''), 3000)
+      } else {
+        setAccentColorSuccess('Failed to save accent color')
+        setTimeout(() => setAccentColorSuccess(''), 3000)
       }
     } catch (error) {
       console.error('Failed to update accent color:', error)
+      setAccentColorSuccess('Network error. Please try again.')
+      setTimeout(() => setAccentColorSuccess(''), 3000)
     }
   }
 
@@ -1415,6 +1438,16 @@ const UserSettings = () => {
               label="Dashboard Accent Color"
             />
 
+            {accentColorSuccess && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={`mt-4 p-3 rounded-lg text-sm ${accentColorSuccess.includes('success') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+              >
+                {accentColorSuccess}
+              </motion.div>
+            )}
+
             {/* Reset Button */}
             <Button
               onClick={() => {
@@ -1444,6 +1477,16 @@ const UserSettings = () => {
               onSave={handleSaveEmbedColor}
               label="Discord Embed Color"
             />
+
+            {embedColorSuccess && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className={`mt-4 p-3 rounded-lg text-sm ${embedColorSuccess.includes('success') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+              >
+                {embedColorSuccess}
+              </motion.div>
+            )}
 
             <p className="text-xs text-white/50 mt-3">
               This color appears on Discord embeds when your profile is shared

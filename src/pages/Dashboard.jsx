@@ -15,6 +15,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import AIOsintSearch from './AIOsintSearch'
 import GeolocationMap from '../components/GeolocationMap'
+import GEOSINT from './GEOSINT'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
@@ -72,7 +73,8 @@ import {
   DollarSign,
   Video,
   DoorOpen,
-  HelpCircle as QuestionMark
+  HelpCircle as QuestionMark,
+  Camera
 } from 'lucide-react'
 
 // Provider icons mapping - using Lucide React icons
@@ -1557,6 +1559,7 @@ Lookup made by https://datawire.cc
   const sidebarItems = [
     { id: 'search', icon: Search, label: 'Search' },
     { id: 'ai-osint', icon: Brain, label: 'Live Intel' },
+    { id: 'geosint', icon: Camera, label: 'GEOSINT' },
     { id: 'intelx', icon: CloudDownload, label: 'IntelX' },
     { id: 'geolocation', icon: Map, label: 'Geolocation' },
     { id: 'mapping', icon: Link2, label: 'Lead Mapping' },
@@ -2274,6 +2277,10 @@ Lookup made by https://datawire.cc
 
           {activeTab === 'ai-osint' && (
             <AIOsintSearch />
+          )}
+
+          {activeTab === 'geosint' && (
+            <GEOSINT />
           )}
 
           {activeTab === 'mapping' && (

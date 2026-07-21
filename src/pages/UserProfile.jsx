@@ -39,6 +39,9 @@ const UserProfile = () => {
     
     setTypingText('')
     const text = (user?.enterText && typeof user.enterText === 'string' && user.enterText.trim()) ? user.enterText.trim() : "ENTER"
+    
+    console.log('[UserProfile] Typing text:', text, 'User enterText:', user?.enterText)
+    
     let index = 0
     
     const typeNextChar = () => {
