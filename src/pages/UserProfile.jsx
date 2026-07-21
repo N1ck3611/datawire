@@ -38,7 +38,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (hasEntered) return
     
-    const text = "Press ENTER to enter"
+    const text = "ENTER"
     let index = 0
     const interval = setInterval(() => {
       if (index < text.length) {
@@ -56,6 +56,7 @@ const UserProfile = () => {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === 'Enter' && !hasEntered) {
+        e.preventDefault()
         setHasEntered(true)
       }
     }
@@ -264,14 +265,12 @@ const UserProfile = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
+          onClick={() => setHasEntered(true)}
         >
           <div className="text-center">
-            <p className="text-white text-2xl font-mono tracking-wider">
+            <p className="text-white text-4xl font-mono tracking-wider">
               {typingText}
               <span className="animate-pulse">|</span>
-            </p>
-            <p className="text-white/50 text-sm mt-4 font-mono">
-              [ENTER]
             </p>
           </div>
         </motion.div>
