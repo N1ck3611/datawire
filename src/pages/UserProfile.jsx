@@ -123,26 +123,44 @@ const UserProfile = () => {
       const audio = new Audio(user.backgroundAudio)
       audio.loop = true
       audio.volume = 1.0
-      audio.muted = userMuteSetting
       audio.preload = 'auto'
+      
+      // Start muted for autoplay compliance
+      audio.muted = true
       
       // Store audio reference for mute toggle
       window.backgroundAudio = audio
       
-      // Force unmute if user wants audio enabled
-      if (!userMuteSetting) {
-        audio.muted = false
+      // Try to play muted first for autoplay compliance
+      const playAudio = () => {
+        if (window.backgroundAudio) {
+          window.backgroundAudio.play().then(() => {
+            console.log('Background audio playing (muted for autoplay)')
+            // Try to unmute after a short delay if user wants audio
+            if (!userMuteSetting) {
+              setTimeout(() => {
+                if (window.backgroundAudio) {
+                  window.backgroundAudio.muted = false
+                  window.backgroundAudio.play().then(() => {
+                    console.log('Background audio unmuted successfully')
+                    setIsMuted(false)
+                  }).catch(e => {
+                    console.log('Could not unmute audio, needs user interaction:', e)
+                    window.backgroundAudio.muted = true
+                  })
+                }
+              }, 500)
+            }
+          }).catch(e => {
+            console.log('Background audio play error:', e)
+          })
+        }
       }
       
-      // Try to play - browsers may block autoplay
-      audio.play().then(() => {
-        console.log('Background audio playing successfully, muted:', audio.muted, 'volume:', audio.volume)
-      }).catch(e => {
-        console.log('Background audio autoplay failed:', e)
-        console.log('Audio will play on first user interaction')
-        // Show enable audio button
-        setShowEnableAudio(true)
-      })
+      playAudio()
+      setTimeout(playAudio, 100)
+      setTimeout(playAudio, 500)
+      setTimeout(playAudio, 1000)
       
       console.log('Background audio element created')
     } else {
