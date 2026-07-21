@@ -19,7 +19,6 @@ const UserProfile = () => {
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [showEnableAudio, setShowEnableAudio] = useState(false)
   const videoRef = useRef(null)
-  const audioRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
   const unmuteAttemptsRef = useRef(0)
 
@@ -40,25 +39,32 @@ const UserProfile = () => {
     // Set isMuted based on user setting
     setIsMuted(userMuteSetting)
     
-    // Try to play video when user data loads (with audio first)
+    // Try to play video when user data loads (start muted for autoplay compliance)
     if (user?.backgroundType === 'video') {
       console.log('Video background detected, attempting to play')
       const playVideo = () => {
         if (videoRef.current) {
           console.log('Attempting to play video, readyState:', videoRef.current.readyState, 'paused:', videoRef.current.paused)
-          // Try with audio first
-          videoRef.current.muted = false
+          // Start muted to ensure autoplay works
+          videoRef.current.muted = true
           videoRef.current.volume = 1.0
           videoRef.current.play().then(() => {
-            console.log('Video playing successfully with audio')
-            setIsMuted(false)
+            console.log('Video playing successfully (muted for autoplay)')
+            // Try to unmute after a short delay
+            setTimeout(() => {
+              if (videoRef.current) {
+                videoRef.current.muted = false
+                videoRef.current.play().then(() => {
+                  console.log('Video unmuted successfully')
+                  setIsMuted(false)
+                }).catch(e => {
+                  console.log('Could not unmute video, needs user interaction:', e)
+                  videoRef.current.muted = true
+                })
+              }
+            }, 500)
           }).catch(e => {
-            console.log('Autoplay with audio blocked, trying muted:', e)
-            // Fallback to muted
-            videoRef.current.muted = true
-            videoRef.current.play().then(() => {
-              console.log('Video playing muted (fallback)')
-            }).catch(err => console.log('Video play error even muted:', err))
+            console.log('Video play error:', e)
           })
         } else {
           console.log('Video ref not available yet')
@@ -73,28 +79,35 @@ const UserProfile = () => {
       setTimeout(playVideo, 2000)
     }
 
-    // Try to play background audio when user data loads
-    if (user?.backgroundAudio && audioRef.current) {
-      console.log('Background audio detected, attempting to play')
-      const playAudio = () => {
-        if (audioRef.current) {
-          audioRef.current.muted = false
-          audioRef.current.volume = 1.0
-          audioRef.current.play().then(() => {
-            console.log('Background audio playing with sound')
-            setIsMuted(false)
-          }).catch(e => {
-            console.log('Background audio autoplay blocked, trying muted:', e)
-            audioRef.current.muted = true
-            audioRef.current.play().catch(err => console.log('Background audio muted play error:', err))
-          })
-        }
+    // Add document click handler to unmute audio/video after user interaction
+    const handleUserInteraction = () => {
+      console.log('User interaction detected, attempting to unmute')
+      
+      // Unmute video
+      if (videoRef.current && videoRef.current.muted) {
+        videoRef.current.muted = false
+        videoRef.current.play().then(() => {
+          console.log('Video unmuted after user interaction')
+          setIsMuted(false)
+        }).catch(e => console.log('Could not unmute video:', e))
       }
-      playAudio()
-      setTimeout(playAudio, 100)
-      setTimeout(playAudio, 500)
-      setTimeout(playAudio, 1000)
+      
+      // Unmute background audio
+      if (window.backgroundAudio && window.backgroundAudio.muted) {
+        window.backgroundAudio.muted = false
+        window.backgroundAudio.play().then(() => {
+          console.log('Background audio unmuted after user interaction')
+          setIsMuted(false)
+        }).catch(e => console.log('Could not unmute background audio:', e))
+      }
+      
+      // Remove listener after first interaction
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
     }
+
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
     
     // Handle background audio (MP3) - plays in addition to video/image background
     if (user?.backgroundAudio) {
@@ -142,43 +155,11 @@ const UserProfile = () => {
         window.backgroundAudio.pause()
         window.backgroundAudio = null
       }
+      // Remove event listeners
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
     }
   }, [user?.background, user?.backgroundType, user?.muteVideoAudio, user?.backgroundAudio])
-
-  // Enable audio on first user interaction (browsers block autoplay)
-  useEffect(() => {
-    const enableAudio = () => {
-      console.log('User interaction detected, attempting to enable audio')
-      
-      // Enable background audio
-      if (window.backgroundAudio) {
-        console.log('Background audio exists, paused:', window.backgroundAudio.paused, 'muted:', window.backgroundAudio.muted)
-        window.backgroundAudio.muted = false
-        window.backgroundAudio.volume = 1.0
-        window.backgroundAudio.play().then(() => {
-          console.log('Background audio enabled on user interaction, playing:', !window.backgroundAudio.paused)
-          setAudioEnabled(true)
-          setShowEnableAudio(false)
-        }).catch(e => console.log('Failed to play audio on interaction:', e))
-      } else {
-        console.log('No background audio element found')
-      }
-      
-      // Enable video audio if user wants it
-      if (videoRef.current && user?.muteVideoAudio !== true) {
-        console.log('Enabling video audio on user interaction')
-        videoRef.current.muted = false
-        setIsMuted(false)
-      }
-    }
-    
-    // Add click listener to document
-    document.addEventListener('click', enableAudio, { once: true })
-    
-    return () => {
-      document.removeEventListener('click', enableAudio)
-    }
-  }, [user?.muteVideoAudio])
 
   const handleEnableAudio = () => {
     console.log('Enable audio button clicked')
@@ -412,32 +393,6 @@ const UserProfile = () => {
                 </svg>
               )}
             </button>
-          )}
-          {/* Background Audio (separate from video) */}
-          {user.backgroundAudio && (
-            <audio
-              ref={audioRef}
-              src={user.backgroundAudio}
-              autoPlay
-              loop
-              muted={false}
-              className="hidden"
-              onLoadedData={() => {
-                console.log('Background audio loaded')
-                if (audioRef.current) {
-                  audioRef.current.muted = false
-                  audioRef.current.play().then(() => {
-                    console.log('Background audio playing with sound')
-                  }).catch(e => {
-                    console.log('Background audio autoplay blocked, trying muted:', e)
-                    if (audioRef.current) {
-                      audioRef.current.muted = true
-                      audioRef.current.play().catch(err => console.log('Background audio muted play error:', err))
-                    }
-                  })
-                }
-              }}
-            />
           )}
           <div className="absolute inset-0 bg-black/60" />
         </div>

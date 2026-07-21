@@ -29,25 +29,48 @@ export async function onRequest(context) {
 
   // Handle bot requests for user profile pages
   if (isBot && path.startsWith('/users/')) {
-    const username = path.split('/users/')[1];
+    let username = path.split('/users/')[1];
+    
+    // Remove @ prefix if present
+    if (username && username.startsWith('@')) {
+      username = username.substring(1);
+    }
+    
+    // Remove any query parameters
+    if (username) {
+      username = username.split('?')[0];
+    }
+    
     if (username) {
       try {
         // Fetch user data from Firebase
         const firebaseUrl = 'https://framework-osint-default-rtdb.firebaseio.com/users.json';
         const response = await fetch(firebaseUrl);
+        
+        if (!response.ok) {
+          console.error('Firebase fetch failed:', response.status);
+          return new Response(generateDefaultEmbedHTML(), {
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+        
         const users = await response.json();
 
-        if (!users) {
+        if (!users || typeof users !== 'object') {
+          console.error('Invalid users data from Firebase');
           return new Response(generateDefaultEmbedHTML(), {
             headers: { 'Content-Type': 'text/html' }
           });
         }
 
-        const userKey = Object.keys(users).find(key =>
-          users[key].username && users[key].username.toLowerCase() === username.toLowerCase()
-        );
+        // Try to find user by username (case-insensitive)
+        const userKey = Object.keys(users).find(key => {
+          const user = users[key];
+          return user && user.username && user.username.toLowerCase() === username.toLowerCase();
+        });
 
         if (!userKey) {
+          console.log('User not found:', username);
           return new Response(generateDefaultEmbedHTML(), {
             headers: { 'Content-Type': 'text/html' }
           });
