@@ -23,6 +23,8 @@ const UserProfile = () => {
   const [viewCount, setViewCount] = useState(0)
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [showEnableAudio, setShowEnableAudio] = useState(false)
+  const [hasEntered, setHasEntered] = useState(false)
+  const [typingText, setTypingText] = useState('')
   const videoRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
   const unmuteAttemptsRef = useRef(0)
@@ -32,9 +34,39 @@ const UserProfile = () => {
     recordView()
   }, [username])
 
+  // Animated typing effect for intro
+  useEffect(() => {
+    if (hasEntered) return
+    
+    const text = "Press ENTER to enter"
+    let index = 0
+    const interval = setInterval(() => {
+      if (index < text.length) {
+        setTypingText(text.slice(0, index + 1))
+        index++
+      } else {
+        clearInterval(interval)
+      }
+    }, 100)
+    
+    return () => clearInterval(interval)
+  }, [hasEntered])
+
+  // Handle ENTER key press
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && !hasEntered) {
+        setHasEntered(true)
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [hasEntered])
+
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !hasEntered) return
     
     console.log('[Playback] User loaded, backgroundType:', user.backgroundType, 'backgroundAudio:', !!user.backgroundAudio)
     
@@ -49,7 +81,7 @@ const UserProfile = () => {
       audio.loop = true
       audio.volume = 1.0
       audio.preload = 'auto'
-      audio.muted = true // Always start muted for autoplay
+      audio.muted = isMuted
       window.backgroundAudio = audio
       
       console.log('[Playback] Audio created, src:', user.backgroundAudio)
@@ -75,7 +107,7 @@ const UserProfile = () => {
       const playVideo = () => {
         if (videoRef.current) {
           console.log('[Playback] Attempting to play video, muted:', videoRef.current.muted, 'readyState:', videoRef.current.readyState)
-          videoRef.current.muted = true // Always start muted for autoplay
+          videoRef.current.muted = isMuted
           videoRef.current.volume = 1.0
           videoRef.current.play()
             .then(() => console.log('[Playback] Video playing successfully'))
@@ -106,7 +138,7 @@ const UserProfile = () => {
         window.backgroundAudio = null
       }
     }
-  }, [user?.background, user?.backgroundType, user?.backgroundAudio])
+  }, [user?.background, user?.backgroundType, user?.backgroundAudio, hasEntered, isMuted])
 
   // Handle mute state changes
   useEffect(() => {
@@ -224,6 +256,26 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 relative">
+      {/* ENTER Intro Screen */}
+      {!hasEntered && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: hasEntered ? 0 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
+        >
+          <div className="text-center">
+            <p className="text-white text-2xl font-mono tracking-wider">
+              {typingText}
+              <span className="animate-pulse">|</span>
+            </p>
+            <p className="text-white/50 text-sm mt-4 font-mono">
+              [ENTER]
+            </p>
+          </div>
+        </motion.div>
+      )}
       <Helmet>
         <title>@{user?.username || 'User'} | DataWire.cc</title>
         <meta name="theme-color" content="#000000" />
