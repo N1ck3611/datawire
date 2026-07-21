@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
+import ColorSlider from '../components/ui/ColorSlider'
 
 const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
 
@@ -43,6 +44,7 @@ const UserSettings = () => {
   const [enterText, setEnterText] = useState('ENTER')
   const [enterTextError, setEnterTextError] = useState('')
   const [enterTextSuccess, setEnterTextSuccess] = useState('')
+  const [embedColor, setEmbedColor] = useState('#6366f1')
 
   useEffect(() => {
     fetchUserProfile()
@@ -95,8 +97,13 @@ const UserSettings = () => {
         if (data.user.status) {
           setStatus(data.user.status)
         }
-        if (data.user.enterText) {
+        if (data.user.enterText && data.user.enterText.trim()) {
           setEnterText(data.user.enterText)
+        } else {
+          setEnterText('ENTER')
+        }
+        if (data.user.embedColor) {
+          setEmbedColor(data.user.embedColor)
         }
       } else {
         console.error('Profile fetch failed:', data.error)
@@ -654,6 +661,30 @@ const UserSettings = () => {
       }
     } catch (error) {
       setEnterTextError('Network error. Please try again.')
+    }
+  }
+
+  const handleEmbedColorUpdate = async (color) => {
+    setEmbedColor(color)
+    
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/embed-color`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ embedColor: color })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setUser({ ...user, embedColor: color })
+      }
+    } catch (error) {
+      console.error('Failed to update embed color:', error)
     }
   }
 
@@ -1332,78 +1363,47 @@ const UserSettings = () => {
                 <circle cx="13.5" cy="6.5" r=".5"></circle>
                 <circle cx="17.5" cy="10.5" r=".5"></circle>
                 <circle cx="8.5" cy="7.5" r=".5"></circle>
-                <circle cx="6.5" cy="12.5" r=".5"></circle>
+                <circle cx="6" cy="12.5" r=".5"></circle>
                 <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
               </svg>
               Accent Color
             </h2>
             
-            <div className="space-y-6">
-              {/* Color Preview */}
-              <div className="flex items-center gap-4">
-                <div 
-                  className="w-16 h-16 rounded-xl border-2 border-white/20 shadow-lg"
-                  style={{ backgroundColor: accentColor }}
-                />
-                <div>
-                  <p className="text-white font-medium">Current Accent</p>
-                  <p className="text-osint-muted text-sm">{accentColor}</p>
-                </div>
-              </div>
+            <ColorSlider 
+              value={accentColor} 
+              onChange={handleColorChange}
+              label="Dashboard Accent Color"
+            />
 
-              {/* Preset Colors */}
-              <div>
-                <label className="block text-sm text-osint-muted mb-3">Preset Colors</label>
-                <div className="grid grid-cols-6 gap-3">
-                  {presetColors.map((color) => (
-                    <motion.button
-                      key={color}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleColorChange(color)}
-                      className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                        accentColor === color 
-                          ? 'border-white shadow-lg scale-110' 
-                          : 'border-white/20 hover:border-white/50'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </div>
+            {/* Reset Button */}
+            <Button
+              onClick={() => handleColorChange('#6366f1')}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Reset to Default
+            </Button>
+          </GlassCard>
 
-              {/* Custom Color Picker */}
-              <div>
-                <label className="block text-sm text-osint-muted mb-3">Custom Color</label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="color"
-                    value={accentColor}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="w-16 h-12 rounded-lg cursor-pointer border-2 border-white/20 bg-transparent"
-                  />
-                  <div className="flex-1">
-                    <Input
-                      type="text"
-                      value={hexInput}
-                      onChange={handleHexChange}
-                      placeholder="#000000"
-                      className="w-full uppercase"
-                      maxLength={7}
-                    />
-                  </div>
-                </div>
-              </div>
+          {/* Embed Color Section */}
+          <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
+            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg>
+              Profile Embed Color
+            </h2>
+            
+            <ColorSlider 
+              value={embedColor} 
+              onChange={handleEmbedColorUpdate}
+              label="Discord Embed Color"
+            />
 
-              {/* Reset Button */}
-              <Button
-                onClick={() => handleColorChange('#6366f1')}
-                variant="outline"
-                className="w-full"
-              >
-                Reset to Default
-              </Button>
-            </div>
+            <p className="text-xs text-white/50 mt-3">
+              This color appears on Discord embeds when your profile is shared
+            </p>
           </GlassCard>
         </motion.div>
       </div>

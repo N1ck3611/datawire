@@ -11,6 +11,23 @@
     @apply bg-background text-white font-sans antialiased;
   }
   
+  /* Accent color utility class */
+  .text-accent {
+    color: var(--accent-color);
+  }
+  
+  .bg-accent {
+    background-color: var(--accent-color);
+  }
+  
+  .border-accent {
+    border-color: var(--accent-color);
+  }
+  
+  .ring-accent {
+    --tw-ring-color: var(--accent-color);
+  }
+  
   /* Hide ReactFlow attribution */
   .react-flow__attribution {
     display: none !important;
