@@ -37,24 +37,17 @@ const UserProfile = () => {
     // Try to play video when user data loads
     if (user?.backgroundType === 'video' && videoRef.current) {
       const playVideo = () => {
-        if (!videoRef.current) return
-        
-        // Try with audio first
-        videoRef.current.muted = false
-        videoRef.current.volume = 1.0
-        videoRef.current.play().then(() => {
-          console.log('Video playing with audio')
-          setIsMuted(false)
-        }).catch(() => {
-          // Fallback to muted
-          videoRef.current.muted = true
+        if (videoRef.current) {
+          videoRef.current.muted = isMuted
+          videoRef.current.volume = 1.0
           videoRef.current.play().catch(e => console.log('Video play error:', e))
-        })
+        }
       }
       
       playVideo()
       setTimeout(playVideo, 100)
       setTimeout(playVideo, 500)
+      setTimeout(playVideo, 1000)
     }
 
     // Handle background audio
@@ -70,24 +63,9 @@ const UserProfile = () => {
       audio.preload = 'auto'
       window.backgroundAudio = audio
       
-      const playAudio = () => {
-        if (!window.backgroundAudio) return
-        
-        // Try with audio first
-        window.backgroundAudio.muted = false
-        window.backgroundAudio.play().then(() => {
-          console.log('Audio playing with sound')
-          setIsMuted(false)
-        }).catch(() => {
-          // Fallback to muted
-          window.backgroundAudio.muted = true
-          window.backgroundAudio.play().catch(e => console.log('Audio play error:', e))
-        })
-      }
-      
-      playAudio()
-      setTimeout(playAudio, 100)
-      setTimeout(playAudio, 500)
+      // Start muted for autoplay compliance
+      audio.muted = isMuted
+      audio.play().catch(e => console.log('Audio play error:', e))
     }
     
     return () => {
@@ -97,6 +75,16 @@ const UserProfile = () => {
       }
     }
   }, [user?.background, user?.backgroundType, user?.backgroundAudio])
+
+  // Separate effect to handle mute state changes
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted
+    }
+    if (window.backgroundAudio) {
+      window.backgroundAudio.muted = isMuted
+    }
+  }, [isMuted])
 
   const handleEnableAudio = () => {
     console.log('Enable audio button clicked')
@@ -246,24 +234,12 @@ const UserProfile = () => {
               loading="eager"
             />
           )}
-          {/* Enable Audio Button (shows when autoplay is blocked) */}
-          {showEnableAudio && (
-            <button
-              onClick={handleEnableAudio}
-              className="fixed top-4 right-4 z-50 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full backdrop-blur-sm transition-all cursor-pointer flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-              <span>Enable Audio</span>
-            </button>
-          )}
           {/* Client-side mute toggle */}
           {(user.backgroundType === 'video' || user?.backgroundAudio) && (
             <button
               onClick={(e) => {
                 e.stopPropagation()
+                e.preventDefault()
                 const newMutedState = !isMuted
                 setIsMuted(newMutedState)
                 localStorage.setItem('profileMuted', newMutedState)
@@ -275,8 +251,9 @@ const UserProfile = () => {
                   window.backgroundAudio.muted = newMutedState
                 }
               }}
-              className="fixed bottom-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
+              className="fixed bottom-4 right-4 z-[100] bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer"
               title="Toggle sound"
+              style={{ pointerEvents: 'auto' }}
             >
               {isMuted ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
