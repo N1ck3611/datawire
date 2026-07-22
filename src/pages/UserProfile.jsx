@@ -38,17 +38,42 @@ const UserProfile = () => {
     if (hasEntered) return
     
     setTypingText('')
-    const text = (user?.enterText && typeof user.enterText === 'string' && user.enterText.trim()) ? user.enterText.trim() : "ENTER"
     
-    console.log('[UserProfile] Typing text:', text, 'User enterText:', user?.enterText)
+    // Ensure enterText is a proper string
+    let rawEnterText = user?.enterText
+    console.log('[UserProfile] Raw enterText from user:', rawEnterText, 'Type:', typeof rawEnterText)
+    
+    // Convert to string and handle any edge cases
+    let text = "ENTER"
+    if (rawEnterText) {
+      if (typeof rawEnterText === 'string') {
+        text = rawEnterText.trim()
+      } else if (typeof rawEnterText === 'object' && rawEnterText !== null) {
+        // If it's an object/array, try to convert it
+        text = String(rawEnterText).trim()
+      } else {
+        text = String(rawEnterText).trim()
+      }
+    }
+    
+    // Ensure it's not empty after processing
+    if (!text || text === 'undefined' || text === 'null') {
+      text = "ENTER"
+    }
+    
+    console.log('[UserProfile] Final typing text:', text, 'Length:', text.length)
     
     let index = 0
     
     const typeNextChar = () => {
       if (index < text.length) {
-        setTypingText(prev => prev + text[index])
+        const char = text.charAt(index)
+        console.log('[UserProfile] Typing char at index', index, ':', char, 'Code:', char.charCodeAt(0))
+        setTypingText(prev => prev + char)
         index++
         setTimeout(typeNextChar, 100)
+      } else {
+        console.log('[UserProfile] Typing complete, final text:', typingText)
       }
     }
     
