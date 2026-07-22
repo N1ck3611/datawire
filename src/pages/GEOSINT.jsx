@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Upload, MapPin, AlertCircle, Loader2, Globe, Navigation, Eye, Brain, CheckCircle, XCircle, ExternalLink, Download } from 'lucide-react'
+import { Upload, MapPin, AlertCircle, Loader2, Globe, Navigation, Eye, Brain, CheckCircle, XCircle, ExternalLink, Download, Search, FileText, Shield } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 
-const GEOSINT = () => {
+const GEOINT = () => {
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [results, setResults] = useState(null)
   const [error, setError] = useState('')
-  const [geosintId, setGeosintId] = useState(null)
+  const [geointId, setGeosintId] = useState(null)
   const [progress, setProgress] = useState(0)
   const [stage, setStage] = useState('')
   const [activityLog, setActivityLog] = useState([])
@@ -38,9 +38,9 @@ const GEOSINT = () => {
   }
 
   const analyzeImage = async () => {
-    console.log('[GEOSINT] Starting analysis')
+    console.log('[GEOINT] Starting analysis')
     if (!image) {
-      console.log('[GEOSINT] No image, returning')
+      console.log('[GEOINT] No image, returning')
       return
     }
 
@@ -52,33 +52,33 @@ const GEOSINT = () => {
     setActivityLog([])
 
     try {
-      console.log('[GEOSINT] Converting image to base64')
+      console.log('[GEOINT] Converting image to base64')
       // Convert image to base64
       const base64Image = await new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = () => {
-          console.log('[GEOSINT] FileReader loaded')
+          console.log('[GEOINT] FileReader loaded')
           resolve(reader.result)
         }
         reader.onerror = (error) => {
-          console.error('[GEOSINT] FileReader error:', error)
+          console.error('[GEOINT] FileReader error:', error)
           reject(error)
         }
         reader.readAsDataURL(image)
       })
 
-      console.log('[GEOSINT] Base64 conversion complete, length:', base64Image.length)
+      console.log('[GEOINT] Base64 conversion complete, length:', base64Image.length)
 
       const token = localStorage.getItem('auth_token')
-      console.log('[GEOSINT] Token present:', !!token)
+      console.log('[GEOINT] Token present:', !!token)
       if (!token) {
-        throw new Error('Please login to use GEOSINT')
+        throw new Error('Please login to use GEOINT')
       }
 
       const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
-      console.log('[GEOSINT] Sending fetch request to:', `${API_BASE}/api/geosint/analyze`)
+      console.log('[GEOINT] Sending fetch request to:', `${API_BASE}/api/geoint/analyze`)
 
-      const response = await fetch(`${API_BASE}/api/geosint/analyze`, {
+      const response = await fetch(`${API_BASE}/api/geoint/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,19 +87,19 @@ const GEOSINT = () => {
         body: JSON.stringify({ imageData: base64Image })
       })
 
-      console.log('[GEOSINT] Response received, status:', response.status)
+      console.log('[GEOINT] Response received, status:', response.status)
 
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`)
       }
 
       const data = await response.json()
-      console.log('[GEOSINT] Response data:', data)
+      console.log('[GEOINT] Response data:', data)
 
-      if (data.success && data.geosintId) {
-        setGeosintId(data.geosintId)
+      if (data.success && data.geointId) {
+        setGeosintId(data.geointId)
         // Start polling for progress
-        startProgressPolling(data.geosintId, token, API_BASE)
+        startProgressPolling(data.geointId, token, API_BASE)
       } else if (data.success && data.results) {
         setResults(data.results)
       } else {
@@ -107,7 +107,7 @@ const GEOSINT = () => {
       }
 
     } catch (err) {
-      console.error('[GEOSINT] Analysis error:', err)
+      console.error('[GEOINT] Analysis error:', err)
       setError(err.message || 'Failed to analyze image')
       setAnalyzing(false)
     }
@@ -116,7 +116,7 @@ const GEOSINT = () => {
   const startProgressPolling = (id, token, apiBase) => {
     const pollProgress = async () => {
       try {
-        const response = await fetch(`${apiBase}/api/geosint-progress?id=${id}`, {
+        const response = await fetch(`${apiBase}/api/geoint-progress?id=${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -141,7 +141,7 @@ const GEOSINT = () => {
           }
         }
       } catch (err) {
-        console.error('[GEOSINT] Progress polling error:', err)
+        console.error('[GEOINT] Progress polling error:', err)
       }
     }
 
@@ -176,7 +176,7 @@ const GEOSINT = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">GEOSINT</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">GEOINT</h1>
           <p className="text-white/60">AI-powered geolocation analysis using computer vision</p>
         </motion.div>
 
@@ -353,7 +353,7 @@ const GEOSINT = () => {
                     }
                     
                     content += separator + '\n';
-                    content += 'Generated by Datawire.cc GEOSINT Analysis\n';
+                    content += 'Generated by Datawire.cc GEOINT Analysis\n';
                     content += 'Date: ' + new Date().toLocaleString() + '\n';
                     content += 'Powered by https://datawire.cc\n';
                     content += 'Analysis made by https://datawire.cc';
@@ -362,7 +362,7 @@ const GEOSINT = () => {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `datawire-geosint-${Date.now()}.txt`;
+                    a.download = `datawire-geoint-${Date.now()}.txt`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -389,11 +389,11 @@ const GEOSINT = () => {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg"
+                    className="flex items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-lg"
                   >
-                    <Brain className="w-5 h-5 text-blue-400" />
+                    <Brain className="w-5 h-5 text-white/60" />
                     <div>
-                      <p className="text-blue-400 text-sm font-medium">Analysis Mode</p>
+                      <p className="text-white/60 text-sm font-medium">Analysis Mode</p>
                       <p className="text-white">{results.classification}</p>
                     </div>
                   </motion.div>
@@ -406,8 +406,8 @@ const GEOSINT = () => {
                   className="p-4 bg-white/5 rounded-lg border border-white/10"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <MapPin className="w-5 h-5 text-green-400" />
-                    <h3 className="text-white font-semibold">📍 Estimated Location</h3>
+                    <MapPin className="w-5 h-5 text-white/60" />
+                    <h3 className="text-white font-semibold">Estimated Location</h3>
                   </div>
                   <div className="space-y-2 text-sm">
                     {(results.country || results.region || results.city) && (
@@ -456,8 +456,8 @@ const GEOSINT = () => {
                     className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <Navigation className="w-5 h-5 text-purple-400" />
-                      <h3 className="text-white font-semibold">🌐 Coordinates</h3>
+                      <Navigation className="w-5 h-5 text-white/60" />
+                      <h3 className="text-white font-semibold">Coordinates</h3>
                     </div>
                     <div className="space-y-2 text-sm">
                       <div className="grid grid-cols-2 gap-2">
@@ -476,7 +476,7 @@ const GEOSINT = () => {
                           href={`https://www.google.com/maps?q=${results.latitude},${results.longitude}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg text-blue-400 text-xs transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white/80 text-xs transition-colors"
                         >
                           <Globe className="w-3 h-3" />
                           Google Maps
@@ -486,7 +486,7 @@ const GEOSINT = () => {
                           href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${results.latitude},${results.longitude}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-lg text-green-400 text-xs transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white/80 text-xs transition-colors"
                         >
                           <Eye className="w-3 h-3" />
                           Street View
@@ -496,7 +496,7 @@ const GEOSINT = () => {
                           href={`https://www.openstreetmap.org/?mlat=${results.latitude}&mlon=${results.longitude}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg text-orange-400 text-xs transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white/80 text-xs transition-colors"
                         >
                           <Globe className="w-3 h-3" />
                           OpenStreetMap
@@ -515,8 +515,8 @@ const GEOSINT = () => {
                   className="p-4 bg-white/5 rounded-lg border border-white/10"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <AlertCircle className="w-5 h-5 text-yellow-400" />
-                    <h3 className="text-white font-semibold">⚠️ Confidence Assessment</h3>
+                    <AlertCircle className="w-5 h-5 text-white/60" />
+                    <h3 className="text-white font-semibold">Confidence Assessment</h3>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -537,10 +537,10 @@ const GEOSINT = () => {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className={`h-full ${
                           parseInt(results.confidence) >= 70
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500'
                             : parseInt(results.confidence) >= 40
-                            ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
-                            : 'bg-gradient-to-r from-red-500 to-pink-500'
+                            ? 'bg-gradient-to-r from-yellow-300 to-yellow-400'
+                            : 'bg-gradient-to-r from-red-500 to-red-600'
                         }`}
                       />
                     </div>
@@ -556,8 +556,8 @@ const GEOSINT = () => {
                     className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <Brain className="w-5 h-5 text-cyan-400" />
-                      <h3 className="text-white font-semibold">🧠 AI Reasoning</h3>
+                      <Brain className="w-5 h-5 text-white/60" />
+                      <h3 className="text-white font-semibold">AI Reasoning</h3>
                     </div>
                     <p className="text-white/80 text-sm leading-relaxed">{results.analysis_summary}</p>
                   </motion.div>
@@ -572,13 +572,13 @@ const GEOSINT = () => {
                     className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <Eye className="w-5 h-5 text-pink-400" />
-                      <h3 className="text-white font-semibold">🔍 Evidence Found</h3>
+                      <Eye className="w-5 h-5 text-white/60" />
+                      <h3 className="text-white font-semibold">Evidence Found</h3>
                     </div>
                     <ul className="space-y-1.5">
                       {results.visual_evidence.map((evidence, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="w-4 h-4 text-white/60 mt-0.5 flex-shrink-0" />
                           <span className="text-white/80">{evidence}</span>
                         </li>
                       ))}
@@ -596,7 +596,7 @@ const GEOSINT = () => {
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <MapPin className="w-5 h-5 text-white/60" />
-                      <h3 className="text-white font-semibold">📌 Alternative Locations</h3>
+                      <h3 className="text-white font-semibold">Alternative Locations</h3>
                     </div>
                     <div className="space-y-2">
                       {results.alternative_locations.map((alt, idx) => (
@@ -615,16 +615,16 @@ const GEOSINT = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20"
+                    className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <Brain className="w-5 h-5 text-purple-400" />
-                      <h3 className="text-white font-semibold">🧪 Independent Verification</h3>
+                      <Brain className="w-5 h-5 text-white/60" />
+                      <h3 className="text-white font-semibold">Independent Verification</h3>
                     </div>
                     <div className="space-y-3 text-sm">
                       {results.reviewer_analysis.review_summary && (
                         <div>
-                          <p className="text-purple-400/80 font-medium mb-1">Review Summary</p>
+                          <p className="text-white/60 font-medium mb-1">Review Summary</p>
                           <p className="text-white/80">{results.reviewer_analysis.review_summary}</p>
                         </div>
                       )}
@@ -657,8 +657,8 @@ const GEOSINT = () => {
                       {results.reviewer_analysis.reproducibility && (
                         <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
                           <CheckCircle className={`w-4 h-4 ${
-                            results.reviewer_analysis.reproducibility === 'yes' ? 'text-green-400' :
-                            results.reviewer_analysis.reproducibility === 'partially' ? 'text-yellow-400' :
+                            results.reviewer_analysis.reproducibility === 'yes' ? 'text-yellow-400' :
+                            results.reviewer_analysis.reproducibility === 'partially' ? 'text-yellow-300' :
                             'text-red-400'
                           }`} />
                           <span className="text-white/80">
@@ -694,7 +694,7 @@ const GEOSINT = () => {
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5 }}
-                  className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
+                  className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500"
                 />
               </div>
 
@@ -719,7 +719,7 @@ const GEOSINT = () => {
                         transition={{ delay: idx * 0.1 }}
                         className="flex items-center gap-2 text-sm"
                       >
-                        <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-white/60 flex-shrink-0" />
                         <span className="text-white/80">{activity}</span>
                       </motion.div>
                     ))}
@@ -735,19 +735,19 @@ const GEOSINT = () => {
           <h3 className="text-lg font-semibold text-white mb-3">Professional GeoINT Analysis Pipeline</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-white/60 text-sm">
             <div>
-              <p className="font-medium text-white mb-1">🔍 Phase 1: Visual Collection</p>
+              <p className="font-medium text-white mb-1 flex items-center gap-2"><Search className="w-4 h-4" /> Phase 1: Visual Collection</p>
               <p>Extracts all geographic indicators: text, signs, architecture, terrain, vegetation, and cultural markers</p>
             </div>
             <div>
-              <p className="font-medium text-white mb-1">🧠 Phase 2: Geographic Reasoning</p>
+              <p className="font-medium text-white mb-1 flex items-center gap-2"><Brain className="w-4 h-4" /> Phase 2: Geographic Reasoning</p>
               <p>Generates multiple candidate locations, compares evidence, and identifies strongest matches</p>
             </div>
             <div>
-              <p className="font-medium text-white mb-1">📊 Phase 3: Intelligence Report</p>
+              <p className="font-medium text-white mb-1 flex items-center gap-2"><FileText className="w-4 h-4" /> Phase 3: Intelligence Report</p>
               <p>Returns structured JSON with coordinates, confidence, evidence, and alternative locations</p>
             </div>
             <div>
-              <p className="font-medium text-white mb-1">🧪 Phase 4: Independent Verification</p>
+              <p className="font-medium text-white mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> Phase 4: Independent Verification</p>
               <p>Senior analyst reviewer validates findings, adjusts confidence, and assesses reproducibility</p>
             </div>
           </div>
@@ -757,4 +757,4 @@ const GEOSINT = () => {
   )
 }
 
-export default GEOSINT
+export default GEOINT
