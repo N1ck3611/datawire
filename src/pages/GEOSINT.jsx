@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Upload, MapPin, AlertCircle, Loader2, Globe, Navigation, Eye, Brain, CheckCircle, XCircle, ExternalLink } from 'lucide-react'
+import { Upload, MapPin, AlertCircle, Loader2, Globe, Navigation, Eye, Brain, CheckCircle, XCircle, ExternalLink, Download } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 
@@ -199,7 +199,133 @@ const GEOSINT = () => {
 
           {/* Results Section */}
           <GlassCard className="p-6 bg-white/5 backdrop-blur-xl border border-white/10">
-            <h2 className="text-xl font-semibold text-white mb-4">GeoINT Analysis Report</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">GeoINT Analysis Report</h2>
+              {results && (
+                <button
+                  onClick={() => {
+                    const separator = '═'.repeat(100);
+                    let content = '██████╗  █████╗ ████████╗ █████╗ ██╗    ██╗██╗██████╗ ███████╗    ██████╗ ██████╗\n';
+                    content += '██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║    ██║██║██╔══██╗██╔════╝   ██╔════╝██╔════╝\n';
+                    content += '██║  ██║███████║   ██║   ███████║██║ █╗ ██║██║██████╔╝█████╗     ██║     ██║     \n';
+                    content += '██║  ██║██╔══██║   ██║   ██╔══██║██║███╗██║██║██╔══██╗██╔══╝     ██║     ██║     \n';
+                    content += '██████╔╝██║  ██║   ██║   ██║  ██║╚███╔███╔╝██║██║  ██║███████╗   ╚██████╗╚██████╗\n';
+                    content += '╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚══════╝    ╚═════╝ ╚═════╝\n\n';
+                    content += separator + '\n';
+                    content += 'GEOSPATIAL INTELLIGENCE ANALYSIS REPORT\n';
+                    content += separator + '\n\n';
+                    
+                    if (results.classification) {
+                      content += 'ANALYSIS MODE\n';
+                      content += separator + '\n';
+                      content += results.classification + '\n\n';
+                    }
+                    
+                    if (results.country || results.region || results.city || results.area || results.estimated_address) {
+                      content += 'ESTIMATED LOCATION\n';
+                      content += separator + '\n';
+                      if (results.country) content += `Country: ${results.country}\n`;
+                      if (results.region) content += `Region: ${results.region}\n`;
+                      if (results.city) content += `City: ${results.city}\n`;
+                      if (results.area) content += `Area: ${results.area}\n`;
+                      if (results.estimated_address) content += `Address: ${results.estimated_address}\n`;
+                      content += '\n';
+                    }
+                    
+                    if (results.latitude && results.longitude) {
+                      content += 'COORDINATES\n';
+                      content += separator + '\n';
+                      content += 'Latitude: ' + results.latitude + '\n';
+                      content += 'Longitude: ' + results.longitude + '\n';
+                      content += 'Google Maps: https://www.google.com/maps?q=' + results.latitude + ',' + results.longitude + '\n';
+                      content += 'Street View: https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + results.latitude + ',' + results.longitude + '\n';
+                      content += 'OpenStreetMap: https://www.openstreetmap.org/?mlat=' + results.latitude + '&mlon=' + results.longitude + '\n';
+                      content += '\n';
+                    }
+                    
+                    if (results.confidence) {
+                      content += 'CONFIDENCE ASSESSMENT\n';
+                      content += separator + '\n';
+                      content += `Confidence Score: ${results.confidence}%\n`;
+                      if (results.original_confidence && results.original_confidence !== results.confidence) {
+                        content += `Original Confidence: ${results.original_confidence}%\n`;
+                      }
+                      content += '\n';
+                    }
+                    
+                    if (results.analysis_summary) {
+                      content += 'AI REASONING\n';
+                      content += separator + '\n';
+                      content += results.analysis_summary + '\n\n';
+                    }
+                    
+                    if (results.visual_evidence && results.visual_evidence.length > 0) {
+                      content += 'EVIDENCE FOUND\n';
+                      content += separator + '\n';
+                      results.visual_evidence.forEach((evidence, idx) => {
+                        content += `${idx + 1}. ${evidence}\n`;
+                      });
+                      content += '\n';
+                    }
+                    
+                    if (results.alternative_locations && results.alternative_locations.length > 0) {
+                      content += 'ALTERNATIVE LOCATIONS\n';
+                      content += separator + '\n';
+                      results.alternative_locations.forEach((alt, idx) => {
+                        content += `${idx + 1}. ${alt.location} (Confidence: ${alt.confidence}%)\n`;
+                      });
+                      content += '\n';
+                    }
+                    
+                    if (results.reviewer_analysis) {
+                      content += 'INDEPENDENT VERIFICATION\n';
+                      content += separator + '\n';
+                      if (results.reviewer_analysis.review_summary) {
+                        content += `Review Summary: ${results.reviewer_analysis.review_summary}\n\n`;
+                      }
+                      if (results.reviewer_analysis.weaknesses && results.reviewer_analysis.weaknesses.length > 0) {
+                        content += 'Identified Weaknesses:\n';
+                        results.reviewer_analysis.weaknesses.forEach((weakness, idx) => {
+                          content += `  ${idx + 1}. ${weakness}\n`;
+                        });
+                        content += '\n';
+                      }
+                      if (results.reviewer_analysis.missing_evidence && results.reviewer_analysis.missing_evidence.length > 0) {
+                        content += 'Missing Evidence:\n';
+                        results.reviewer_analysis.missing_evidence.forEach((evidence, idx) => {
+                          content += `  ${idx + 1}. ${evidence}\n`;
+                        });
+                        content += '\n';
+                      }
+                      if (results.reviewer_analysis.reproducibility) {
+                        content += `Reproducibility: ${results.reviewer_analysis.reproducibility}\n`;
+                      }
+                      content += '\n';
+                    }
+                    
+                    content += separator + '\n';
+                    content += 'Generated by Datawire.cc GEOSINT Analysis\n';
+                    content += 'Date: ' + new Date().toLocaleString() + '\n';
+                    content += 'Powered by https://datawire.cc\n';
+                    content += 'Analysis made by https://datawire.cc';
+                    
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `datawire-geosint-${Date.now()}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                  }}
+                  className="px-4 py-2 bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Report
+                </button>
+              )}
+            </div>
             
             {analyzing ? (
               <div className="flex flex-col items-center justify-center h-64 space-y-4">

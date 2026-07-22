@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 
 const ColorSlider = ({ value, onChange, label, onSave }) => {
@@ -8,6 +8,12 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
   const [isDragging, setIsDragging] = useState(false)
   const canvasRef = useRef(null)
   const sliderRef = useRef(null)
+  const onChangeRef = useRef(onChange)
+
+  // Keep onChange ref updated
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
 
   useEffect(() => {
     if (value) {
@@ -63,7 +69,8 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
     return `#${r}${g}${b}`
   }
 
-  const handleColorPickerClick = (e) => {
+  const handleColorPickerClick = useCallback((e) => {
+    if (!sliderRef.current) return
     const rect = sliderRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
@@ -74,13 +81,13 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
     setSaturation(newSaturation)
     setLightness(newLightness)
     const hex = hslToHex(hue, newSaturation, newLightness)
-    onChange(hex)
-  }
+    onChangeRef.current(hex)
+  }, [hue])
 
-  const handleColorPickerDrag = (e) => {
+  const handleColorPickerDrag = useCallback((e) => {
     if (!isDragging) return
     handleColorPickerClick(e)
-  }
+  }, [isDragging, handleColorPickerClick])
 
   const currentColor = hslToHex(hue, saturation, lightness)
 
@@ -161,7 +168,7 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
               const newHue = parseInt(e.target.value)
               setHue(newHue)
               const hex = hslToHex(newHue, saturation, lightness)
-              onChange(hex)
+              onChangeRef.current(hex)
             }}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />

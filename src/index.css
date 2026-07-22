@@ -4,27 +4,41 @@
 
 @layer base {
   :root {
-    --accent-color: #6366f1;
+    --accent-color: #ffffff;
   }
   
   body {
     @apply bg-background text-white font-sans antialiased;
+    overflow-x: hidden;
+    min-width: 320px;
   }
   
-  /* Accent color utility class */
-  .text-accent {
+  * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  p, span, div, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  /* Dashboard-specific accent color utility class */
+  .dashboard-accent {
     color: var(--accent-color);
   }
   
-  .bg-accent {
+  .dashboard-accent-bg {
     background-color: var(--accent-color);
   }
   
-  .border-accent {
+  .dashboard-accent-border {
     border-color: var(--accent-color);
   }
   
-  .ring-accent {
+  .dashboard-accent-ring {
     --tw-ring-color: var(--accent-color);
   }
   

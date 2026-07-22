@@ -678,7 +678,7 @@ const UserSettings = () => {
     }
   }
 
-  const handleEmbedColorUpdate = async (color) => {
+  const handleEmbedColorUpdate = (color) => {
     setEmbedColor(color)
     setEmbedColorSuccess('')
   }
@@ -1101,27 +1101,50 @@ const UserSettings = () => {
                           onPause={() => setIsAudioPlaying(false)}
                         />
                         <div className="flex-1">
-                          <div className="flex items-center gap-1 mb-1">
-                            <div className="flex gap-1 items-end h-4">
-                              {[...Array(12)].map((_, i) => (
+                          <div className="flex items-center gap-1 mb-2">
+                            <div className="flex gap-1 items-end h-8 px-2 py-1 bg-black/30 rounded-lg border border-white/10">
+                              {[...Array(16)].map((_, i) => (
                                 <motion.div
                                   key={i}
                                   animate={isAudioPlaying ? {
-                                    height: [4, 20, 4],
+                                    height: [4, 24, 8, 20, 4],
+                                    scaleY: [1, 1.5, 0.8, 1.3, 1],
                                   } : {
                                     height: 4,
+                                    scaleY: 1,
                                   }}
                                   transition={{
-                                    duration: 0.6,
+                                    duration: 0.8,
                                     repeat: isAudioPlaying ? Infinity : 0,
-                                    delay: i * 0.05,
+                                    delay: i * 0.08,
+                                    ease: "easeInOut"
                                   }}
-                                  className="w-1 bg-white/60 rounded-full"
+                                  className="w-1.5 bg-gradient-to-t from-white/40 to-white/90 rounded-full shadow-lg shadow-white/20"
                                 />
                               ))}
                             </div>
                           </div>
-                          <span className="text-white text-xs">Audio file selected</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white text-xs font-medium">Audio Preview</span>
+                            <div className="flex gap-1">
+                              {[...Array(3)].map((_, i) => (
+                                <motion.div
+                                  key={i}
+                                  animate={isAudioPlaying ? {
+                                    opacity: [0.4, 1, 0.4],
+                                  } : {
+                                    opacity: 0.4,
+                                  }}
+                                  transition={{
+                                    duration: 1.5,
+                                    repeat: isAudioPlaying ? Infinity : 0,
+                                    delay: i * 0.3,
+                                  }}
+                                  className="w-1 h-1 bg-green-400 rounded-full"
+                                />
+                              ))}
+                            </div>
+                          </div>
                         </div>
                         <button
                           onClick={handleRemoveBackgroundAudio}
@@ -1418,10 +1441,10 @@ const UserSettings = () => {
             </form>
           </GlassCard>
 
-          {/* Accent Color Section */}
+            {/* Accent Color Section */}
           <GlassCard className="mb-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-color)' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <circle cx="13.5" cy="6.5" r=".5"></circle>
                 <circle cx="17.5" cy="10.5" r=".5"></circle>
                 <circle cx="8.5" cy="7.5" r=".5"></circle>
@@ -1451,8 +1474,8 @@ const UserSettings = () => {
             {/* Reset Button */}
             <Button
               onClick={() => {
-                handleAccentColorUpdate('#6366f1')
-                handleSaveAccentColor('#6366f1')
+                handleAccentColorUpdate('#ffffff')
+                handleSaveAccentColor('#ffffff')
               }}
               variant="outline"
               className="w-full mt-4"
