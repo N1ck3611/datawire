@@ -9,7 +9,6 @@ const Navbar = () => {
   const navItems = [
     { name: 'Home', path: '/', external: false },
     { name: 'Commands', path: '/commands', external: false },
-    { name: 'GEOINT', path: '/geoint', external: false },
     { name: 'Add Bot', path: '/add-bot', external: false, highlight: true },
     { name: 'Purchase', path: '/purchase', external: false, highlight: true },
     { name: 'Dashboard', path: '/dashboard', external: false },

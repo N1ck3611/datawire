@@ -107,17 +107,6 @@ const PageMeta = () => {
   )
 }
 
-const ConditionalAnnouncement = () => {
-  const location = useLocation()
-  
-  // Hide on profile pages and settings
-  if (location.pathname.startsWith('/users/') || location.pathname === '/settings') {
-    return null
-  }
-  
-  return <AnnouncementBanner />
-}
-
 function App() {
   return (
     <Router>
@@ -136,7 +125,7 @@ function App() {
           <Route path="*" element={
             <>
               <Navbar />
-              <ConditionalAnnouncement />
+              <AnnouncementBanner />
               <EyeBackground />
               <main className="flex-1 relative z-10">
                 <Routes>

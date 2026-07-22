@@ -1588,7 +1588,7 @@ Lookup made by https://datawire.cc
   const sidebarItems = [
     { id: 'search', icon: Search, label: 'Search' },
     { id: 'ai-osint', icon: Brain, label: 'Live Intel' },
-    { id: 'geosint', icon: Camera, label: 'GEOSINT' },
+    { id: 'geosint', icon: Camera, label: 'GEOINT' },
     { id: 'intelx', icon: CloudDownload, label: 'IntelX' },
     { id: 'geolocation', icon: Map, label: 'Geolocation' },
     { id: 'mapping', icon: Link2, label: 'Lead Mapping' },
