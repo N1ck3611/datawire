@@ -490,13 +490,282 @@ const AIOsintSearch = () => {
           </div>
 
           <div className="prose prose-invert max-w-none">
-            {/* Executive Summary */}
-            <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
-              <h4 className="text-lg font-semibold text-white mb-2">Executive Summary</h4>
-              <p className="text-osint-muted text-sm">{report.executiveSummary}</p>
-            </div>
+            {/* Analysis Method Badge */}
+            {report.metadata?.analysisMethod && (
+              <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <i className='bx bx-brain text-blue-400'></i>
+                  <span className="text-blue-400 text-sm font-medium">Analysis Method</span>
+                </div>
+                <p className="text-white text-sm mt-1">{report.metadata.analysisMethod}</p>
+              </div>
+            )}
 
-            {/* Investigation Overview */}
+            {/* AI Analysis Summary */}
+            {report.aiAnalysis?.summary && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">📊 Intelligence Summary</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <p className="text-osint-muted text-xs">Confidence Score</p>
+                    <p className="text-white font-bold text-xl">{report.aiAnalysis.summary.confidence}</p>
+                  </div>
+                  <div>
+                    <p className="text-osint-muted text-xs">Investigation Depth</p>
+                    <p className="text-white font-medium">{report.aiAnalysis.summary.investigation_depth}</p>
+                  </div>
+                  <div>
+                    <p className="text-osint-muted text-xs">Key Findings</p>
+                    <p className="text-white font-medium">{report.aiAnalysis.summary.key_findings?.length || 0}</p>
+                  </div>
+                </div>
+                {report.aiAnalysis.summary.key_findings && report.aiAnalysis.summary.key_findings.length > 0 && (
+                  <div>
+                    <p className="text-osint-muted text-xs mb-2">Key Findings</p>
+                    <ul className="space-y-1">
+                      {report.aiAnalysis.summary.key_findings.map((finding, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-white/80">
+                          <i className='bx bx-check-circle text-green-400 mt-0.5'></i>
+                          <span>{finding}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Discovered Identifiers */}
+            {report.aiAnalysis?.identifiers && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">🔍 Discovered Identifiers</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(report.aiAnalysis.identifiers).map(([type, values]) => (
+                    values && values.length > 0 && (
+                      <div key={type}>
+                        <p className="text-osint-muted text-xs capitalize mb-1">{type}</p>
+                        <div className="space-y-1">
+                          {values.map((value, idx) => (
+                            <div key={idx} className="text-sm text-white bg-white/5 px-2 py-1 rounded">
+                              {value}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Identity Clusters */}
+            {report.aiAnalysis?.identity_clusters && report.aiAnalysis.identity_clusters.length > 0 && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">👥 Identity Clusters</h4>
+                <div className="space-y-3">
+                  {report.aiAnalysis.identity_clusters.map((cluster, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white font-medium">{cluster.cluster_name}</span>
+                        <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded">
+                          {cluster.confidence}
+                        </span>
+                      </div>
+                      {cluster.possible_identity && (
+                        <p className="text-osint-muted text-sm mb-2">Possible Identity: {cluster.possible_identity}</p>
+                      )}
+                      {cluster.linked_accounts && cluster.linked_accounts.length > 0 && (
+                        <div className="mb-2">
+                          <p className="text-osint-muted text-xs mb-1">Linked Accounts</p>
+                          <div className="flex flex-wrap gap-1">
+                            {cluster.linked_accounts.map((account, aidx) => (
+                              <span key={aidx} className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
+                                {account}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {cluster.reasoning && (
+                        <p className="text-osint-muted text-xs">{cluster.reasoning}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Entities */}
+            {report.aiAnalysis?.entities && report.aiAnalysis.entities.length > 0 && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">🏢 Related Entities</h4>
+                <div className="space-y-2">
+                  {report.aiAnalysis.entities.map((entity, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white font-medium">{entity.entity}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded">
+                            {entity.type}
+                          </span>
+                          <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded">
+                            {entity.confidence}
+                          </span>
+                        </div>
+                      </div>
+                      {entity.connections && entity.connections.length > 0 && (
+                        <div className="mb-2">
+                          <p className="text-osint-muted text-xs mb-1">Connections</p>
+                          <div className="flex flex-wrap gap-1">
+                            {entity.connections.map((conn, cidx) => (
+                              <span key={cidx} className="text-xs bg-white/10 text-white/60 px-2 py-0.5 rounded">
+                                {conn}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {entity.evidence && entity.evidence.length > 0 && (
+                        <div>
+                          <p className="text-osint-muted text-xs mb-1">Evidence</p>
+                          <ul className="space-y-1">
+                            {entity.evidence.map((evid, eidx) => (
+                              <li key={eidx} className="text-xs text-white/60">• {evid}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Locations */}
+            {report.aiAnalysis?.locations && report.aiAnalysis.locations.length > 0 && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">🌍 Geographic Intelligence</h4>
+                <div className="space-y-2">
+                  {report.aiAnalysis.locations.map((location, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white font-medium">{location.location}</span>
+                        <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded">
+                          {location.confidence}
+                        </span>
+                      </div>
+                      {location.coordinates && (
+                        <p className="text-osint-muted text-xs mb-2">Coordinates: {location.coordinates}</p>
+                      )}
+                      {location.evidence && (
+                        <p className="text-osint-muted text-xs">Evidence: {location.evidence}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Findings */}
+            {report.aiAnalysis?.findings && report.aiAnalysis.findings.length > 0 && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">🎯 Intelligence Findings</h4>
+                <div className="space-y-2">
+                  {report.aiAnalysis.findings.map((finding, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white font-medium">{finding.finding}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            finding.importance === 'high' ? 'bg-red-500/20 text-red-400' :
+                            finding.importance === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-blue-500/20 text-blue-400'
+                          }`}>
+                            {finding.importance}
+                          </span>
+                          <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded">
+                            {finding.confidence}
+                          </span>
+                        </div>
+                      </div>
+                      {finding.evidence && (
+                        <p className="text-osint-muted text-xs">Evidence: {finding.evidence}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Verification Report */}
+            {report.aiAnalysis?.verification && (
+              <div className="bg-purple-500/10 rounded-lg p-4 mb-4 border border-purple-500/20">
+                <h4 className="text-lg font-semibold text-white mb-3">🧪 Independent Verification</h4>
+                {report.aiAnalysis.verification.review_summary && (
+                  <div className="mb-3">
+                    <p className="text-purple-400/80 text-sm font-medium mb-1">Review Summary</p>
+                    <p className="text-white/80 text-sm">{report.aiAnalysis.verification.review_summary}</p>
+                  </div>
+                )}
+                {report.aiAnalysis.verification.unsupported_claims && report.aiAnalysis.verification.unsupported_claims.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-red-400/80 text-sm font-medium mb-1">Unsupported Claims</p>
+                    <ul className="space-y-1">
+                      {report.aiAnalysis.verification.unsupported_claims.map((claim, idx) => (
+                        <li key={idx} className="text-xs text-white/80">• {claim}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {report.aiAnalysis.verification.missing_evidence && report.aiAnalysis.verification.missing_evidence.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-yellow-400/80 text-sm font-medium mb-1">Missing Evidence</p>
+                    <ul className="space-y-1">
+                      {report.aiAnalysis.verification.missing_evidence.map((evid, idx) => (
+                        <li key={idx} className="text-xs text-white/80">• {evid}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {report.aiAnalysis.verification.reproducibility && (
+                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+                    <i className={`bx ${
+                      report.aiAnalysis.verification.reproducibility === 'yes' ? 'bx-check-circle text-green-400' :
+                      report.aiAnalysis.verification.reproducibility === 'partially' ? 'bx-minus-circle text-yellow-400' :
+                      'bx-x-circle text-red-400'
+                    }`}></i>
+                    <span className="text-white/80 text-sm">
+                      Reproducibility: <span className="font-medium">{report.aiAnalysis.verification.reproducibility}</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Next Steps */}
+            {report.aiAnalysis?.next_steps && report.aiAnalysis.next_steps.length > 0 && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-3">📋 Recommended Next Steps</h4>
+                <ul className="space-y-2">
+                  {report.aiAnalysis.next_steps.map((step, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-white/80">
+                      <i className='bx bx-chevron-right text-blue-400 mt-0.5'></i>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Legacy Executive Summary (fallback) */}
+            {!report.aiAnalysis && report.executiveSummary && (
+              <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
+                <h4 className="text-lg font-semibold text-white mb-2">Executive Summary</h4>
+                <p className="text-osint-muted text-sm">{report.executiveSummary}</p>
+              </div>
+            )}
+
+            {/* Legacy Investigation Overview (fallback) */}
             <div className="bg-osint-bg/30 rounded-lg p-4 mb-4 border border-osint-border/50">
               <h4 className="text-lg font-semibold text-white mb-2">Investigation Overview</h4>
               <p className="text-osint-muted text-sm">{report.investigationOverview}</p>
