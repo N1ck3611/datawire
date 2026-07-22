@@ -44,6 +44,7 @@ const UserSettings = () => {
   const [enterText, setEnterText] = useState('ENTER')
   const [enterTextError, setEnterTextError] = useState('')
   const [enterTextSuccess, setEnterTextSuccess] = useState('')
+  const [enterAnimation, setEnterAnimation] = useState('typing')
   const [embedColor, setEmbedColor] = useState('#6366f1')
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
   const [accentColorSuccess, setAccentColorSuccess] = useState('')
@@ -104,6 +105,9 @@ const UserSettings = () => {
           setEnterText(data.user.enterText.trim())
         } else {
           setEnterText('ENTER')
+        }
+        if (data.user.enterAnimation) {
+          setEnterAnimation(data.user.enterAnimation)
         }
         if (data.user.embedColor) {
           setEmbedColor(data.user.embedColor)
@@ -681,6 +685,31 @@ const UserSettings = () => {
   const handleEmbedColorUpdate = (color) => {
     setEmbedColor(color)
     setEmbedColorSuccess('')
+  }
+
+  const handleEnterAnimationUpdate = async (animation) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${API_BASE}/api/user/enter-animation`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ enterAnimation: animation })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setEnterAnimation(animation)
+        setUser({ ...user, enterAnimation: animation })
+      } else {
+        console.error('Failed to update enter animation:', data.error)
+      }
+    } catch (error) {
+      console.error('Failed to update enter animation:', error)
+    }
   }
 
   const handleSaveEmbedColor = async (color) => {
@@ -1409,6 +1438,45 @@ const UserSettings = () => {
                 <p className="text-xs text-osint-muted mt-2">
                   {enterText.length}/10 characters (shown on profile page)
                 </p>
+              </div>
+
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">Animation Style</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleEnterAnimationUpdate('typing')}
+                    className={`p-3 rounded-lg border transition-all ${
+                      enterAnimation === 'typing'
+                        ? 'bg-white/20 border-white/40 text-white'
+                        : 'bg-black/30 border-white/10 text-white/60 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="text-xs font-medium">Typing</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleEnterAnimationUpdate('flicker')}
+                    className={`p-3 rounded-lg border transition-all ${
+                      enterAnimation === 'flicker'
+                        ? 'bg-white/20 border-white/40 text-white'
+                        : 'bg-black/30 border-white/10 text-white/60 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="text-xs font-medium">Flicker</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleEnterAnimationUpdate('fadeblink')}
+                    className={`p-3 rounded-lg border transition-all ${
+                      enterAnimation === 'fadeblink'
+                        ? 'bg-white/20 border-white/40 text-white'
+                        : 'bg-black/30 border-white/10 text-white/60 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="text-xs font-medium">Fade+Blink</div>
+                  </button>
+                </div>
               </div>
 
               {enterTextError && (

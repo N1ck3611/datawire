@@ -61,26 +61,57 @@ const UserProfile = () => {
       text = "ENTER"
     }
     
-    console.log('[UserProfile] Final typing text:', text, 'Length:', text.length)
+    const animation = user?.enterAnimation || 'typing'
+    console.log('[UserProfile] Final typing text:', text, 'Animation:', animation)
     
-    let index = 0
-    
-    const typeNextChar = () => {
-      if (index < text.length) {
-        const char = text.charAt(index)
-        console.log('[UserProfile] Typing char at index', index, ':', char, 'Code:', char.charCodeAt(0))
-        setTypingText(prev => prev + char)
-        index++
-        setTimeout(typeNextChar, 100)
-      } else {
-        console.log('[UserProfile] Typing complete, final text:', typingText)
+    if (animation === 'typing') {
+      // Improved typing animation
+      let index = 0
+      const typeNextChar = () => {
+        if (index < text.length) {
+          const char = text.charAt(index)
+          setTypingText(prev => prev + char)
+          index++
+          setTimeout(typeNextChar, 80)
+        }
       }
+      const timer = setTimeout(typeNextChar, 300)
+      return () => clearTimeout(timer)
+    } else if (animation === 'flicker') {
+      // Random letter flicker animation
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
+      let iterations = 0
+      const maxIterations = 15
+      
+      const flicker = () => {
+        if (iterations < maxIterations) {
+          // Generate random string of same length
+          let flickerText = ''
+          for (let i = 0; i < text.length; i++) {
+            if (i < iterations * (text.length / maxIterations)) {
+              flickerText += text[i]
+            } else {
+              flickerText += chars.charAt(Math.floor(Math.random() * chars.length))
+            }
+          }
+          setTypingText(flickerText)
+          iterations++
+          setTimeout(flicker, 50)
+        } else {
+          setTypingText(text)
+        }
+      }
+      const timer = setTimeout(flicker, 300)
+      return () => clearTimeout(timer)
+    } else if (animation === 'fadeblink') {
+      // Fade in then blink animation
+      setTypingText(text)
+      const timer = setTimeout(() => {
+        // Text is already set, the blinking cursor handles the rest
+      }, 300)
+      return () => clearTimeout(timer)
     }
-    
-    // Start typing after a short delay
-    const timer = setTimeout(typeNextChar, 500)
-    return () => clearTimeout(timer)
-  }, [hasEntered, user?.enterText])
+  }, [hasEntered, user?.enterText, user?.enterAnimation])
 
   // Handle ENTER key press
   useEffect(() => {
