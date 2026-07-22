@@ -107,12 +107,21 @@ const PageMeta = () => {
   )
 }
 
+const shouldShowAnnouncement = (path) => {
+  // Hide on profile pages and settings
+  if (path.startsWith('/users/') || path === '/settings') {
+    return false
+  }
+  return true
+}
+
 function App() {
+  const location = useLocation()
+  
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
         <PageMeta />
-        <AnnouncementBanner />
         <Routes>
           <Route path="/own" element={<Own />} />
           <Route path="/login" element={<Login />} />
@@ -126,6 +135,7 @@ function App() {
           <Route path="*" element={
             <>
               <Navbar />
+              {shouldShowAnnouncement(location.pathname) && <AnnouncementBanner />}
               <EyeBackground />
               <main className="flex-1 relative z-10">
                 <Routes>

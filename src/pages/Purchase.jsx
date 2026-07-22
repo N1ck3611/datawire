@@ -432,7 +432,7 @@ const Purchase = () => {
               value={depositAmount}
               onChange={(e) => setDepositAmount(e.target.value)}
               placeholder="Min $1.00"
-              className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border rounded-lg text-osint-secondary focus:border-white focus:outline-none transition-colors text-sm"
+              className="w-full px-3 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 transition-all text-sm"
             />
           </div>
 
@@ -590,7 +590,7 @@ const Purchase = () => {
                     value={senderAddress}
                     onChange={(e) => setSenderAddress(e.target.value)}
                     placeholder="Enter the address you'll send from"
-                    className="w-full px-3 py-2 bg-osint-bg/50 border border-osint-border rounded-lg text-osint-secondary focus:border-white focus:outline-none transition-colors text-sm"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 transition-all text-sm"
                   />
                   <p className="text-xs text-osint-muted mt-1">
                     Required for blockchain verification. This is the address you will send the payment from.
