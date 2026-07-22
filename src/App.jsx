@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import DiscordButton from './components/DiscordButton'
+import AnnouncementBanner from './components/AnnouncementBanner'
 import EyeBackground from './components/EyeBackground'
 import Home from './pages/Home'
 import Commands from './pages/Commands'
@@ -111,6 +112,7 @@ function App() {
     <Router>
       <div className="min-h-screen flex flex-col">
         <PageMeta />
+        <AnnouncementBanner />
         <Routes>
           <Route path="/own" element={<Own />} />
           <Route path="/login" element={<Login />} />
