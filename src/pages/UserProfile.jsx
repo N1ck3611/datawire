@@ -24,6 +24,7 @@ const UserProfile = () => {
   const [showEnableAudio, setShowEnableAudio] = useState(false)
   const [hasEntered, setHasEntered] = useState(false)
   const [typingText, setTypingText] = useState('')
+  const [fadeOpacity, setFadeOpacity] = useState(1)
   const videoRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
   const unmuteAttemptsRef = useRef(0)
@@ -106,10 +107,41 @@ const UserProfile = () => {
     } else if (animation === 'fadeblink') {
       // Fade in then blink animation
       setTypingText(text)
-      const timer = setTimeout(() => {
-        // Text is already set, the blinking cursor handles the rest
-      }, 300)
-      return () => clearTimeout(timer)
+      setFadeOpacity(0)
+      
+      // Fade in
+      const fadeDuration = 800
+      const fadeSteps = 20
+      const fadeInterval = fadeDuration / fadeSteps
+      
+      let fadeStep = 0
+      const fadeIn = () => {
+        if (fadeStep < fadeSteps) {
+          fadeStep++
+          setFadeOpacity(fadeStep / fadeSteps)
+          setTimeout(fadeIn, fadeInterval)
+        } else {
+          // Start blinking after fade in
+          startBlinking()
+        }
+      }
+      
+      const startBlinking = () => {
+        let isBlinking = true
+        const blink = () => {
+          if (isBlinking) {
+            setFadeOpacity(prev => prev > 0.3 ? 0.3 : 1)
+            setTimeout(blink, 500)
+          }
+        }
+        blink()
+      }
+      
+      const timer = setTimeout(fadeIn, 300)
+      return () => {
+        clearTimeout(timer)
+        isBlinking = false
+      }
     }
   }, [hasEntered, user?.enterText, user?.enterAnimation])
 
@@ -358,7 +390,13 @@ const UserProfile = () => {
           onClick={() => setHasEntered(true)}
         >
           <div className="text-center">
-            <p className="text-white text-4xl font-mono tracking-wider">
+            <p 
+              className="text-white text-4xl font-mono tracking-wider"
+              style={{ 
+                opacity: user?.enterAnimation === 'fadeblink' ? fadeOpacity : 1,
+                transition: 'opacity 0.05s ease-in-out'
+              }}
+            >
               {typingText}
               <span className="animate-pulse">|</span>
             </p>
