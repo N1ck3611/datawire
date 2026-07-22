@@ -20,12 +20,6 @@ const AnnouncementBanner = () => {
             discord.gg/breaches
           </a>
         </span>
-        <button 
-          onClick={() => setIsVisible(false)}
-          className="absolute right-4 hover:bg-white/20 rounded-full p-1 transition-colors"
-        >
-          <X size={18} />
-        </button>
       </div>
     </div>
   )
