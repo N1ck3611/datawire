@@ -10,7 +10,12 @@ const GEOSINT = () => {
   const [analyzing, setAnalyzing] = useState(false)
   const [results, setResults] = useState(null)
   const [error, setError] = useState('')
+  const [geosintId, setGeosintId] = useState(null)
+  const [progress, setProgress] = useState(0)
+  const [stage, setStage] = useState('')
+  const [activityLog, setActivityLog] = useState([])
   const fileInputRef = useRef(null)
+  const progressIntervalRef = useRef(null)
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
@@ -42,6 +47,9 @@ const GEOSINT = () => {
     setAnalyzing(true)
     setError('')
     setResults(null)
+    setProgress(0)
+    setStage('')
+    setActivityLog([])
 
     try {
       console.log('[GEOSINT] Converting image to base64')
@@ -87,8 +95,12 @@ const GEOSINT = () => {
 
       const data = await response.json()
       console.log('[GEOSINT] Response data:', data)
-      
-      if (data.success && data.results) {
+
+      if (data.success && data.geosintId) {
+        setGeosintId(data.geosintId)
+        // Start polling for progress
+        startProgressPolling(data.geosintId, token, API_BASE)
+      } else if (data.success && data.results) {
         setResults(data.results)
       } else {
         throw new Error(data.error || 'Failed to analyze image')
@@ -97,10 +109,47 @@ const GEOSINT = () => {
     } catch (err) {
       console.error('[GEOSINT] Analysis error:', err)
       setError(err.message || 'Failed to analyze image')
-    } finally {
-      console.log('[GEOSINT] Setting analyzing to false')
       setAnalyzing(false)
     }
+  }
+
+  const startProgressPolling = (id, token, apiBase) => {
+    const pollProgress = async () => {
+      try {
+        const response = await fetch(`${apiBase}/api/geosint-progress?id=${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success) {
+            setProgress(data.progress)
+            setStage(data.stage)
+            setActivityLog(data.activityLog || [])
+
+            if (data.completed && data.results) {
+              setResults(data.results)
+              setAnalyzing(false)
+              clearInterval(progressIntervalRef.current)
+            } else if (data.stage === 'error') {
+              setError('Analysis failed during processing')
+              setAnalyzing(false)
+              clearInterval(progressIntervalRef.current)
+            }
+          }
+        }
+      } catch (err) {
+        console.error('[GEOSINT] Progress polling error:', err)
+      }
+    }
+
+    // Initial poll
+    pollProgress()
+
+    // Poll every 2 seconds
+    progressIntervalRef.current = setInterval(pollProgress, 2000)
   }
 
   const handleDragOver = (e) => {
@@ -629,6 +678,57 @@ const GEOSINT = () => {
             )}
           </GlassCard>
         </div>
+
+        {/* Progress Bar Section */}
+        {analyzing && (
+          <GlassCard className="mt-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Analysis Progress</h3>
+                <span className="text-white font-bold text-xl">{progress}%</span>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="h-4 bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
+                />
+              </div>
+
+              {/* Current Stage */}
+              {stage && (
+                <div className="flex items-center gap-2 text-white/80">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="font-medium">{stage.replace(/_/g, ' ').toUpperCase()}</span>
+                </div>
+              )}
+
+              {/* Activity Log */}
+              {activityLog.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-white/60 text-sm font-medium">Activity Log:</p>
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {activityLog.map((activity, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                        <span className="text-white/80">{activity}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </GlassCard>
+        )}
 
         {/* Info Section */}
         <GlassCard className="mt-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10">

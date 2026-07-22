@@ -28,6 +28,7 @@ const UserProfile = () => {
   const videoRef = useRef(null)
   const hasTriedUnmuteRef = useRef(false)
   const unmuteAttemptsRef = useRef(0)
+  const isBlinkingRef = useRef(false)
 
   useEffect(() => {
     fetchUserProfile()
@@ -127,9 +128,9 @@ const UserProfile = () => {
       }
       
       const startBlinking = () => {
-        let isBlinking = true
+        isBlinkingRef.current = true
         const blink = () => {
-          if (isBlinking) {
+          if (isBlinkingRef.current) {
             setFadeOpacity(prev => prev > 0.3 ? 0.3 : 1)
             setTimeout(blink, 500)
           }
@@ -140,7 +141,7 @@ const UserProfile = () => {
       const timer = setTimeout(fadeIn, 300)
       return () => {
         clearTimeout(timer)
-        isBlinking = false
+        isBlinkingRef.current = false
       }
     }
   }, [hasEntered, user?.enterText, user?.enterAnimation])
