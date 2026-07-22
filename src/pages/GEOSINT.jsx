@@ -537,9 +537,9 @@ const GEOINT = () => {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className={`h-full ${
                           parseInt(results.confidence) >= 70
-                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500'
+                            ? 'bg-gradient-to-r from-green-400 to-green-500'
                             : parseInt(results.confidence) >= 40
-                            ? 'bg-gradient-to-r from-yellow-300 to-yellow-400'
+                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500'
                             : 'bg-gradient-to-r from-red-500 to-red-600'
                         }`}
                       />

@@ -69,11 +69,11 @@ const PageMeta = () => {
       description: 'DataWire terms of service',
       themeColor: '#ffffff'
     },
-    '/own': {
-      title: 'Owner - DataWire.cc',
-      description: 'DataWire owner information',
+    '/geoint': {
+      title: 'GEOINT - DataWire.cc',
+      description: 'AI-powered geolocation analysis using computer vision',
       themeColor: '#ffffff'
-    }
+    },
   }
 
   // Check if it's a user profile page
