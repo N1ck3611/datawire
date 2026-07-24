@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
 
@@ -289,6 +290,7 @@ const Purchase = () => {
 
   return (
     <div className="min-h-screen bg-osint-bg text-osint-secondary pt-20 px-6">
+      <AnnouncementBanner />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Shield, Calendar, Eye } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
 
@@ -380,6 +381,7 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 relative">
+      <AnnouncementBanner />
       {/* ENTER Intro Screen */}
       {!hasEntered && (
         <motion.div

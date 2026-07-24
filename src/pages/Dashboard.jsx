@@ -18,6 +18,7 @@ import GeolocationMap from '../components/GeolocationMap'
 import GEOSINT from './GEOSINT'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 import Input from '../components/ui/Input'
 import Dropdown from '../components/ui/Dropdown'
 import EmptyState from '../components/ui/EmptyState'
@@ -1600,6 +1601,7 @@ Lookup made by https://datawire.cc
   return (
     <div className="h-screen bg-background text-white flex overflow-hidden">
       <PremiumBackground />
+      <AnnouncementBanner />
       
       {/* Sidebar */}
       <div className={`fixed lg:relative z-50 w-72 h-screen bg-black/60 backdrop-blur-2xl border-r border-white/10 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>

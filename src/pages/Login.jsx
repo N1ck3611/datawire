@@ -90,7 +90,7 @@ const Login = () => {
     }
   }
 
-  const handleCodeVerify = async (e) => {
+  const handleCodeVerify = async (e, codeOverride = null) => {
     if (e) e.preventDefault()
     setError('')
     setVerifying(true)
@@ -103,7 +103,7 @@ const Login = () => {
       const response = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
+        body: JSON.stringify({ email, code: codeOverride || code })
       })
 
       const data = await response.json()
@@ -129,7 +129,7 @@ const Login = () => {
     
     // Auto-check when 6 digits are entered
     if (value.length === 6 && !verifying) {
-      handleCodeVerify()
+      handleCodeVerify(null, value)
     }
   }
 

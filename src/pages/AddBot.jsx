@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const AddBot = () => {
   const features = [
@@ -31,6 +32,7 @@ const AddBot = () => {
 
   return (
     <div className="pt-16 pb-16">
+      <AnnouncementBanner />
       <div className="max-w-5xl mx-auto px-6">
         {/* Back Button */}
         <motion.div

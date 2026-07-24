@@ -97,12 +97,12 @@ const PageMeta = () => {
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" />
+      <meta property="og:image" content="https://res.cloudinary.com/fek6eeii/image/upload/v1784851529/ukz0c0q5yqwdrc69h9qz.png" />
       <meta property="og:url" content={`https://datawire.cc${path}`} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
-      <meta name="twitter:image" content="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" />
+      <meta name="twitter:image" content="https://res.cloudinary.com/fek6eeii/image/upload/v1784851529/ukz0c0q5yqwdrc69h9qz.png" />
     </Helmet>
   )
 }

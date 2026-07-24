@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import ProviderScroll from '../components/ProviderScroll'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const Home = () => {
   const [searching, setSearching] = useState(null)
@@ -95,6 +96,7 @@ const Home = () => {
 
   return (
     <div className="pt-14">
+      <AnnouncementBanner />
       {/* Hero Section */}
       <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
         {/* Animated background elements */}
@@ -680,7 +682,7 @@ const Home = () => {
           >
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden">
-                <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="DataWire" className="w-full h-full object-cover" />
+                <img src="https://res.cloudinary.com/fek6eeii/image/upload/v1784851529/ukz0c0q5yqwdrc69h9qz.png" alt="DataWire" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 text-center md:text-left">
                 <h2 className="text-2xl font-bold text-osint-secondary mb-2">DataWire Team</h2>

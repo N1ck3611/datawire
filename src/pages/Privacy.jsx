@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const Privacy = () => {
   return (
     <div className="pt-16 pb-16">
+      <AnnouncementBanner />
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}

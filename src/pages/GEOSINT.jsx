@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Upload, MapPin, AlertCircle, Loader2, Globe, Navigation, Eye, Brain, CheckCircle, XCircle, ExternalLink, Download, Search, FileText, Shield } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const GEOINT = () => {
   const [image, setImage] = useState(null)
@@ -169,7 +170,8 @@ const GEOINT = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 bg-black">
+    <div className="min-h-screen py-12 px-4">
+      <AnnouncementBanner />
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

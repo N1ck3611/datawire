@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import AnnouncementBanner from '../components/AnnouncementBanner'
 
 // Manual provider definitions - matching newapi.txt exactly
 const MANUAL_PROVIDERS = {
@@ -340,6 +341,7 @@ const Commands = () => {
 
   return (
     <div className="pt-16 pb-16">
+      <AnnouncementBanner />
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <motion.div
