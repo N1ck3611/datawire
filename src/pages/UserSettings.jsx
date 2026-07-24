@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
-import ColorSlider from '../components/ui/ColorSlider'
+import DiscordColorPicker from '../components/ui/DiscordColorPicker'
 import AnnouncementBanner from '../components/AnnouncementBanner'
 
 const API_BASE = 'https://datawirecc-api.mynameisntnick0.workers.dev'
@@ -1588,7 +1588,7 @@ const UserSettings = () => {
               Accent Color
             </h2>
             
-            <ColorSlider 
+            <DiscordColorPicker 
               value={accentColor} 
               onChange={handleAccentColorUpdate}
               onSave={handleSaveAccentColor}
@@ -1628,7 +1628,7 @@ const UserSettings = () => {
               Profile Embed Color
             </h2>
             
-            <ColorSlider 
+            <DiscordColorPicker 
               value={embedColor} 
               onChange={handleEmbedColorUpdate}
               onSave={handleSaveEmbedColor}
