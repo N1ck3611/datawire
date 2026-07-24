@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { HexColorPicker, RgbaColorPicker, HslaColorPicker } from 'react-colorful'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, EyeDropper, X } from 'lucide-react'
+import { Copy, Check, X } from 'lucide-react'
 
 const DiscordColorPicker = ({ 
   value = '#6366f1', 
@@ -208,7 +208,13 @@ const DiscordColorPicker = ({
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-colors"
                           title="Pick color from screen"
                         >
-                          <EyeDropper size={14} />
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m2 22 1-1h3l9-9"/>
+                            <path d="M3 21v-8l9-9"/>
+                            <path d="M18 11l-5-5"/>
+                            <path d="M13 6l5-5"/>
+                            <path d="M21 3l-5 5"/>
+                          </svg>
                           <span>Pick</span>
                         </button>
                       )}
