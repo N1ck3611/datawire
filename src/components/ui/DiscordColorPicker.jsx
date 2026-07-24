@@ -134,11 +134,11 @@ const DiscordColorPicker = ({
         {isOpen && (
           <motion.div
             ref={pickerRef}
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute top-full left-0 right-0 mt-2 z-50"
+            className="absolute bottom-full left-0 right-0 mb-2 z-[9999]"
           >
             <div className="bg-[#1e1f22] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
               {/* Header */}
