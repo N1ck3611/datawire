@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
-import { HexColorPicker, RgbaColorPicker, HslaColorPicker } from 'react-colorful'
+import { ChromePicker } from 'react-color'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Check, X } from 'lucide-react'
 
@@ -14,16 +14,15 @@ const DiscordColorPicker = ({
   onSave
 }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [localColor, setLocalColor] = useState(value)
+  const [localColor, setLocalColor] = useState({ hex: value })
   const [copied, setCopied] = useState(false)
   const [recentColors, setRecentColors] = useState([])
-  const [activeTab, setActiveTab] = useState('hex') // hex, rgb, hsl
   const pickerRef = useRef(null)
   const containerRef = useRef(null)
 
   // Sync local color with prop value when not dragging
   useEffect(() => {
-    setLocalColor(value)
+    setLocalColor({ hex: value })
   }, [value])
 
   // Load recent colors from localStorage
@@ -48,17 +47,17 @@ const DiscordColorPicker = ({
     })
   }, [maxRecentColors])
 
-  // Handle color change with debounced save
+  // Handle color change
   const handleColorChange = useCallback((newColor) => {
     setLocalColor(newColor)
-    onChange(newColor)
+    onChange(newColor.hex)
   }, [onChange])
 
   // Handle save
   const handleSave = useCallback(() => {
-    addToRecentColors(localColor)
+    addToRecentColors(localColor.hex)
     if (onSave) {
-      onSave(localColor)
+      onSave(localColor.hex)
     }
     setIsOpen(false)
   }, [localColor, addToRecentColors, onSave])
@@ -66,7 +65,7 @@ const DiscordColorPicker = ({
   // Handle copy to clipboard
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(localColor)
+      await navigator.clipboard.writeText(localColor.hex)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (e) {
@@ -84,7 +83,7 @@ const DiscordColorPicker = ({
     try {
       const eyeDropper = new window.EyeDropper()
       const result = await eyeDropper.open()
-      handleColorChange(result.sRGBHex)
+      handleColorChange({ hex: result.sRGBHex })
     } catch (e) {
       console.error('EyeDropper cancelled or failed:', e)
     }
@@ -104,20 +103,6 @@ const DiscordColorPicker = ({
     }
   }, [isOpen])
 
-  // Format color for display
-  const formatColor = useCallback((color, format) => {
-    if (format === 'hex') {
-      return color
-    }
-    // Add RGB/HSL formatting if needed
-    return color
-  }, [])
-
-  // Parse color for different formats
-  const parseColor = useCallback((color) => {
-    return color
-  }, [])
-
   return (
     <div className="relative" ref={containerRef}>
       {/* Color Preview Button */}
@@ -127,11 +112,11 @@ const DiscordColorPicker = ({
       >
         <div 
           className="w-8 h-8 rounded-lg shadow-inner border-2 border-white/20"
-          style={{ backgroundColor: localColor }}
+          style={{ backgroundColor: localColor.hex }}
         />
         <div className="flex-1 text-left">
           {label && <p className="text-xs text-white/40 mb-1">{label}</p>}
-          <p className="text-sm font-mono text-white/90 uppercase">{localColor}</p>
+          <p className="text-sm font-mono text-white/90 uppercase">{localColor.hex}</p>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -172,19 +157,47 @@ const DiscordColorPicker = ({
                 <div className="flex gap-4">
                   {/* Main Color Picker */}
                   <div className="flex-1">
-                    {showAlpha ? (
-                      <RgbaColorPicker
-                        color={parseColor(localColor)}
-                        onChange={handleColorChange}
-                        className="!w-full !h-48"
-                      />
-                    ) : (
-                      <HexColorPicker
-                        color={localColor}
-                        onChange={handleColorChange}
-                        className="!w-full !h-48"
-                      />
-                    )}
+                    <ChromePicker
+                      color={localColor}
+                      onChange={handleColorChange}
+                      disableAlpha={!showAlpha}
+                      styles={{
+                        default: {
+                          picker: {
+                            background: 'transparent',
+                            boxShadow: 'none',
+                            borderRadius: '0',
+                          },
+                          header: {
+                            display: 'none'
+                          },
+                          body: {
+                            padding: '0'
+                          },
+                          saturation: {
+                            paddingBottom: '10px',
+                            borderRadius: '8px',
+                            overflow: 'hidden'
+                          },
+                          Hue: {
+                            height: '12px',
+                            borderRadius: '6px',
+                            marginBottom: '10px'
+                          },
+                          Alpha: {
+                            height: '12px',
+                            borderRadius: '6px',
+                            marginBottom: '10px'
+                          },
+                          color: {
+                            display: 'none'
+                          },
+                          swatch: {
+                            display: 'none'
+                          }
+                        }
+                      }}
+                    />
                   </div>
 
                   {/* Sidebar */}
@@ -193,10 +206,10 @@ const DiscordColorPicker = ({
                     <div className="p-3 bg-black/30 rounded-lg">
                       <div 
                         className="w-full h-12 rounded-lg shadow-inner border-2 border-white/20"
-                        style={{ backgroundColor: localColor }}
+                        style={{ backgroundColor: localColor.hex }}
                       />
                       <p className="text-xs text-white/50 mt-2 text-center font-mono uppercase">
-                        {localColor}
+                        {localColor.hex}
                       </p>
                     </div>
 
@@ -234,13 +247,13 @@ const DiscordColorPicker = ({
                 <div className="mt-4 flex gap-2">
                   <input
                     type="text"
-                    value={localColor}
+                    value={localColor.hex}
                     onChange={(e) => {
                       const value = e.target.value
                       if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                        handleColorChange(value)
+                        handleColorChange({ hex: value })
                       }
-                      setLocalColor(value)
+                      setLocalColor(prev => ({ ...prev, hex: value }))
                     }}
                     className="flex-1 px-3 py-2 bg-black/30 border border-white/20 rounded-lg text-white text-sm font-mono focus:outline-none focus:border-white/40 transition-colors"
                     placeholder="#000000"
@@ -255,7 +268,7 @@ const DiscordColorPicker = ({
                       {recentColors.map((color, index) => (
                         <button
                           key={`${color}-${index}`}
-                          onClick={() => handleColorChange(color)}
+                          onClick={() => handleColorChange({ hex: color })}
                           className="w-8 h-8 rounded-lg border-2 border-white/20 hover:border-white/40 hover:scale-110 transition-all shadow-inner"
                           style={{ backgroundColor: color }}
                           title={color}
