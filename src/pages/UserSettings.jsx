@@ -821,9 +821,10 @@ const UserSettings = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 bg-black">
+    <div className="min-h-screen bg-black">
       <AnnouncementBanner />
-      <div className="max-w-3xl mx-auto">
+      <div className="py-12 px-4">
+        <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1649,6 +1650,7 @@ const UserSettings = () => {
             </p>
           </GlassCard>
         </motion.div>
+      </div>
       </div>
     </div>
   )

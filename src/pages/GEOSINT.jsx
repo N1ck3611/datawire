@@ -170,9 +170,10 @@ const GEOINT = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen">
       <AnnouncementBanner />
-      <div className="max-w-6xl mx-auto">
+      <div className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -754,6 +755,7 @@ const GEOINT = () => {
             </div>
           </div>
         </GlassCard>
+      </div>
       </div>
     </div>
   )

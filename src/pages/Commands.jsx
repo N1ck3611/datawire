@@ -340,9 +340,9 @@ const Commands = () => {
   }, {}) : {}
 
   return (
-    <div className="pt-16 pb-16">
+    <div>
       <AnnouncementBanner />
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="pt-16 pb-16 max-w-5xl mx-auto px-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

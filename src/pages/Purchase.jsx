@@ -289,9 +289,10 @@ const Purchase = () => {
   }
 
   return (
-    <div className="min-h-screen bg-osint-bg text-osint-secondary pt-20 px-6">
+    <div className="min-h-screen bg-osint-bg text-osint-secondary">
       <AnnouncementBanner />
-      <div className="max-w-4xl mx-auto">
+      <div className="pt-20 px-6">
+        <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -750,7 +751,7 @@ const Purchase = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
+      </div>
     </div>
   )
 }

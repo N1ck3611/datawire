@@ -380,8 +380,9 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 relative">
+    <div className="min-h-screen relative">
       <AnnouncementBanner />
+      <div className="py-12 px-4">
       {/* ENTER Intro Screen */}
       {!hasEntered && (
         <motion.div
@@ -732,6 +733,7 @@ const UserProfile = () => {
             </div>
           </GlassCard>
         </motion.div>
+      </div>
       </div>
     </div>
   )
