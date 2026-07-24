@@ -127,7 +127,11 @@ const DiscordColorPicker = ({
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
+      // Check if click is outside both the button and the dropdown
+      const isOutsideButton = containerRef.current && !containerRef.current.contains(e.target)
+      const isOutsideDropdown = pickerRef.current && !pickerRef.current.contains(e.target)
+      
+      if (isOutsideButton && isOutsideDropdown) {
         setIsOpen(false)
       }
     }
