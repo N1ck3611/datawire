@@ -1613,7 +1613,7 @@ Lookup made by https://datawire.cc
         <div className="p-6 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
             <img 
-              src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" 
+              src="https://res.cloudinary.com/fek6eeii/image/upload/v1784851529/ukz0c0q5yqwdrc69h9qz.png" 
               alt="DataWire" 
               className="w-10 h-10 rounded-xl"
               onError={(e) => {

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { ChromePicker } from 'react-color'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Check, X } from 'lucide-react'
@@ -17,13 +18,47 @@ const DiscordColorPicker = ({
   const [localColor, setLocalColor] = useState({ hex: value })
   const [copied, setCopied] = useState(false)
   const [recentColors, setRecentColors] = useState([])
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
   const pickerRef = useRef(null)
   const containerRef = useRef(null)
+  const buttonRef = useRef(null)
 
   // Sync local color with prop value when not dragging
   useEffect(() => {
     setLocalColor({ hex: value })
   }, [value])
+
+  // Calculate dropdown position when opening
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      // Use requestAnimationFrame to ensure button is fully rendered
+      requestAnimationFrame(() => {
+        const rect = buttonRef.current.getBoundingClientRect()
+        const dropdownHeight = 450 // Approximate height of dropdown
+        const dropdownWidth = 450 // Fixed width for better UX
+        const margin = 8 // Margin between button and dropdown
+        
+        // Check if there's enough space above the button
+        const spaceAbove = rect.top
+        const spaceBelow = window.innerHeight - rect.bottom
+        
+        let topPosition
+        if (spaceAbove < dropdownHeight + margin && spaceBelow > spaceAbove) {
+          // Not enough space above, position below
+          topPosition = rect.bottom + margin
+        } else {
+          // Position above the button
+          topPosition = rect.top - dropdownHeight - margin
+        }
+        
+        setDropdownPosition({
+          top: topPosition,
+          left: rect.left,
+          width: dropdownWidth
+        })
+      })
+    }
+  }, [isOpen])
 
   // Load recent colors from localStorage
   useEffect(() => {
@@ -107,6 +142,7 @@ const DiscordColorPicker = ({
     <div className="relative" ref={containerRef}>
       {/* Color Preview Button */}
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 px-4 py-3 bg-black/60 backdrop-blur-xl border border-white/20 rounded-xl hover:border-white/30 transition-all group"
       >
@@ -129,16 +165,21 @@ const DiscordColorPicker = ({
         </motion.div>
       </button>
 
-      {/* Color Picker Dropdown */}
-      <AnimatePresence>
-        {isOpen && (
+      {/* Color Picker Dropdown - Portal to render outside container */}
+      {isOpen && createPortal(
+        <AnimatePresence>
           <motion.div
             ref={pickerRef}
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute bottom-full left-0 right-0 mb-2 z-[9999]"
+            className="fixed z-[9999]"
+            style={{
+              top: `${dropdownPosition.top}px`,
+              left: `${dropdownPosition.left}px`,
+              width: `${dropdownPosition.width}px`
+            }}
           >
             <div className="bg-[#1e1f22] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
               {/* Header */}
@@ -296,8 +337,9 @@ const DiscordColorPicker = ({
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   )
 }

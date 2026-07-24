@@ -73,7 +73,7 @@ const AddBot = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="w-24 h-24 rounded-2xl bg-white/10 flex items-center justify-center"
               >
-                <img src="https://i.ibb.co/wFrNvxt5/Chat-GPT-Image-Jul-6-2026-09-02-01-PM-removebg-preview.png" alt="Datawire.cc" className="w-16 h-16 object-contain" />
+                <img src="https://res.cloudinary.com/fek6eeii/image/upload/v1784851529/ukz0c0q5yqwdrc69h9qz.png" alt="Datawire.cc" className="w-16 h-16 object-contain" />
               </motion.div>
             </div>
           </motion.div>
