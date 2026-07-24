@@ -16,13 +16,13 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
   }, [onChange])
 
   useEffect(() => {
-    if (value) {
+    if (value && !isDragging) {
       const hsl = hexToHSL(value)
       setHue(hsl.h)
       setSaturation(hsl.s)
       setLightness(hsl.l)
     }
-  }, [value])
+  }, [value, isDragging])
 
   const hexToHSL = (hex) => {
     let r = parseInt(hex.slice(1, 3), 16) / 255
@@ -82,10 +82,12 @@ const ColorSlider = ({ value, onChange, label, onSave }) => {
     setLightness(newLightness)
     const hex = hslToHex(hue, newSaturation, newLightness)
     onChangeRef.current(hex)
+    e.preventDefault()
   }, [hue])
 
   const handleColorPickerDrag = useCallback((e) => {
     if (!isDragging) return
+    e.preventDefault()
     handleColorPickerClick(e)
   }, [isDragging, handleColorPickerClick])
 

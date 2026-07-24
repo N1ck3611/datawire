@@ -688,6 +688,12 @@ const Dashboard = () => {
     fetchUserData()
     fetchProviders()
     
+    // Load accent color from localStorage
+    const savedAccentColor = localStorage.getItem('accentColor')
+    if (savedAccentColor) {
+      document.documentElement.style.setProperty('--accent-color', savedAccentColor)
+    }
+    
     // Update time every second
     const timeInterval = setInterval(() => {
       setCurrentTime(new Date())
@@ -1649,7 +1655,7 @@ Lookup made by https://datawire.cc
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 transition-all border-l-2 relative overflow-hidden rounded-lg ${
                   activeTab === item.id 
-                    ? 'bg-white/10 text-white border-white' 
+                    ? 'bg-white/10 text-white dashboard-accent-border' 
                     : 'text-white/50 border-transparent hover:bg-white/5 hover:text-white'
                 }`}
               >
@@ -1691,7 +1697,7 @@ Lookup made by https://datawire.cc
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all border-l-2 rounded-lg ${
                       selectedProvider === provider && activeTab === 'search' && searchMode === 'provider'
-                        ? 'bg-white/10 text-white border-white' 
+                        ? 'bg-white/10 text-white dashboard-accent-border' 
                         : 'text-white/50 border-transparent hover:bg-white/5 hover:text-white'
                     }`}
                   >
@@ -1912,7 +1918,7 @@ Lookup made by https://datawire.cc
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <div className="w-1 h-6 bg-white/80 rounded-full" />
+                    <div className="w-1 h-6 dashboard-accent-bg rounded-full" />
                     <h3 className="text-lg font-semibold tracking-tight">OSINT Search</h3>
                   </motion.div>
                   
@@ -2198,7 +2204,7 @@ Lookup made by https://datawire.cc
             <div className="max-w-4xl mx-auto">
               <GlassCard className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-white/80 rounded-full" />
+                  <div className="w-1 h-6 dashboard-accent-bg rounded-full" />
                   <h3 className="text-lg font-semibold tracking-tight">IntelX File Download</h3>
                 </div>
                 <p className="text-sm text-white/50 mb-4">Download files from IntelX by System ID</p>
@@ -2538,7 +2544,7 @@ Lookup made by https://datawire.cc
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-medium capitalize text-white/90">{tx.type}</span>
                           <span className={`text-xs px-2 py-1 rounded-lg ${
-                            tx.status === 'completed' ? 'bg-white/10 text-white' :
+                            tx.status === 'completed' ? 'dashboard-accent-bg text-white' :
                             tx.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
                             'bg-red-500/10 text-red-500'
                           }`}>
